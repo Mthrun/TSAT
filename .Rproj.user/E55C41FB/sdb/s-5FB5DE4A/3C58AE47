@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\nrequireRpackage('WaveletComp')\nx = WaveletComp::periodic.series(start.period = 500, length = 4747)\nx = x + 0.2*rnorm(500)  # add some noise\n\nmy.data = data.frame(x = x)\nmy.w = analyze.wavelet(my.data, \"x\",\n                       loess.span = 0,\n                       dt = 1, dj = 1/250,\n                       lowerPeriod = 256,\n                       upperPeriod = 1024,\n                       make.pval = T, n.sim = 10)\n\n\nwt.image(my.w, color.key = \"quantile\", n.levels = 250,\n         legend.params = list(lab = \"wavelet power levels\", mar = 4.7))\n\nres=reconstruct(my.w, plot.waves = F, lwd = c(1,2), legend.coords = \"bottomleft\")\n\nplot.ts(x)  \nTimeSeries=x\n#res=waveslim::dwt(waveslim::up.sample(TimeSeries, 16, 0), wf=\"haar\", n.levels=1, boundary=\"periodic\")  \nres=waveslim::dwt(TimeSeries, wf=\"la8\", n.levels=1, boundary=\"periodic\")  \n#res=waveslim::dwt(waveslim::up.sample(TimeSeries, 16, 0), wf=\"la8\", n.levels=1, boundary=\"reflection\")\n\n#res$d1=res$d1[res$d1!=0]\n# res$d2=res$d2[res$d2!=0]\n #res$s1=res$s1[res$s1!=0]\n# \n# resTmp=resT\n# resTmp$d1=res$d2\n# resTmp$s1=res$s2\n# res$d1[1:2700]=0\n#res$d1[1:length(res$d1)]=0\nres$s1[1:length(res$s1)]=0\n#res$d2[1:length(res$d2)]=0\n\nres2=waveslim::idwt(res)\n#plot(res2)\nEps=0.01\nFilteredTS=res2#[res2<-Eps&res2>Eps]\n#plot(FilteredTS)\nmain='t'\nplot.ts(TimeSeries,type='l',ylim=c(min(TimeSeries,na.rm=T)*0.99,max(TimeSeries,na.rm=T)*1.01),xlim=c(0,length(TimeSeries)),main=main,col='blue',xlab='Time',ylab='Range of values_ Filtering (red) versus Data(blue)')\npoints(as.vector(FilteredTS),type='l',col='red',ylim=c(min(TimeSeries,na.rm=T)*0.99,max(TimeSeries,na.rm=T)*1.01),xlim=c(0,length(TimeSeries)))\n",
+    "created" : 1512137641276.000,
+    "dirty" : false,
+    "encoding" : "ISO8859-1",
+    "folds" : "",
+    "hash" : "2343609040",
+    "id" : "3C58AE47",
+    "lastKnownWriteTime" : 1512135930,
+    "last_content_update" : 1512135930,
+    "path" : "D:/Viessmann/08AnalyseProgramme/99WavelettTrafo.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

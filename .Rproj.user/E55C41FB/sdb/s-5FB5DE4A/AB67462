@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "PlotEventCounts=function(Counts,Names=NULL,main='Event Counts',xlab='Events',  ylab='Frequencies',order=F){\n  #PlotEventCounts(Counts,Names=NULL,main='Event Counts',xlab='Events',ylab='Frequencies')\n  nB <- length(Counts)\n  Breaks=1:nB\n  if(is.null(Names))\n    Names=Breaks\n  MiN=1\n  MaX=nB\n  Counts=as.numeric(Counts)\n  if(order){\n    tmp=order(Counts,decreasing = T,na.last = T)\n    Names=Names[tmp]\n    y <- Counts[tmp]\n  }else{\n    y <- Counts\n  }\n\n\n\n\n    plot(x = c(MiN-0.5, MaX+0.5), \n         y = c(0, max(Counts, na.rm = TRUE) * 1.2), type = \"n\", \n         main = main, xaxs = \"i\", yaxs = \"i\", axes = FALSE, \n         xlab = xlab, ylab = ylab, xlim = c(MiN-0.5, \n                                            MaX+0.5), ylim = c(0, max(Counts, \n                                                                      na.rm = TRUE) * 1.2))\n    par(mgp = c(2.2, 0.6, 0))\n    rect(Breaks-0.5, 0, Breaks+0.5, y, col = \"blue\", border = \"light blue\", \n         xlab = \"\", ylab = ylab, xlim = c(MiN-0.5, \n                                          MaX+0.5), ylim = c(0, max(Counts, \n                                                                    na.rm = TRUE) * 1.2))\n    axis(1, col = \"black\", las = 1, xaxs = \"i\",at=Breaks,labels = Names)\n    axis(2, col = \"black\", las = 1, yaxs = \"i\")\n  \n}",
+    "created" : 1512052937021.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3811619329",
+    "id" : "AB67462",
+    "lastKnownWriteTime" : 1512048026,
+    "last_content_update" : 1512048026,
+    "path" : "D:/Subversion/PUB/dbt/TimeSeries/R/PlotEventCounts.R",
+    "project_path" : "R/PlotEventCounts.R",
+    "properties" : {
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

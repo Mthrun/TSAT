@@ -1,0 +1,10 @@
+{
+    "data" : [
+        "\nR version 3.4.2 (2017-09-28) -- \"Short Summer\"\nCopyright (C) 2017 The R Foundation for Statistical Computing\nPlatform: x86_64-w64-mingw32/x64 (64-bit)\n\nR is free software and comes with ABSOLUTELY NO WARRANTY.\nYou are welcome to redistribute it under certain conditions.\nType 'license()' or 'licence()' for distribution details.\n\nR is a collaborative project with many contributors.\nType 'contributors()' for more information and\n'citation()' on how to cite R or R packages in publications.\n\nType 'demo()' for some demos, 'help()' for on-line help, or\n'help.start()' for an HTML browser interface to help.\nType 'q()' to quit R.\n\n",
+        "[1] \"=============LOADED AS INTERACTIVE SESSION============\"\n[1] \"DBT Packages geladen\"\n[1] \"FCPS loaded\"\n\nRestarting R session...\n\n"
+    ],
+    "type" : [
+        2,
+        2
+    ]
+}
