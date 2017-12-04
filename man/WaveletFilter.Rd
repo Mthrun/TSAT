@@ -106,7 +106,24 @@ Droping coeeficients does not work yet
 for fancy=TRUE see
 \url{http://www.hs-stat.com/projects/WaveletComp/WaveletComp_guided_tour.pdf}
 }
+\examples{
+\donttest{
+# Genrerate Data
+TimeSeries = WaveletComp::periodic.series(start.period = 500, length = 1347)
+TimeSeriesWithNoise = TimeSeries + 0.2 *rnorm(1000)  # add some noise+
 
+
+#highpass filter
+require('WaveletComp')
+TimeSeriesWithOutNoiseList=WaveletFilter(TimeSeriesWithNoise,largest = TRUE,Fancy=TRUE,PlotIt = T)
+TimeSeriesWithOutNoise=TimeSeriesWithOutNoiseList$FilteredTS
+
+#lowpass filter
+require('waveslim')
+NoiseList=WaveletFilter(TimeSeriesWithNoise,largest = FALSE,Fancy=FALSE,PlotIt = T)
+Noise=NoiseList$FilteredTS
+}
+}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 

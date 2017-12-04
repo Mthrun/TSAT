@@ -93,14 +93,19 @@ if(!Fancy){
                           lowerPeriod = lowerPeriod,
                           upperPeriod = upperPeriod,
                           make.pval = F, n.sim = 1)
+   #def.par <-par(no.readonly = TRUE) # save default, for resetting...
+if(PlotIt){
 
-if(PlotIt)
-  WaveletComp::wt.image(my.w, color.key = "quantile", n.levels = 250,
+#  m <-graphics::layout(matrix(c(1, 2, 1, 2), 2, 2))
+   WaveletComp::wt.image(my.w, color.key = "quantile", n.levels = 250,
             legend.params = list(lab = "wavelet power levels", mar = 4.7))
    
+
+}  
    WaveletDecompositionVector=my.w
    BookkeepingVector=WaveletComp::reconstruct(my.w, plot.waves = F, lwd = c(1,2), legend.coords = "bottomleft")
    FilteredTS=BookkeepingVector$series$x.r
-}  
+   #par(def.par)
 return(list(FilteredTS=FilteredTS, WaveletDecompositionVector=WaveletDecompositionVector, BookkeepingVector=BookkeepingVector))
+}
 }
