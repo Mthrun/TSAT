@@ -1,3 +1,4 @@
+export(AddCounts)
 export(CrossCorr)
 export(AutoCorr)
 export(PartialAutoCorr)
