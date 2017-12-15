@@ -37,7 +37,7 @@ EventDurationAndTimeDifference=function(Time,EventNameorValue,EventArrayOrEvent,
     Counts=0
     EventAnfangInd=NULL
     EventEndeInd=NULL
-    return(list(Time=TimeChar,Counts=Counts,Duration=DauerPerDevice,Difference=AbstandPerDevice,BeginIndsFound=EventAnfangInd,EndOfEventsInds=EventEndeInd))
+    return(list(Time=Time,Counts=Counts,Duration=DauerPerDevice,Difference=AbstandPerDevice,BeginIndsFound=EventAnfangInd,EndOfEventsInds=EventEndeInd))
   }
   n=length(Feature)
   if(sum(Feature)==0){
@@ -45,6 +45,7 @@ EventDurationAndTimeDifference=function(Time,EventNameorValue,EventArrayOrEvent,
     return(list(Time=Time,Counts=0,Duration=NA,Difference=NA,BeginIndsFound=NULL,EndOfEventsInds=NULL))
     
   }
+  TimeChar=Time
   if(!inherits(Time, "POSIXlt")){
     if(inherits(Time, "POSIXct")){
       warning('Timevector stores seconds since UNIX epoch (+some other data) and not the character vectors of time. Assuming UTC and trying to transform')
