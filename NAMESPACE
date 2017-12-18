@@ -16,6 +16,8 @@ export(FourierFilter)
 export(MovingAverage)
 export(PlotEventCounts)
 export(SplitTime)
+export(TSDistancesMatrix)
+
 export(WaveletFilter)
  importFrom("stats", "acf", "ccf", "na.fail", "pacf", "plot.ts")
   importFrom("graphics", "axis", "grid", "mtext", "par", "plot",
