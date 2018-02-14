@@ -1,14 +1,14 @@
 Package: TimeSeries
 Type: Package
 Title: TimeSeries Analysis Tools
-Version: 0.7.2
-Date: 2017-12-18
+Version: 0.8.0
+Date: 2018-02-14
 Author: Michael Thrun
 Maintainer: Michael Thrun <m.thrun@gmx.net>
 Description: TimeSeries analysis Tools is able to describe event-pattern detection as a part of Complex event processing (CEP) for categorial time series and gives several approaches for numerical times series, like Filtering through FFT, WVT.
 License: GPL-3
-Imports: 
-Suggests: imputeTS, AdaptGauss, signal, waveslim, chron, WaveletComp, tswge, TSdist
+Imports: DataVisualizations
+Suggests: imputeTS, AdaptGauss, signal, waveslim, chron, WaveletComp, tswge, TSdist, zoo, xts, fanplot, forecast,rugarch, RHmm, Classifiers, dbt.ClassAnalysis, dbt.Transforms
 LinkingTo: 
 Depends: R (>= 3.0)
 NeedsCompilation: no

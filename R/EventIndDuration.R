@@ -37,11 +37,15 @@ EventIndDuration=TimeDifference=function(Timevector,BeginInd,EndInd,Resolution='
     if(sum(!is.finite(BeginInd))>0){
       indt=which(!is.finite(BeginInd))
       warning(paste('One or more Beginning of Events are missing:',indt,collapse = '\n'))
+      # BeginInd=BeginInd[-indt]
+      # EndInd=EndInd[-indt]
       return(NaN)
     }
     if(sum(!is.finite(EndInd))>0){
       indt=which(!is.finite(EndInd))
       warning(paste('One or more End of Event are missing:',indt,collapse = '\n'))
+     # BeginInd=BeginInd[-indt]
+      # EndInd=EndInd[-indt]
       return(NaN)
     }
     if(sum(EndInd-BeginInd<0)>0){
@@ -68,7 +72,7 @@ EventIndDuration=TimeDifference=function(Timevector,BeginInd,EndInd,Resolution='
 
   }  #End Catching Errors
   diff=as.numeric(Timevector[EndInd]-Timevector[BeginInd],units=Resolution)
-
+  names(diff)=BeginInd
   if(!Silent){
     if(sum(!is.finite(diff))>0){
       indtemp=which(!is.finite(diff))

@@ -28,6 +28,7 @@ EventDurationAndTimeDifference=function(Time,EventNameorValue,EventArrayOrEvent,
   # 
   # AUTHOR: MT 11/2017
   n=length(EventArrayOrEvent)
+  EventAnfangIndTmp=NULL
   if(n>1){
     Feature=EventFiltering(EventNameorValue,EventArrayOrEvent,Silent=Silent)
   }else{
@@ -77,23 +78,35 @@ EventDurationAndTimeDifference=function(Time,EventNameorValue,EventArrayOrEvent,
       warning('Length or number of rows of EventArrayOrEvent is smaller than 2, cannot calculate approximations.')
     }
   }
-  
-  indevent=which(Feature==1)
+  # print(sum(!is.finite(Feature)))
+   indevent=which(Feature==1)
+ # return(Feature)
+  #print(sum(!is.finite(indevent)))
   if(length(indevent)>0){
     Vlist=FilterSuccessiveInds(indevent)
     EventAnfangInd=Vlist$values
     EventLaenge=Vlist$lengths
     EventEndeInd=EventAnfangInd+EventLaenge
+    
+    # print(sum(!is.finite(EventEndeInd)))
+    # print(sum(!is.finite(EventAnfangInd)))
     indt=which.max(EventEndeInd)
-    if(EventEndeInd[indt]>n) EventEndeInd[indt]=NaN #Event dauert bis zum ende der Zeit an
+    if(EventEndeInd[indt]>n){
+      #EventEndeInd[indt]=NaN #Event dauert bis zum ende der Zeit an
+      EventEndeInd=EventEndeInd[-indt]
+      EventAnfangInd=EventAnfangInd[-indt]
+    } 
     
     DauerPerDevice=EventIndDuration(TimeChar,EventAnfangInd,EventEndeInd,units,Silent = Silent)
+#   print(EventEndeInd)
+     #EventAnfangIndTmp=as.numeric(names(DauerPerDevice))
+   # print(EventAnfangIndTmp)
     if(length(EventAnfangInd)>1){
       #letztes Ende und erster Anfang werden geloescht
       AbstandPerDevice=EventIndTimeDifference(TimeChar,EventAnfangInd[-1],EventEndeInd[-length(EventEndeInd)],units,Silent = Silent)
       Counts=length(DauerPerDevice)
     }else{
-      AbstandPerDevice=NA
+      AbstandPerDevice=NULL
       Counts=1
     }
   }else{
@@ -122,6 +135,6 @@ EventDurationAndTimeDifference=function(Time,EventNameorValue,EventArrayOrEvent,
   
   if(!Silent&sum(!is.finite(DauerPerDevice)>0,na.rm = T)) warning('NaN in Duration found, something went wrong.')
   if(!Silent&sum(!is.finite(AbstandPerDevice)>0,na.rm = T)) warning('NaN in AbstandPerDevice found, something went wrong.')
-  
+  #if(!is.null(EventAnfangIndTmp)) EventAnfangInd=EventAnfangIndTmp
   return(list(Time=TimeChar,Counts=Counts,Duration=DauerPerDevice,Difference=AbstandPerDevice,BeginIndsFound=EventAnfangInd,EndOfEventsInds=EventEndeInd))
 }
