@@ -93,8 +93,9 @@ EventDurationAndTimeDifference=function(Time,EventNameorValue,EventArrayOrEvent,
     indt=which.max(EventEndeInd)
     if(EventEndeInd[indt]>n){
       #EventEndeInd[indt]=NaN #Event dauert bis zum ende der Zeit an
-      EventEndeInd=EventEndeInd[-indt]
-      EventAnfangInd=EventAnfangInd[-indt]
+      # EventEndeInd=EventEndeInd[-indt]
+      # EventAnfangInd=EventAnfangInd[-indt]
+      EventEndeInd[indt]=n
     } 
     
     DauerPerDevice=EventIndDuration(TimeChar,EventAnfangInd,EventEndeInd,units,Silent = Silent)
