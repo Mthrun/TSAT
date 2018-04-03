@@ -65,15 +65,16 @@ EventDurationAndTimeDifference=function(Time,EventNameorValue,EventArrayOrEvent,
   }
   if(PeriodBetweenEvents>0){
     if(n>2){
-      LatencyCheck=EventIndDuration(TimeChar,1:(length(Feature)-1),2:length(Feature),units,Silent=TRUE)<PeriodBetweenEvents#
-      for(k in 1:(length(Feature)-2)){#Das Ende definiert nur der aktuelle Fehler, letztes Event ist sicher vorbei dank Jan
-        if(Feature[k]==1){#Sobald ein Event anliegt
-          #if(LatencyCheck[k]&LatencyCheck[k+1])#der Abstand vom anliegen zum naechsten und uebernachsten Event ist kleiner als eine Minute
-          if(LatencyCheck[k+1])#der Abstand vom anliegen zum naechsten Event ist kleiner als eine Minute
-            Feature[k+1]=1 #Dann liegt er auch beim naechsten Zeitstempel noch an, dabei ist esgal ob der uebernaechste
-          #Zeitstempel eine null oder eine 1 hat (event anliegt oder nicht)
-        }
-      }
+      Feature=EventTimeFilter=function(Time=Time,EventNameorValue=EventNameorValue,EventArrayOrEvent=EventArrayOrEvent,units=units,PeriodBetweenEvents=PeriodBetweenEvents,formating=formating,Timezone=Timezone,Silent=Silent)
+      # LatencyCheck=EventIndDuration(TimeChar,1:(length(Feature)-1),2:length(Feature),units,Silent=TRUE)<PeriodBetweenEvents#
+      # for(k in 1:(length(Feature)-2)){#Das Ende definiert nur der aktuelle Fehler, letztes Event ist sicher vorbei dank Jan
+      #   if(Feature[k]==1){#Sobald ein Event anliegt
+      #     #if(LatencyCheck[k]&LatencyCheck[k+1])#der Abstand vom anliegen zum naechsten und uebernachsten Event ist kleiner als eine Minute
+      #     if(LatencyCheck[k+1])#der Abstand vom anliegen zum naechsten Event ist kleiner als eine Minute
+      #       Feature[k+1]=1 #Dann liegt er auch beim naechsten Zeitstempel noch an, dabei ist esgal ob der uebernaechste
+      #     #Zeitstempel eine null oder eine 1 hat (event anliegt oder nicht)
+      #   }
+      # }
     }else{
       warning('Length or number of rows of EventArrayOrEvent is smaller than 2, cannot calculate approximations.')
     }
