@@ -10,7 +10,7 @@ High level function that calculates time difference between events (if more than
 \usage{
 EventTimeFilter(Time,Feature,
 
-units='mins',PeriodBetweenEvents=0,formating="(\%y-\%m-\%d \%H:\%M:\%S)"
+units='mins',PeriodBetweenEvents=1,formating="(\%y-\%m-\%d \%H:\%M:\%S)"
 
 ,Timezone='UTC',Silent=FALSE)
 }
@@ -46,7 +46,7 @@ sometimes there issues in the quality of data, than its usefull to define a peri
 }
 \value{
 
-
+  \item{FilteredFeature}{[1:n,1] vector of string or Values where time periods below PeriodBetweenEvents are filled up with values to clear "false" zeros }
 
 }
 

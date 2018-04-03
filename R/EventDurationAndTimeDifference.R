@@ -65,7 +65,8 @@ EventDurationAndTimeDifference=function(Time,EventNameorValue,EventArrayOrEvent,
   }
   if(PeriodBetweenEvents>0){
     if(n>2){
-      Feature=EventTimeFilter=function(Time=Time,EventNameorValue=EventNameorValue,EventArrayOrEvent=EventArrayOrEvent,units=units,PeriodBetweenEvents=PeriodBetweenEvents,formating=formating,Timezone=Timezone,Silent=Silent)
+      Feature=EventTimeFilter(Time=Time,Feature=Feature,units=units,PeriodBetweenEvents=PeriodBetweenEvents,formating=formating,Timezone=Timezone,Silent=Silent)
+      
       # LatencyCheck=EventIndDuration(TimeChar,1:(length(Feature)-1),2:length(Feature),units,Silent=TRUE)<PeriodBetweenEvents#
       # for(k in 1:(length(Feature)-2)){#Das Ende definiert nur der aktuelle Fehler, letztes Event ist sicher vorbei dank Jan
       #   if(Feature[k]==1){#Sobald ein Event anliegt
@@ -75,6 +76,7 @@ EventDurationAndTimeDifference=function(Time,EventNameorValue,EventArrayOrEvent,
       #     #Zeitstempel eine null oder eine 1 hat (event anliegt oder nicht)
       #   }
       # }
+      
     }else{
       warning('Length or number of rows of EventArrayOrEvent is smaller than 2, cannot calculate approximations.')
     }
