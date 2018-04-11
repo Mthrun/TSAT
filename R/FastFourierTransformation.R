@@ -18,19 +18,20 @@ FastFourierTransformation=function(Timeseries,na.rm=FALSE,PlotIt=FALSE){
 # 
 # AUTHOR: MT 09/2017 
   if (!is.vector(Timeseries, mode = "numeric")){
-    warning("Argument 'Timeseries' must be numeric vector. Trying to transform to a vecotr...")
+    warning("Argument 'Timeseries' must be numeric vector. Trying to transform to a vector...")
     Timeseries=as.vector(Timeseries,mode =  "numeric")
   } 
   if(na.rm==TRUE){
     requireNamespace('imputeTS')
     Timeseries=imputeTS::na.interpolation(Timeseries,option = 'spline')
   }else{
-    if(sum(!is.finite(as.numeric(timeseries)))){
+    if(sum(!is.finite(as.numeric(Timeseries)))){
       warning('NaNs in Data. FFT will fail!')
     }
   }
 
   #Trick 17: verfierfache ZR damit auf jedenfall periodisch
+  # see windowing effect
   Timeseries=c(Timeseries,Timeseries[length(Timeseries):1])
   timeseries=c(Timeseries,Timeseries[length(Timeseries):1])
   
@@ -40,7 +41,7 @@ FastFourierTransformation=function(Timeseries,na.rm=FALSE,PlotIt=FALSE){
   #get the absolute value of the coefficients  
   Amplitude = abs(KomplexeFourierKoeffizienten)
   ##Freqenz
-  frequenz=c(0:N)
+  frequenz=c(1:N)
   
   #Nyquist 0.5 * N * f, f=1/Periode
   
@@ -48,9 +49,11 @@ FastFourierTransformation=function(Timeseries,na.rm=FALSE,PlotIt=FALSE){
 
   #ind=seq(from=2,to=Nyquist,by=1)
   if(PlotIt){
-    plot(cbind(frequenz,Amplitude), t="h", lwd=2, 
+    #geht nur bis N/2, ohne 1.Frequenc (DC anteil)
+    #1.Oberschwingungen werden ignoriert
+    plot(cbind((frequenz[2:N/2])/N,Amplitude[2:N/2]), t="h", lwd=2, 
          xlab="Frequency (Hz)", ylab="Amplitude", 
-         xlim=c(0,N), ylim=c(0,max(Amplitude)),main=' Amplitude versus Frequenz')
+         ylim=c(0,max(Amplitude)),main=' Amplitude versus Frequenz')
   }
   return(list(Frequenzspektrum=frequenz,Amplitude=Amplitude,KomplexeFourierKoeffizienten=KomplexeFourierKoeffizienten,Data=timeseries))
 }
