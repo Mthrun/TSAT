@@ -1,4 +1,5 @@
 export(AddCounts)
+export(autoCompoundModel)
 export(CrossCorr)
 export(AutoCorr)
 export(PartialAutoCorr)
@@ -23,6 +24,8 @@ export(TSDistancesMatrix)
 export(GenerateRegularTS)
 
 export(WaveletFilter)
+import(ggplot2)
+
  importFrom("stats", "acf", "ccf", "na.fail", "pacf", "plot.ts")
   importFrom("graphics", "axis", "grid", "mtext", "par", "plot",
              "points")
