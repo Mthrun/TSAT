@@ -1,4 +1,4 @@
-autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods=10,Holidays=NULL,PlotIt,xlab='Time',ylab='Feature',EquiDist=TRUE,...){
+autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods=10,Holidays=NULL,PlotIt,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,...){
 #res=autoCompoundModel(DataFrame, TimeColumnName = "Time", FeatureName = "Absatz", SplitDataAt, Frequency = "day", ForecastPeriods = 10, Holidays = c(), PlotIt, xlab = "Time", ylab = "Feature", EquiDist=TRUE)
 #
 #     Automatic Compound Model
@@ -207,15 +207,43 @@ else
   
   if(SplitDataAt>nrow(history)) stop('Number SplitDataAt is higher than number of rows in data'
   )
-    
+  if(!is.null(MinLowerBound)){
+    history$floor=MinLowerBound
+  }
+  if(!is.null(MaxUpperBound)){
+    history$cap=MaxUpperBound
+  }
+ 
   train=history[1:SplitDataAt,]
   testind=seq(from=(SplitDataAt+1),to=nrow(history),by=1)
   testdata=history[testind,]
-
+  
+  
   m <- prophet::prophet(train,holidays=Holidays,...)
+  #m$logistic.floor=T
+  future=prophet::make_future_dataframe(m, periods = ForecastPeriods, freq = Frequency)
+ 
+  if(!is.null(MinLowerBound)){
+    future$floor=MinLowerBound
+  }
+  if(!is.null(MaxUpperBound)){
+    future$cap=MaxUpperBound
+  }
 
-  ff=prophet::make_future_dataframe(m, periods = ForecastPeriods, freq = Frequency)
-  forecast <- predict(m, ff)
+  forecast <- predict(m, future)
+  
+  if(!is.null(MinLowerBound)){
+    forecast$yhat_lower[forecast$yhat_lower<=MinLowerBound]=MinLowerBound
+  }
+  if(!is.null(MaxUpperBound)){
+    forecast$yhat_upper[forecast$yhat_upper>=MaxUpperBound]=MaxUpperBound
+  }
+  if(!is.null(MinLowerBound)){
+    forecast$yhat[forecast$yhat<=MinLowerBound]=MinLowerBound
+  }
+  if(!is.null(MaxUpperBound)){
+    forecast$yhat[forecast$yhat>=MaxUpperBound]=MaxUpperBound
+  }
   #plot(m, forecast)
   if(!is.numeric(Frequency)){ #days weeks months,quarters and years
     m$history$ds=as.Date(m$history$ds)
