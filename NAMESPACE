@@ -25,7 +25,7 @@ export(GenerateRegularTS)
 
 export(WaveletFilter)
 import(ggplot2)
-
+import(Rcpp)
  importFrom("stats", "acf", "ccf", "na.fail", "pacf", "plot.ts")
   importFrom("graphics", "axis", "grid", "mtext", "par", "plot",
              "points")
