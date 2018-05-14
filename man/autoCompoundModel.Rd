@@ -41,7 +41,15 @@ how many days, weeks, ..., should the model be foracested on?
 data frame of time and dates, see example
 }
   \item{PlotIt}{
-Plots data model and prediction
+Plots data model and prediction with
+
+black dots: data
+
+dark green line: model based on training data
+
+red dots: prediction
+
+blue range: confidence intervall of model
 }
   \item{xlab}{
 see ggplot2

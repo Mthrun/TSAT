@@ -54,7 +54,7 @@ CrossCorr=function(TimeSeries1 , TimeSeries2 , nLags=2 ,PlotIt=FALSE){
   
   res1=ccf(TimeSeries1, TimeSeries2, lag.max = nLags, type = "correlation",
       plot = PlotIt, na.action = na.fail)
-  return(res1)
+  return(invisible(res1))
   
   
   # res2=ccf(TimeSeries1, TimeSeries2, lag.max = nLags, type = "covariance",
