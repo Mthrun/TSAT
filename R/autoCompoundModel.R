@@ -199,10 +199,11 @@ if(EquiDist)
     from=as.Date(min(DataFrame[,ColNum2])), to=as.Date(max(DataFrame[,ColNum2])), by =Frequency
   ),
   y = DataFrame[,ColNum])
-else
+else{
   history <- data.frame(ds = DataFrame[,ColNum2],
   y = DataFrame[,ColNum])
-  
+  warnings('Working progress. May not work properly yet.')
+}
   xlab=paste0(xlab,' in ',Frequency,'s')
   
   if(SplitDataAt>nrow(history)) stop('Number SplitDataAt is higher than number of rows in data'

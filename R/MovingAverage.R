@@ -15,7 +15,7 @@ FilterVector = c( matrix(1, nrow = 1, ncol = lag),0,matrix(0, nrow = 1, ncol = l
 FilterVector = FilterVector /sum(FilterVector) 
 FilteredData = signal::filter(FilterVector,1,Data) 
 # jetzt noch anfang korrigieren
-FilteredData[1] =Data[1] 
+FilteredData[1] =mean(Data,na.rm=T)#Data[1]
 for(i in 2:lag){
     FilterVector = c( matrix(1, nrow = 1, ncol = i),0,matrix(0, nrow = 1, ncol = i))
     FilterVector = FilterVector /sum(FilterVector) 
