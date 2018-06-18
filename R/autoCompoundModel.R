@@ -1,4 +1,4 @@
-autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods=10,Holidays=NULL,PlotIt,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,...){
+autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods=10,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,...){
 #res=autoCompoundModel(DataFrame, TimeColumnName = "Time", FeatureName = "Absatz", SplitDataAt, Frequency = "day", ForecastPeriods = 10, Holidays = c(), PlotIt, xlab = "Time", ylab = "Feature", EquiDist=TRUE)
 #
 #     Automatic Compound Model
@@ -169,7 +169,7 @@ autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",
 #       1-abs(mean(dailyres$TestData$y) - dailyres$Accuracy[2,3])/dailyres$Accuracy[2,3]
 #     
 ### End of Examples     
-  
+  #ToDo: Frequency Input abruefen auf tippfehler
 
   library(Rcpp)#hier funktioniert requireNamespace nicht, description und impprt geht auch nicht :-()
   # Error in cpp_object_initializer(.self, .refClassDef, ...) : 
@@ -195,14 +195,24 @@ autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",
     stop("TimeColumnName not found.")
   
 if(EquiDist)
-  history <- data.frame(ds = seq(
-    from=as.Date(min(DataFrame[,ColNum2])), to=as.Date(max(DataFrame[,ColNum2])), by =Frequency
-  ),
-  y = DataFrame[,ColNum])
+  # history <- data.frame(ds = seq(
+  #   from=as.Date(min(DataFrame[,ColNum2])), to=as.Date(max(DataFrame[,ColNum2])), by =Frequency
+  # ),
+  # y = DataFrame[,ColNum])
+  history <- data.frame(ds = as.Date(DataFrame[,ColNum2]),
+                        y = DataFrame[,ColNum])
 else{
-  history <- data.frame(ds = DataFrame[,ColNum2],
+  history <- data.frame(ds = as.Date(DataFrame[,ColNum2]),
   y = DataFrame[,ColNum])
   warnings('Working progress. May not work properly yet.')
+  # su muesste man es machen
+  # x=seq(from=as.Date(min(DailySales7441884and7571348$Time)),to=as.Date(max(DailySales7441884and7571348$Time)),by='day')
+  # 
+  # y=DailySales7441884and7571348
+  # y$Time=as.Date(y$Time)
+  # 
+  # x=data.frame(Time=x,Absatz=0)
+  # x[x$Time%in%y$Time,2]=y$Absatz
 }
   xlab=paste0(xlab,' in ',Frequency,'s')
   

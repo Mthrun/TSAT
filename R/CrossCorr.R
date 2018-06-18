@@ -1,4 +1,4 @@
-CrossCorr=function(TimeSeries1 , TimeSeries2 , nLags=2 ,PlotIt=FALSE){
+CrossCorr=function(TimeSeries1 , TimeSeries2 , nLags=2 ,PlotIt=FALSE,...){
 #MT auch ccf in R, naeher vergleichen
 #CROSSCORR Compute or plot sample cross-correlation function.
 #   Compute or plot the sample cross-correlation function (XCF) between
@@ -53,7 +53,7 @@ CrossCorr=function(TimeSeries1 , TimeSeries2 , nLags=2 ,PlotIt=FALSE){
 
   
   res1=ccf(TimeSeries1, TimeSeries2, lag.max = nLags, type = "correlation",
-      plot = PlotIt, na.action = na.fail)
+      plot = PlotIt, na.action = na.fail,...)
   return(invisible(res1))
   
   

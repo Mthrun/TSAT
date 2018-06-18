@@ -28,11 +28,12 @@
 
 WaveletFilter = function(timeSeries, wavelet = 'haar', percent = '12.5', plot = FALSE){
   
+  timeSeries = up.sample(x = timeSeries, f = 2, y = 0)
   timeSeries_length = length(timeSeries)
   floor_of_exponent = floor(log2(timeSeries_length))
   length_of_power_two = 2**floor_of_exponent
   timeSeries = timeSeries[1:length_of_power_two]
-  
+
   output=switch(percent,
          '6.25' = {
            WaveletDecompositionVector <- waveslim::dwpt(timeSeries, wavelet, n.levels = 4)
