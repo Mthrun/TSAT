@@ -229,8 +229,8 @@ else{
   testind=seq(from=(SplitDataAt+1),to=nrow(history),by=1)
   testdata=history[testind,]
   
-  
   m <- prophet::prophet(train,holidays=Holidays,...)
+
   #m$logistic.floor=T
   future=prophet::make_future_dataframe(m, periods = ForecastPeriods, freq = Frequency)
  
