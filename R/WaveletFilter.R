@@ -28,32 +28,36 @@
 
 WaveletFilter = function(timeSeries, wavelet = 'haar', percent = '12.5', plot = FALSE){
   
-  timeSeries = up.sample(x = timeSeries, f = 2, y = 0)
-  timeSeries_length = length(timeSeries)
-  floor_of_exponent = floor(log2(timeSeries_length))
+  timeSeries_rev <- rev(timeSeries)
+  timeSeries_processed <- rbind(timeSeries, timeSeries_rev)
+  timeSeries_processed_rev <- rev(timeSeries_processed)
+  timeSeries_processed <- rbind(timeSeries_processed, timeSeries_processed_rev)
+  
+  timeSeries_processed_length = length(timeSeries_processed)
+  floor_of_exponent = floor(log2(timeSeries_processed_length))
   length_of_power_two = 2**floor_of_exponent
-  timeSeries = timeSeries[1:length_of_power_two]
+  timeSeries_processed = timeSeries_processed[1:length_of_power_two]
 
   output=switch(percent,
          '6.25' = {
-           WaveletDecompositionVector <- waveslim::dwpt(timeSeries, wavelet, n.levels = 4)
-           timeSeries.basis <- waveslim::basis(WaveletDecompositionVector, c("w4.0"))
-           Reconstruct(WaveletDecompositionVector, timeSeries.basis, timeSeries, plot)
+           WaveletDecompositionVector <- waveslim::dwpt(timeSeries_processed, wavelet, n.levels = 4)
+           timeSeries_processed.basis <- waveslim::basis(WaveletDecompositionVector, c("w4.0"))
+           Reconstruct(WaveletDecompositionVector, timeSeries_processed.basis, timeSeries_processed, plot)
          },
          '12.5' = {
-           WaveletDecompositionVector <- waveslim::dwpt(timeSeries, wavelet, n.levels = 3)
-           timeSeries.basis <- waveslim::basis(WaveletDecompositionVector, c("w3.0"))
-           Reconstruct(WaveletDecompositionVector, timeSeries.basis, timeSeries, plot)
+           WaveletDecompositionVector <- waveslim::dwpt(timeSeries_processed, wavelet, n.levels = 3)
+           timeSeries_processed.basis <- waveslim::basis(WaveletDecompositionVector, c("w3.0"))
+           Reconstruct(WaveletDecompositionVector, timeSeries_processed.basis, timeSeries_processed, plot)
          },
          '25' = {
-           WaveletDecompositionVector <- waveslim::dwpt(timeSeries, wavelet, n.levels = 2)
-           timeSeries.basis <- waveslim::basis(WaveletDecompositionVector, c("w2.0"))
-           Reconstruct(WaveletDecompositionVector, timeSeries.basis, timeSeries, plot)
+           WaveletDecompositionVector <- waveslim::dwpt(timeSeries_processed, wavelet, n.levels = 2)
+           timeSeries_processed.basis <- waveslim::basis(WaveletDecompositionVector, c("w2.0"))
+           Reconstruct(WaveletDecompositionVector, timeSeries_processed.basis, timeSeries_processed, plot)
          },
          '50' = {
-           WaveletDecompositionVector <- waveslim::dwpt(timeSeries, wavelet, n.levels = 1)
-           timeSeries.basis <- waveslim::basis(WaveletDecompositionVector, c("w1.0"))
-           Reconstruct(WaveletDecompositionVector, timeSeries.basis, timeSeries, plot)
+           WaveletDecompositionVector <- waveslim::dwpt(timeSeries_processed, wavelet, n.levels = 1)
+           timeSeries_processed.basis <- waveslim::basis(WaveletDecompositionVector, c("w1.0"))
+           Reconstruct(WaveletDecompositionVector, timeSeries_processed.basis, timeSeries_processed, plot)
          },
          stop("Invalid selection for percent"))
   return(output)
