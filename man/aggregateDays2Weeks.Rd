@@ -1,51 +1,39 @@
 \name{aggregateDays2Weeks}
 \alias{aggregateDays2Weeks}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
-aggregateDays2Weeks
+Aggregate Days to Weeks
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Aggregation of many Days over several years to Weeks is possible with this function
 }
 \usage{
 aggregateDays2Weeks(Time, Datavector, FUN)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{Time}{
-%%     ~~Describe \code{Time} here~~
+[1:n], a date-time object. Must be a POSIXct, POSIXlt, Date, chron, yearmon, yearqtr, zoo, zooreg, timeDate, xts, its, ti, jul, timeSeries, or fts object.
 }
   \item{Datavector}{
-%%     ~~Describe \code{Datavector} here~~
+numerical vector [1:n]
 }
   \item{FUN}{
-function like sum or mean
+aggegate by a function like \code{sum} or \code{mean}
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+A week is defined here by the ISO 8601 system, which uses a reoccurring leap week. Aggegation works even if several different years are used.
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+A list with
+\item{WeeklyTime}{\code{as.Date} object [1:m], m<n}
+\item{WeeklyData}{[1:m], numerical vector, m<n}
+
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
+
 \author{
 Michael Thrun
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 
 \keyword{aggregateDays2Weeks}% use one of  RShowDoc("KEYWORDS")
