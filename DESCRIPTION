@@ -3,7 +3,7 @@ Type: Package
 Title: TimeSeries Analysis Tools
 Version: 0.8.11
 Date: 2018-06-19
-Author: Michael Thrun
+Author: Michael Thrun, Quirin Stier
 Maintainer: Michael Thrun <m.thrun@gmx.net>
 Description: TimeSeries analysis Tools is able to describe event-pattern detection as a part of Complex event processing (CEP) for categorial time series and gives several approaches for numerical times series, like Filtering through FFT, WVT or predictions (e.g. compound model).
 License: GPL-3
