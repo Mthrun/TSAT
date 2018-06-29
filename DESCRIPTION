@@ -1,11 +1,11 @@
 Package: TimeSeries
 Type: Package
-Title: TimeSeries Analysis Tools
-Version: 0.8.11
-Date: 2018-06-19
+Title: Time Series Analysis Tools (TSAT)
+Version: 0.8.12
+Date: 2018-06-29
 Author: Michael Thrun, Quirin Stier
 Maintainer: Michael Thrun <m.thrun@gmx.net>
-Description: TimeSeries analysis Tools is able to describe event-pattern detection as a part of Complex event processing (CEP) for categorial time series and gives several approaches for numerical times series, like Filtering through FFT, WVT or predictions (e.g. compound model).
+Description: TSAT can be used to describe event-pattern detection as a part of Complex event processing (CEP) for categorial time series and gives several approaches for numerical times series, like Filtering through FFT, WVT or predictions (e.g. compound model).
 License: GPL-3
 Imports: DataVisualizations, ggplot2, Rcpp
 Suggests: imputeTS, AdaptGauss, signal, waveslim, chron, WaveletComp, tswge, TSdist, zoo, xts, fanplot, forecast,rugarch, RHmm, prophet, Classifiers, dbt.ClassAnalysis, dbt.Transforms
