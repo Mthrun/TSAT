@@ -1,14 +1,12 @@
-InterpolateOutliers=function(Time,Datavector,OutliersTime,PlotIt=TRUE){
+InterpolateOutliers=function(Time,Datavector,OutliersTime,option = 'stine',PlotIt=TRUE){
   
   DataBefore=Datavector
   ind=Time %in% OutliersTime
-  
-  points(SkillList[[i]]$Time[ind],SumCalls[ind],col='red')
-  points(mm$Time,mm$Calls,col='blue',pch=2)
-  
   Datavector[ind]=NaN
   
-  DataAfter=imputeTS::na.interpolation(Datavector,option = 'spline')
+  # DataAfter=imputeTS::na.interpolation(Datavector,option = 'spline')
+  # DataAfter[ind]=NaN
+  DataAfter=imputeTS::na.interpolation(Datavector,option = option)
   
   if(PlotIt){
   def.par <-
