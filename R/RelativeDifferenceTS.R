@@ -1,4 +1,4 @@
-RelativeDifference=function(TS1,TS2,na.rm=TRUE){
+RelativeDifferenceTS=function(TS1,TS2,na.rm=TRUE){
     if(na.rm){
       requireNamespace('imputeTS')
       if(sum(!is.finite(TS1))>0)
