@@ -8,7 +8,7 @@ Filter Weekdays
 Filter Days of Week Out of Daily time series 
 }
 \usage{
-FilterWeekdays(Time, Datavector=NULL)
+FilterWeekdays(Time, Datavector=NULL,PlotIt=FALSE))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,6 +17,9 @@ FilterWeekdays(Time, Datavector=NULL)
 }
   \item{Datavector}{
  Optional, default \code{NULL}, [1:n] either Key in case of a dataframe or vector of data
+}
+  \item{PlotIt}{
+Default: FALSE, TRUE: Evaluates output of function versus input by plots, works only if Datavector given
 }
 }
 \details{

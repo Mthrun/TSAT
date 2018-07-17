@@ -1,4 +1,4 @@
-FilterWeekdays=function(Time,Datavector=NULL){
+FilterWeekdays=function(Time,Datavector=NULL,PlotIt=FALSE){
   
   weekdays=weekdays(Time)
   
@@ -8,8 +8,13 @@ FilterWeekdays=function(Time,Datavector=NULL){
   
   if(!is.null(Datavector)){
     FilteredData=Datavector[weeks]
+    if(PlotIt){
+      plotEvaluationFilteredTS(Time,Datavector,FilteredData,TRUE)
+    }
+    
   }else
     FilteredData=NULL
   
+
   return(list(FilteredTime=Time[weeks],FilteredData=FilteredData))
 }

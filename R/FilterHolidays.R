@@ -1,4 +1,4 @@
-FilterHolidays=function(Time,Datavector=NULL,HolidaysTime=TSAT::GermanHolidays$Time){
+FilterHolidays=function(Time,Datavector=NULL,HolidaysTime=TSAT::GermanHolidays$Time,PlotIt=FALSE)){
   
   is.Date <- function(x) inherits(x, 'Date')
   
@@ -9,8 +9,13 @@ FilterHolidays=function(Time,Datavector=NULL,HolidaysTime=TSAT::GermanHolidays$T
   
   if(!is.null(Datavector)){
     FilteredData=Datavector[ind]
+    if(PlotIt){
+      plotEvaluationFilteredTS(Time,FilteredData,Datavector,TRUE)
+    }
   }else
     FilteredData=NULL
+  
+
   
   return(list(FilteredTime=Time[ind],FilteredData=FilteredData))
 }

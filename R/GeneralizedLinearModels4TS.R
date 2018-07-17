@@ -33,16 +33,16 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
   
   if(PlotIt){
     if(missing(Time)){
-      plot(TestSet$Response,type = 'l')
-      points(predicted,type='l',col='red')
+      # plot(TestSet$Response,type = 'l')
+      # points(predicted,type='l',col='red')
+      plotEvaluationFilteredTS(1:length(predicted),TestSet$Response,predicted,TRUE)
     }else{
-      plot(Time[(SplitDataAt+1):N],TestSet$Response,type = 'l')
-      points(Time[(SplitDataAt+1):N],predicted,type='l',col='red')
+      plotEvaluationFilteredTS(Time[(SplitDataAt+1):N],TestSet$Response,predicted,FALSE)
     }
   }
   x=predicted
   y=TestSet$Response
-
+  Residuals=abs(x-y)
   # InspectVariable(abs(x-y)/max(y))
-  return(invisible(list(Predicted=predicted,ME=median(abs(x-y)/max(y))*100,Errors=x-y,Model=model)))
+  return(invisible(list(Predicted=predicted,ME=median(Residuals/max(c(x,y)))*100,Residuals=Residuals,Model=model)))
 }

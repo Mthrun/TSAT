@@ -8,7 +8,7 @@ FilterHolidays
 Filters Holidays out of daily data
 }
 \usage{
-FilterHolidays(Time, Datavector=NULL, HolidaysTime = TSAT::GermanHolidays$Time)
+FilterHolidays(Time, Datavector=NULL, HolidaysTime = TSAT::GermanHolidays$Time,PlotIt=FALSE))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +20,9 @@ FilterHolidays(Time, Datavector=NULL, HolidaysTime = TSAT::GermanHolidays$Time)
 }
   \item{HolidaysTime}{
 Optional, default: German Holidays, [1:N] vector of time, code{as.Date} objectets or \code{POSIXct} are accepted
+}
+  \item{PlotIt}{
+Default: FALSE, TRUE: Evaluates output of function versus input by plots, works only if Datavector given
 }
 }
 \details{

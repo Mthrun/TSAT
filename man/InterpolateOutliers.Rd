@@ -22,7 +22,7 @@ InterpolateOutliers(Time, Datavector, OutliersTime, PlotIt = TRUE)
 [1:k] vector of time of outliers
 }
   \item{PlotIt}{
-plots the results if true
+Default: FALSE, TRUE: Evaluates output of function versus input by plots
 }
 }
 \details{
