@@ -8,7 +8,7 @@ Filter Weekdays
 Filter Days of Week Out of Daily time series 
 }
 \usage{
-FilterWeekdays(Time, Datavector)
+FilterWeekdays(Time, Datavector=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,7 +16,7 @@ FilterWeekdays(Time, Datavector)
 [1:n] Time object, either code{POSIXlt} or \code{POSIXct} are required with daily frequency
 }
   \item{Datavector}{
- [1:n] either Key in case of a dataframe or vector of data
+ Optional, default \code{NULL}, [1:n] either Key in case of a dataframe or vector of data
 }
 }
 \details{
@@ -25,10 +25,9 @@ Saturday and Sunday are deleted
 }
 \value{
 List with
-\item{InweekTime}{[1:m], m<=n, Time object}
-\item{InWeekData}{[1:m], m<=n, Filtered Datavector}
+\item{FilteredTime}{[1:m], m<=n, Time object}
+\item{FilteredData}{[1:m], m<=n, Filtered Datavector}
 }
-
 
 \author{
 Michael Thrun

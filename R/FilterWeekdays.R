@@ -1,4 +1,4 @@
-FilterWeekdays=function(Time,Datavector){
+FilterWeekdays=function(Time,Datavector=NULL){
   
   weekdays=weekdays(Time)
   
@@ -6,5 +6,10 @@ FilterWeekdays=function(Time,Datavector){
   
   weeks=setdiff(1:length(Time),ind)
   
-  return(list(InweekTime=Time[weeks],InWeekData=Datavector[weeks]))
+  if(!is.null){
+    FilteredData=Datavector[ind]
+  }else
+    FilteredData=NULL
+  
+  return(list(FilteredTime=Time[weeks],FilteredData=FilteredData))
 }
