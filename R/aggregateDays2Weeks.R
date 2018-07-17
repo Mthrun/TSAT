@@ -1,25 +1,54 @@
-aggregateDays2Weeks=function(Time,Datavector,FUN){
+aggregateDays2Weeks=function(Time,Data,FUN,Header){
   
-  requireNamespace('lubridate')
-  b=lubridate::isoweek(x = Time)
-  c=lubridate::isoyear(x = Time)
-  u=unique(c)
-  # WeekTime = seq(as.Date(min(Time)), as.Date(max(Time)
-  # ), by ='week'
-  # )
-  if(length(u)==1){
-    WeeklyTime=Time[!duplicated(b,fromLast=T)]
-    return(list(WeeklyTime=as.Date(WeeklyTime),WeeklyData=tapply(Datavector, b, FUN)))
-  }else{
-     x=c()
-     WeeklyTime=c()
-     for(i in u){
-       WeeklyTime=c(Time[!duplicated(b[c==i],fromLast=T)])
-       x=c(x,tapply(Datavector[c==i], b[c==i], FUN))
-     }
-     return(list(WeeklyTime=as.Date(WeeklyTime),WeeklyData=x))
-   }
-             
+  # requireNamespace('lubridate')
+  # b=lubridate::isoweek(x = Time)
+  # c=lubridate::isoyear(x = Time)
+  # u=unique(c)
+  # # WeekTime = seq(as.Date(min(Time)), as.Date(max(Time)
+  # # ), by ='week'
+  # # )
+  # if(length(u)==1){
+  #   WeeklyTime=Time[!duplicated(b,fromLast=T)]
+  #   WeeklyData=tapply(Datavector, b, FUN)
+  # }else{
+  #   WeeklyData=c()
+  #   # WeeklyTime=NULL
+  #   WeeklyTime=Time[!duplicated(b[c==u[1]],fromLast=T)]#why does that work?
+  #    for(i in u){
+  #      # if(is.null(WeeklyTime))
+  #      # 
+  #      # else
+  #      #   WeeklyTime=c(WeeklyTime,Time[!duplicated(b[c==i],fromLast=T)])
+  #      
+  #      WeeklyData=c(WeeklyData,tapply(Datavector[c==i], b[c==i], FUN))
+  #    }
+  #   
+  #  }
+  # WeeklyTime=as.Date(WeeklyTime)
+  # if(length(WeeklyTime)!=length(WeeklyData))
+  #   warning('Length is not equal. please transform manually')
+  # return(list(WeeklyTime=WeeklyTime,WeeklyData=WeeklyData))     
+  
+  if(missing(Header)){
+    if(is.matrix(Data)|is.data.frame(Data)){
+      if(length(Time)!=nrow(Data)) stop('Unequal number of rows in Data compared to Time')
+      Header=colnames(Data)
+    }else{
+      Header='Data'
+      if(length(Time)!=length(Data)) stop('Unequal length in Data compared to Time')
+    }
+  }
+  
+  DF=data.frame(Time=Time,Data=Data)
+  DF$Time=cut(Time,breaks='weeks')
+  
+  dsummary = aggregate(DF$Data ~ DF$Time, FUN=FUN,    data=DF)
+  
+  colnames(dsummary)=c('Time',Header)
+  
+  dsummary$Time=as.Date(dsummary$Time)
+  return(dsummary)
+   
 }
 
 # AggegateDaysToWeeks=function(Data,Time,method='sum'){
