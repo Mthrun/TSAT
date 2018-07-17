@@ -13,10 +13,10 @@ aggregateDays2Weeks(Time, Datavector, FUN)
 
 \arguments{
   \item{Time}{
-[1:n], a date-time object. Must be a POSIXct, POSIXlt, Date, chron, yearmon, yearqtr, zoo, zooreg, timeDate, xts, its, ti, jul, timeSeries, or fts object.
+[1:n] \code{POSIXlt} or \code{POSIXct}
 }
-  \item{Datavector}{
-numerical vector [1:n]
+ \item{Data}{
+[1:n,1:d] matrix or dataframe, d can be also 1 , then vector
 }
   \item{FUN}{
 aggegate by a function like \code{sum} or \code{mean}
@@ -26,10 +26,7 @@ aggegate by a function like \code{sum} or \code{mean}
 A week is defined here by the ISO 8601 system, which uses a reoccurring leap week. Aggegation works even if several different years are used.
 }
 \value{
-A list with
-\item{WeeklyTime}{\code{as.Date} object [1:m], m<n}
-\item{WeeklyData}{[1:m], numerical vector, m<n}
-
+dataframe[1:m,1:(d+1)] with m<n and first column beeing the time in \code{as.Date} format
 }
 
 \author{

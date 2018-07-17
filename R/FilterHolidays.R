@@ -7,7 +7,7 @@ FilterHolidays=function(Time,Datavector=NULL,HolidaysTime=TSAT::GermanHolidays$T
   else
     ind=!Time%in%HolidaysTime
   
-  if(!is.null){
+  if(!is.null(Datavector)){
     FilteredData=Datavector[ind]
   }else
     FilteredData=NULL
