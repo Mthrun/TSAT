@@ -7,7 +7,7 @@ FilterWeekdays=function(Time,Datavector=NULL){
   weeks=setdiff(1:length(Time),ind)
   
   if(!is.null(Datavector)){
-    FilteredData=Datavector[ind]
+    FilteredData=Datavector[weeks]
   }else
     FilteredData=NULL
   

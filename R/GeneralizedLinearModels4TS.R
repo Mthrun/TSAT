@@ -36,8 +36,8 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
       plot(TestSet$Response,type = 'l')
       points(predicted,type='l',col='red')
     }else{
-      plot(Time,TestSet$Response,type = 'l')
-      points(Time,predicted,type='l',col='red')
+      plot(Time[(SplitDataAt+1):N],TestSet$Response,type = 'l')
+      points(Time[(SplitDataAt+1):N],predicted,type='l',col='red')
     }
   }
   x=predicted
