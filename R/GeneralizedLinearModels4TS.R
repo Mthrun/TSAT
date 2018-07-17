@@ -1,4 +1,4 @@
-GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=NULL,Time,PlotIt=TRUE,Summary=FALSE){
+GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=NULL,Time,PlotIt=TRUE,Summary=FALSE,...){
   #response : Full$CallsAsIssues
   #predictiors:  Full$Temperature
   
@@ -9,7 +9,7 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
   Train=data.frame(Response=Response[1:SplitDataAt],Predictor1=Predictor1[1:SplitDataAt])
   TestSet=data.frame(Response=Response[(SplitDataAt+1):N],Predictor1=Predictor1[(SplitDataAt+1):N])
   
-  model=glm(Response~ Predictor1,data = Train)
+  model=glm(Response~ Predictor1,data = Train,...)
 
   new <- data.frame(Predictor1 = TestSet$Predictor1)
   predicted=predict(model,new)

@@ -8,7 +8,7 @@ GeneralizedLinearModels4TS
 Generalized linear models for the prediction of time series in the multivariate case
 }
 \usage{
-GeneralizedLinearModels4TS(Response, SplitDataAt, Predictor1, Predictor2 = NULL, Time, PlotIt = TRUE, Summary = FALSE)
+GeneralizedLinearModels4TS(Response, SplitDataAt, Predictor1, Predictor2 = NULL, Time, PlotIt = TRUE, Summary = FALSE,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,6 +32,9 @@ GeneralizedLinearModels4TS(Response, SplitDataAt, Predictor1, Predictor2 = NULL,
 }
   \item{Summary}{
 %%     ~~Describe \code{Summary} here~~
+}
+  \item{\dots}{
+Further arguments passed to \code{glm}
 }
 }
 \details{
