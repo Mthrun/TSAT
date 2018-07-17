@@ -1,19 +1,19 @@
 Package: TSAT
 Type: Package
 Title: Time Series Analysis Tools (TSAT)
-Version: 0.9.0
-Date: 2018-07-14
+Version: 0.9.1
+Date: 2018-07-17
 Author: Michael Thrun, Quirin Stier
 Maintainer: Michael Thrun <m.thrun@gmx.net>
 Description: TSAT can be used to describe event-pattern detection as a part of Complex event processing (CEP) for categorial time series and gives several approaches for numerical times series, like Filtering through FFT, WVT or predictions (e.g. compound model).
 License: GPL-3
 Imports: DataVisualizations, ggplot2, Rcpp
-Suggests: imputeTS, AdaptGauss, signal, waveslim, chron, WaveletComp, tswge, TSdist, zoo, xts, fanplot, forecast,rugarch, RHmm, prophet, Classifiers, dbt.ClassAnalysis, dbt.Transforms
+Suggests: imputeTS, AdaptGauss, signal, waveslim, chron, WaveletComp, tswge, TSdist, zoo, xts, fanplot, forecast,rugarch, prophet, RHmm, plotly, htmlwidgets, Classifiers, dbt.ClassAnalysis, dbt.Transforms
 LinkingTo: Rcpp
 Depends: R (>= 3.0)
 NeedsCompilation: no
 SystemRequirements:
 LazyLoad: yes
 LazyData: TRUE
-URL: 
+URL: www.deepbionics.org
 Encoding: UTF-8

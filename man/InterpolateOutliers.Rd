@@ -13,7 +13,7 @@ InterpolateOutliers(Time, Datavector, OutliersTime, PlotIt = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Time}{
-[1:N] vector of time
+[1:N] vector of time, code{POSIXlt} or \code{POSIXct} are accepted
 }
   \item{Datavector}{
 [1:N] vector of values
