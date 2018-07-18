@@ -8,31 +8,17 @@ Kalman Filter
 Kalman filtering is also sometimes called “linear quadratic estimation”
 }
 \usage{
-KalmanFilter(Datavector,start=0,gam0=1,Fscalar=0.9,gamV=1,G=1,gamW=0.75,PlotIt=TRUE,Short=FALSE)
+KalmanFilter(Datavector,DLMobject,PlotIt=TRUE,Short=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Datavector}{
-%%     ~~Describe \code{TimeSeries} here~~
+[1:n], the univariate data set to be analyzed
 }
-  \item{start}{
-%%     ~~Describe \code{start} here~~
+  \item{DLMobject}{
+Optional, basically a list with scalar Parameters as defined by dlm::dlm, FF, V,  GG, W,  m0, C0 can be set,  details for Parameter estimation in [Petris, 2010] or in the \code{dlmMLE function} of \code{dlm} package.
 }
-  \item{gam0}{
-%%     ~~Describe \code{gam0} here~~
-}
-  \item{Fscalar}{
-%%     ~~Describe \code{Fscalar} here~~
-}
-  \item{gamV}{
-%%     ~~Describe \code{gamV} here~~
-}
-  \item{G}{
-%%     ~~Describe \code{G} here~~
-}
-  \item{gamW}{
-%%     ~~Describe \code{gamW} here~~
-}
+
   \item{PlotIt}{
 Default: FALSE, TRUE: Evaluates output of function versus input by plots, works only if Datavector given
 }
@@ -55,26 +41,24 @@ List with
 \item{
 FilteredData}{[1:n], Filtered Datavector such that noise and uncertainty are reduced.}
 \item{FULL}{output of \code{
-kalman.wge} of packager \code{tswge}}
+dlmFilter} of  \code{dlm} package}
+\item{ParametersDLM}{DLMobject used in \code{dlmFilter}}
 }
 \references{
 [Rhudy et al., 2017]  Matthew B. Rhudy, Roger A. Salguero and Keaton Holappa: A KALMAN FILTERING TUTORIAL FOR UNDERGRADUATE STUDENTS, International Journal of Computer Science & Engineering Survey (IJCSES) Vol.8, No.1, February, 2017.
+
+[Petris, 2010]  Petris, Giovanni: An R Package for Dynamic Linear Models, Journal of Statistical Software,Vol. 36(12), 2010.
 }
 \author{
 Michael Thrun
 }
 \note{
-in working progress
+ If DLMobject not given the parameters FF, V,  GG, W are set to 1 and the mean 'm0' and standard deviation 'C0' are estimated robustly.
 }
-
 
 \examples{
 \donttest{
-require(tswge)
-data(table10.1.signal)
-data(table10.1.noise)
-spn=table10.1.signal+table10.1.noise
-KalmanFilter(Datavector=spn,PlotIt=TRUE,Short=FALSE)
+KalmanFilter(Datavector,PlotIt=TRUE,Short=FALSE)
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

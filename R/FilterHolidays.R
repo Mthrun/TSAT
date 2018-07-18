@@ -1,4 +1,4 @@
-FilterHolidays=function(Time,Datavector=NULL,HolidaysTime=TSAT::GermanHolidays$Time,PlotIt=FALSE)){
+FilterHolidays=function(Time,Datavector=NULL,HolidaysTime=TSAT::GermanHolidays$Time,PlotIt=FALSE){
   
   is.Date <- function(x) inherits(x, 'Date')
   

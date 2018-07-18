@@ -6,7 +6,8 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     m <-
       graphics::layout(matrix(c(1, 2, 1, 2), 2, 2))
     plot(Time,DataBefore,type='l')
-    points(Time,DataBefore,pch=2,col='red')
+    if(!is.null(MarkedPoints))
+      points(Time[MarkedPoints],DataBefore[MarkedPoints],pch=2,col='red')
     plot(Time,DataAfter,type='l')
   }else{
     
