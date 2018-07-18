@@ -84,52 +84,7 @@ FourierFilter = function(Data,
   FilteredData = FilteredData[1:AnzData]
   Data = ListeV$Data[1:AnzData]
   if (PlotIt) {
-    def.par <-
-      par(no.readonly = TRUE) # save default, for resetting...
-    m <-
-      graphics::layout(matrix(c(1, 2, 3, 1, 2, 4, 1, 2, 5), 3, 3))
-    # par(oma = c(0, 0, 1, 0))#c(u,li,o,re) in
-    plot.ts(Data)
-    plot.ts(FilteredData)
-    requireNamespace('AdaptGauss')
-    D2 = FilteredData - Data
-    pdeVal        = AdaptGauss::ParetoDensityEstimation(D2)
-    plot(
-      pdeVal$kernels,
-      pdeVal$paretoDensity,
-      type = 'l',
-      xaxs = 'i',
-      yaxs = 'i',
-      xlab = 'Data-FilteredData',
-      ylab = 'PDE',
-      col = 'blue',
-      main = 'Residuum'
-    )
-    MinD = min(D2, na.rm = TRUE)
-    MaxD = max(D2, na.rm = TRUE)
-    par(pty = "s")
-    qqnorm(
-      D2,
-      pch = 20,
-      col = "blue",
-      axes = TRUE,
-      xlim = c(-4.5, 4.5),
-      ylim = c(MinD, MaxD),
-      main = '',
-      xlab = "Normal Distribution",
-      ylab = 'Residuum: Data-FilteredData'
-    )
-    axis(4, col = "black", las = 3) #y-Achse
-    grid(lty = 'dashed', col = 'black')
-    mtext(
-      'Normal QQ-Plot',
-      side = 3,
-      line = 0,
-      cex = 1,
-      col = "black"
-    )
-    plot(D2, type = 'l', ylab = 'Data-FilteredData')
-    par(def.par)
+    plotEvaluationFilteredTS(1:length(Data),Data,FilteredData,Short = FALSE,MarkedPoints = NULL)
   }
   return(FilteredData)
 }
