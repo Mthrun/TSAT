@@ -42,7 +42,8 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
   }
   x=predicted
   y=TestSet$Response
-  Residuals=abs(x-y)
+  Residuals=x-y
+  AccuracyTrain=forecast::accuracy(predicted, TestSet$Response)
   # InspectVariable(abs(x-y)/max(y))
-  return(invisible(list(Predicted=predicted,ME=median(Residuals/max(c(x,y)))*100,Residuals=Residuals,Model=model)))
+  return(invisible(list(Forecast=predicted,TestData=TestSet$Response,Accuracy=AccuracyTrain,Residuals=Residuals,Model=model)))
 }

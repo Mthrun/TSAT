@@ -5,7 +5,7 @@
 GeneralizedLinearModels4TS
 }
 \description{
-Generalized linear models for the prediction of time series in the multivariate case
+Generalized linear models for the forecast of time series in the multivariate case
 }
 \usage{
 GeneralizedLinearModels4TS(Response, SplitDataAt, Predictor1, Predictor2 = NULL, Time, PlotIt = TRUE, Summary = FALSE,\dots)
@@ -13,40 +13,40 @@ GeneralizedLinearModels4TS(Response, SplitDataAt, Predictor1, Predictor2 = NULL,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Response}{
-%%     ~~Describe \code{Response} here~~
+[1:n] vector with an value of each time j in [1,n]
 }
   \item{SplitDataAt}{
-%%     ~~Describe \code{SplitDataAt} here~~
+scalar 'k' with k<n, index of row where the \code{DataFrame} is divided into test and train data
 }
   \item{Predictor1}{
-%%     ~~Describe \code{Predictor1} here~~
+[1:n] vector with an value of each time j in [1,n]
 }
   \item{Predictor2}{
-%%     ~~Describe \code{Predictor2} here~~
+[1:n] vector with an value of each time j in [1,n]
 }
   \item{Time}{
-%%     ~~Describe \code{Time} here~~
+Optional, [1:n] time vector in case of \code{PlotIt=TRUE}
 }
   \item{PlotIt}{
-%%     ~~Describe \code{PlotIt} here~~
+Optional, TRUE: Plots data model and prediction with
 }
   \item{Summary}{
-%%     ~~Describe \code{Summary} here~~
+Output of \code{glm} is evaluted further
 }
   \item{\dots}{
 Further arguments passed to \code{glm}
 }
 }
 \details{
-to be filled
+Assumption: \code{Response} and 'Predictors' have the same time intervalls, the same starting time and the same length.
 }
 \value{
 list with
-\item{Predicted}{}
-
-\item{ME}{}
-\item{Errors}{}
-\item{Model}{}
+\item{Forecast}{[k:n], the forecast, of the time interval [k,n] which was not used in the model}
+\item{TestSet}{[k:n], the part of Response not used in the model}
+\item{Accuracy}{ME, RMSE, MAE, MPE, MAPE of training and test dataset in a matrix}
+\item{Errors}{Residuals: TestSet-Forecast}
+\item{Model}{Output of \code{glm}}
 
 }
 
@@ -54,7 +54,7 @@ list with
 Michael Thrun
 }
 \note{
-Wrapper for \code{glm} and \code{predict} with some additional features
+Wrapper for \code{glm} with some additional features
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~

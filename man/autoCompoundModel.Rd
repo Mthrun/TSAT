@@ -72,13 +72,13 @@ training data is used for model generation, test data is used for evaluating the
 model paramters, see example
 }
   \item{Forecast}{
-model paramters, see example
+Forecast, see example
 }
   \item{TrainingData}{
-model paramters, see example
+TrainingData, see example
 }
   \item{TestData}{
-model paramters, see example
+TestData, see example
 }
   \item{ggObject}{
 ggplot object to change plot with
