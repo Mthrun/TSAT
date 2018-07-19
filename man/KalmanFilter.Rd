@@ -35,6 +35,8 @@ attenuating high frequencies. A Kalman filter also acts as a filter, but its ope
 complex and harder to understand. A Kalman filter takes in information which is known to have
 some error, uncertainty, or noise. The goal of the filter is to take in this imperfect information,
 sort out the useful parts of interest, and to reduce the uncertainty or noise."[Rhudy et al., 2017] 
+
+"A Karman Filter can be seen as a Hidden Markov Model based on Gaussian Mixtures" [Ultsch, 2018].
 }
 \value{
 List with
@@ -47,7 +49,9 @@ dlmFilter} of  \code{dlm} package}
 \references{
 [Rhudy et al., 2017]  Matthew B. Rhudy, Roger A. Salguero and Keaton Holappa: A KALMAN FILTERING TUTORIAL FOR UNDERGRADUATE STUDENTS, International Journal of Computer Science & Engineering Survey (IJCSES) Vol.8, No.1, February, 2017.
 
-[Petris, 2010]  Petris, Giovanni: An R Package for Dynamic Linear Models, Journal of Statistical Software,Vol. 36(12), 2010.
+[Petris, 2010] Petris, Giovanni: An R Package for Dynamic Linear Models, Journal of Statistical Software,Vol. 36(12), 2010.
+
+[Ultsch, 2018] personal correspondance.
 }
 \author{
 Michael Thrun
