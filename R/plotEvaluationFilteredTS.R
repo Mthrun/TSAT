@@ -20,9 +20,12 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     points(Time[MarkedPoints],DataBefore[MarkedPoints],pch=2,col='red')
   plot(Time,DataAfter,type='l')
   requireNamespace('AdaptGauss')
-  D2 = DataBefore-DataAfter
-  D2=D2[D2!=0]
-  pdeVal        = AdaptGauss::ParetoDensityEstimation(D2)
+  #[Tukey, 1977]  Tukey, J. W.: Exploratory data analysis, United States Addison-Wesley Publishing Company, ISBN: 0-201-07616-0, 1977.
+  
+  #page 113
+  Residuals = DataBefore-DataAfter
+  Residuals=Residuals[Residuals!=0]
+  pdeVal        = AdaptGauss::ParetoDensityEstimation(Residuals)
   plot(
     pdeVal$kernels,
     pdeVal$paretoDensity,
@@ -34,11 +37,11 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     col = 'blue',
     main = 'Residuum'
   )
-  MinD = min(D2, na.rm = TRUE)
-  MaxD = max(D2, na.rm = TRUE)
+  MinD = min(Residuals, na.rm = TRUE)
+  MaxD = max(Residuals, na.rm = TRUE)
   par(pty = "s")
   qqnorm(
-    D2,
+    Residuals,
     pch = 20,
     col = "blue",
     axes = TRUE,
@@ -57,7 +60,7 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     cex = 1,
     col = "black"
   )
-  plot(D2, type = 'l', ylab = 'DataBefore-DataAfter')
+  plot(Residuals, type = 'l', ylab = 'DataBefore-DataAfter')
 
   }
   par(def.par)
