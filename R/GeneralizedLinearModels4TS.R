@@ -1,4 +1,4 @@
-GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=NULL,Time,CorrectionFactor=FALSE,PlotIt=TRUE,Summary=FALSE,...){
+GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=NULL,CorrectionFactor=FALSE,PlotIt=TRUE,Time,Summary=FALSE,...){
   #response : Full$CallsAsIssues
   #predictiors:  Full$Temperature
   

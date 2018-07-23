@@ -8,7 +8,9 @@ GeneralizedLinearModels4TS
 Generalized linear models for the forecast of time series in the multivariate case
 }
 \usage{
-GeneralizedLinearModels4TS(Response, SplitDataAt, Predictor1, Predictor2 = NULL, Time, PlotIt = TRUE, Summary = FALSE,\dots)
+GeneralizedLinearModels4TS(Response, SplitDataAt, Predictor1, Predictor2 = NULL, 
+
+CorrectionFactor=FALSE, PlotIt = TRUE,Time, Summary = FALSE,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,11 +26,14 @@ scalar 'k' with k<n, index of row where the \code{DataFrame} is divided into tes
   \item{Predictor2}{
 [1:n] vector with an value of each time j in [1,n]
 }
-  \item{Time}{
-Optional, [1:n] time vector in case of \code{PlotIt=TRUE}
+  \item{CorrectionFactor}{
+scalar, if TRUE: the predicted time series will begin at the same point as the last value of the training set. All other values will be mulitplied by a factor accordingly.
 }
   \item{PlotIt}{
 Optional, TRUE: Plots data model and prediction with
+}
+  \item{Time}{
+Optional, [1:n] time vector in case of \code{PlotIt=TRUE}
 }
   \item{Summary}{
 Output of \code{glm} is evaluted further

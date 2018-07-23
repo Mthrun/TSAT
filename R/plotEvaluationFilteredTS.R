@@ -37,7 +37,7 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     xlab = 'DataBefore-DataAfter',
     ylab = 'PDE',
     col = 'blue',
-    main = 'Residuum'
+    main = 'Residuals'
   )
   MinD = min(Residuals, na.rm = TRUE)
   MaxD = max(Residuals, na.rm = TRUE)
