@@ -14,7 +14,7 @@ KalmanFilter=function(Datavector,DLMobject,PlotIt=TRUE,Short=FALSE){
   
   requireNamespace('dlm')
   
-  stdrobust=function (x, lowInnerPercentile = 25) 
+  stdrobust=function (x, lowInnerPercentile = 25/100) 
   {
     if (is.vector(x) || (is.matrix(x) && dim(x)[1] == 1)) 
       dim(x) <- c(length(x), 1)
@@ -24,7 +24,7 @@ KalmanFilter=function(Datavector,DLMobject,PlotIt=TRUE,Short=FALSE){
                             0, 1)))
     std <- sd(x, na.rm = TRUE)
     p <- c(lowInnerPercentile, hiInnerPercentile)/100
-    quartile <- prctile(x, p)
+    quartile <- quantile(x, p, type = 5, na.rm = TRUE)
     if (ncol(x) > 1) 
       iqr <- quartile[2, ] - quartile[1, ]
     else iqr <- quartile[2] - quartile[1]
