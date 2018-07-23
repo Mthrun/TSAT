@@ -11,8 +11,9 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     plot(Time,DataAfter,type='l')
   }else{
     
-  m <-
-    graphics::layout(matrix(c(1, 2, 3, 1, 2, 4, 1, 2, 5), 3, 3))
+  #m <- graphics::layout(matrix(c(1, 2, 3, 1, 2, 4, 1, 2, 5), 3, 3))
+    m <- graphics::layout(matrix(c(1, 2, 3, 1, 2, 3, 4, 5, 6), 3, 3))
+    
   title(main)
   # par(oma = c(0, 0, 1, 0))#c(u,li,o,re) in
   plot(Time,DataBefore,type='l')
@@ -25,6 +26,7 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
   #page 113
   Residuals = DataBefore-DataAfter
   Residuals=Residuals[Residuals!=0]
+  plot(Time,Residuals, type = 'l', ylab = 'DataBefore-DataAfter')
   pdeVal        = AdaptGauss::ParetoDensityEstimation(Residuals)
   plot(
     pdeVal$kernels,
@@ -49,8 +51,9 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     ylim = c(MinD, MaxD),
     main = '',
     xlab = "Normal Distribution",
-    ylab = 'Residuum: DataBefore-DataAfter'
+    ylab = 'Residuals: DataBefore-DataAfter'
   )
+  qqline(Residuals, col = 2)
   axis(4, col = "black", las = 3) #y-Achse
   grid(lty = 'dashed', col = 'black')
   mtext(
@@ -60,7 +63,7 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     cex = 1,
     col = "black"
   )
-  plot(Residuals, type = 'l', ylab = 'DataBefore-DataAfter')
+ boxplot(Residuals)
 
   }
   par(def.par)

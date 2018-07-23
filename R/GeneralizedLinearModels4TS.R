@@ -1,4 +1,4 @@
-GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=NULL,Time,PlotIt=TRUE,Summary=FALSE,...){
+GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=NULL,Time,CorrectionFactor=FALSE,PlotIt=TRUE,Summary=FALSE,...){
   #response : Full$CallsAsIssues
   #predictiors:  Full$Temperature
   
@@ -23,7 +23,13 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
     new <- data.frame(Predictor1 = TestSet$Predictor1,Predictor2 = TestSet$Predictor2)
     predicted=predict(model,new)
   }
-
+  if(CorrectionFactor)
+    Factor=(Response[SplitDataAt]/predicted[1])
+  else
+    Factor=1
+  
+  predicted=predicted*Factor
+  
   if(Summary){
     summary(model)
     # 1-pchisq(410883496,68)
@@ -45,5 +51,5 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
   Residuals=x-y
   AccuracyTrain=forecast::accuracy(predicted, TestSet$Response)
   # InspectVariable(abs(x-y)/max(y))
-  return(invisible(list(Forecast=predicted,TestData=TestSet$Response,Accuracy=AccuracyTrain,Residuals=Residuals,Model=model)))
+  return(invisible(list(Forecast=predicted,TestData=TestSet$Response,Accuracy=AccuracyTrain,Residuals=Residuals,Model=model,CorrectionFactor=Factor)))
 }
