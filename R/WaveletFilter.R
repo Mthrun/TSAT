@@ -1,5 +1,5 @@
 #WaveletFilter = function(timeSeries, wavelet = "haar", percent = '12.5')
-#
+# Note: programmed during working hours by Quirin Stier, Idea and Input/Output taken from Matlabs function of Alfred Ultsch
 #INPUT
 #timeSeries DATA
 #wavelet    STRING choose wavelet from library
