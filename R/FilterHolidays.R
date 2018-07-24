@@ -1,5 +1,5 @@
 FilterHolidays=function(Time,Datavector=NULL,HolidaysTime=TSAT::GermanHolidays$Time,PlotIt=FALSE){
-  
+  # Note: programmed during working hours
   is.Date <- function(x) inherits(x, 'Date')
   
   if(is.Date(Time))
