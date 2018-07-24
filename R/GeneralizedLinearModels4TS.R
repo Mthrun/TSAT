@@ -1,6 +1,7 @@
 GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=NULL,CorrectionFactor=FALSE,PlotIt=TRUE,Time,Summary=FALSE,...){
   #response : Full$CallsAsIssues
   #predictiors:  Full$Temperature
+  # Note: programmed during working hours
   
   N=length(Response)
 
