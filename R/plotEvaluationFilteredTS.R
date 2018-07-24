@@ -1,4 +1,5 @@
 plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPoints=NULL,main=''){
+  #a dashboard for TS filters and forecasting
   #plotEvaluationFilteredTS(Time,DataBefore,DataAfter,FALSE)
   def.par <-
     par(no.readonly = TRUE) # save default, for resetting...

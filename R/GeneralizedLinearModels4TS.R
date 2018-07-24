@@ -24,7 +24,7 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
     predicted=predict(model,new)
   }
   if(CorrectionFactor)
-    Factor=(Response[SplitDataAt]/predicted[1])
+    Factor=mean(c((Response[SplitDataAt]/predicted[1]),1))
   else
     Factor=1
   
