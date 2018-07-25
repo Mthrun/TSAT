@@ -6,6 +6,8 @@ Cross-Correlation of Time-Dependent Observations
 }
 \description{
 \code{CrossCorr} is the function for the cross-correlation or cross-covariance of two univariate series of observations. The function is a Wrapper for the \code{\link[stats]{ccf}} function with additional features.
+
+Bewware, \code{CrossCorr} assumes implicitly that both time series have the same frequency and thus accepts simple numerical vectors.
 }
 \usage{
 CrossCorr(TimeSeries1, TimeSeries2, nLags = 2,type = "correlation",PlotIt=FALSE,main,...)

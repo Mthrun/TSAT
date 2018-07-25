@@ -44,8 +44,11 @@ CrossCorr=function(TimeSeries1 , TimeSeries2 , nLags=2 ,type = "correlation",Plo
 #     crosscorr(x,y)                   # It should peak at the 4th lag.
 #
 # See also AUTOCORR, PARCORR, FILTER.
+if(length(TimeSeries1)!=length(TimeSeries2)) warning('Timeseries do not have to same length.')
+if(!is.vector(TimeSeries1)| !is.vector(TimeSeries2)) warning('One ore both Timeseries are not vectors, Plotting may not work, ccf function may not work.')
 
-  
+if(sum(!is.finite(TimeSeries1))!=0 | sum(!is.finite(TimeSeries2))!=0)    warning('One ore both Timeseries have NaN values, Please check if you used the parameter na.action = na.omit correctly for ccf.')
+
   res1=ccf(TimeSeries1, TimeSeries2, lag.max = nLags, type = type,
       plot = FALSE, na.action = na.fail,...)
   ind=which.max(abs(res1$acf))
