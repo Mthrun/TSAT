@@ -2,10 +2,10 @@
 \alias{CrossCorr}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Cross-correlation or cross-covariance of two univariate series of observations
+Cross-Correlation of Time-Dependent Observations
 }
 \description{
-Wrapper for the \code{\link[stats]{ccf}} function with additional features
+\code{CrossCorr} is the function for the cross-correlation or cross-covariance of two univariate series of observations. The function is a Wrapper for the \code{\link[stats]{ccf}} function with additional features.
 }
 \usage{
 CrossCorr(TimeSeries1, TimeSeries2, nLags = 2,type = "correlation",PlotIt=FALSE,main,...)
