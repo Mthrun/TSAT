@@ -9,7 +9,7 @@ aggregateTime2Days=function(Time,Data,fun,Header){
     if(length(Time)!=length(Data)) stop('Unequal length in Data compared to Time')
     }
   }
-
+  if(ncol(Data)>1) warning('May not Work with more than one column of data')
   DF=data.frame(Time=Time,Data=Data)
   DF$Time=cut(Time,breaks='days')
   
