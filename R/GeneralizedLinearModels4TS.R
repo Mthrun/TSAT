@@ -25,7 +25,8 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
     predicted=predict(model,new)
   }
   if(CorrectionFactor)
-    Factor=mean(c((Response[SplitDataAt]/predicted[1]),1))
+    # Factor=mean(c((Response[SplitDataAt]/predicted[1]),1))
+    Factor=Response[SplitDataAt]/predicted[1]
   else
     Factor=1
   
@@ -52,5 +53,5 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
   Residuals=x-y
   AccuracyTrain=forecast::accuracy(predicted, TestSet$Response)
   # InspectVariable(abs(x-y)/max(y))
-  return(invisible(list(Forecast=predicted,TestData=TestSet$Response,Accuracy=AccuracyTrain,Residuals=Residuals,Model=model,CorrectionFactor=Factor)))
+  return(invisible(list(Forecast=predicted,TestData=TestSet$Response,Accuracy=AccuracyTrain,Residuals=Residuals,Model=model,TrainData=Train,CorrectionFactor=Factor)))
 }
