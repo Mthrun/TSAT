@@ -4,7 +4,15 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
   # Note: programmed during working hours
   
   N=length(Response)
+  if(missing(Time)|is.null(Time)){
+    
+    TestSetTime=rep(NA,N-SplitDataAt)
+    TrainingTime=rep(NA,SplitDataAt)
+  }else{
+    TestSetTime=Time[(SplitDataAt+1):N]
+    TrainingTime=Time[1:SplitDataAt]
 
+  }
 
   if(is.null(Predictor2)){
   Train=data.frame(Response=Response[1:SplitDataAt],Predictor1=Predictor1[1:SplitDataAt])
@@ -53,5 +61,5 @@ GeneralizedLinearModels4TS=function(Response,SplitDataAt,Predictor1,Predictor2=N
   Residuals=x-y
   AccuracyTrain=forecast::accuracy(predicted, TestSet$Response)
   # InspectVariable(abs(x-y)/max(y))
-  return(invisible(list(Forecast=predicted,TestData=TestSet$Response,Accuracy=AccuracyTrain,Residuals=Residuals,Model=model,TrainData=Train,CorrectionFactor=Factor)))
+  return(invisible(list(Forecast=predicted,TestData=data.frame(Response=TestSet$Response,Time=TestSetTime),Accuracy=AccuracyTrain,Residuals=Residuals,Model=model,TrainData=data.frame(Response=Train$Response,Time=TrainingTime),CorrectionFactor=Factor)))
 }

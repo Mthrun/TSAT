@@ -17,5 +17,5 @@ FilterHolidays=function(Time,Datavector=NULL,HolidaysTime=TSAT::GermanHolidays$T
   
 
   
-  return(list(FilteredTime=Time[ind],FilteredData=FilteredData))
+  return(list(FilteredTime=Time[ind],FilteredData=FilteredData,HolidaysTimes=Time[!ind],HolidaysData=Datavector[!ind]))
 }

@@ -1,13 +1,13 @@
-FilterWeekdays=function(Time,Datavector=NULL,PlotIt=FALSE){
+FilterWeekends=function(Time,Datavector=NULL,PlotIt=FALSE){
   
   weekdays=weekdays(Time)
   
   ind=which(weekdays=="Samstag"|weekdays=="Sonntag")
   
-  weeks=intersect(1:length(Time),ind)
+  weeksends=setdiff(1:length(Time),ind)
   
   if(!is.null(Datavector)){
-    FilteredData=Datavector[weeks]
+    FilteredData=Datavector[weeksends]
     if(PlotIt){
       plotEvaluationFilteredTS(Time,Datavector,FilteredData,TRUE)
     }
@@ -15,6 +15,6 @@ FilterWeekdays=function(Time,Datavector=NULL,PlotIt=FALSE){
   }else
     FilteredData=NULL
   
-  
-  return(list(FilteredTime=Time[weeks],FilteredData=FilteredData))
+
+  return(list(FilteredTime=Time[weeksends],FilteredData=FilteredData))
 }

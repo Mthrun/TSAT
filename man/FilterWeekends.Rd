@@ -1,14 +1,14 @@
-\name{FilterWeekdays}
-\alias{FilterWeekdays}
+\name{FilterWeekends}
+\alias{FilterWeekends}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Filter Weekdays
+Filter Weekends
 }
 \description{
-Filter Days of Week Out of Daily time series 
+Filter Weekends Out of Daily time series 
 }
 \usage{
-FilterWeekdays(Time, Datavector=NULL,PlotIt=FALSE))
+FilterWeekends(Time, Datavector=NULL,PlotIt=FALSE))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,8 +23,8 @@ Default: FALSE, TRUE: Evaluates output of function versus input by plots, works 
 }
 }
 \details{
-Days of Week: Monday to Friday are deleted
-Saturday and Sunday is given back.
+Days of Week: Monday to Friday
+Saturday and Sunday are deleted
 }
 \value{
 List with
@@ -36,5 +36,5 @@ List with
 Michael Thrun
 }
 
-\keyword{FilterWeekdays}% use one of  RShowDoc("KEYWORDS")
+\keyword{FilterWeekends}% use one of  RShowDoc("KEYWORDS")
 

@@ -30,8 +30,10 @@ deletes holidays out of input
 }
 \value{
 List with
-\item{FilteredTime}{[1:m], m<=n, Time object}
-\item{FilteredData}{[1:m], m<=n, Filtered Datavector}
+\item{FilteredTime}{[1:m], m<=n, n=m+k, Time object}
+\item{FilteredData}{[1:m], m<=n, n=m+k Filtered Datavector}
+\item{HolidaysTimes}{[1:k], k<=n, n=m+k Time object of filtered Holidays}
+\item{HolidaysData}{[1:k], k<=n, n=m+k Datavector of filtered Holidays}
 }
 
 \author{
