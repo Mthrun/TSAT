@@ -8,7 +8,9 @@ InterpolateOutliers
 Interpolates Outliers setting them NaN and then applying spline interpolation
 }
 \usage{
-InterpolateOutliers(Time, Datavector, OutliersTime, PlotIt = TRUE)
+InterpolateOutliers(Time, Datavector, OutliersTime, option = "stine",
+
+PlotIt = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +22,9 @@ InterpolateOutliers(Time, Datavector, OutliersTime, PlotIt = TRUE)
 }
   \item{OutliersTime}{
 [1:k] vector of time of outliers
+}
+  \item{option}{
+see \code{\link[imputeTS]{na.interpolation}}
 }
   \item{PlotIt}{
 Default: FALSE, TRUE: Evaluates output of function versus input by plots

@@ -8,7 +8,7 @@ Filter Weekdays
 Filter Days of Week Out of Daily time series 
 }
 \usage{
-FilterWeekdays(Time, Datavector=NULL,EnglishOrGerman=FALSE,PlotIt=FALSE))
+FilterWeekdays(Time, Datavector=NULL,EnglishOrGerman=FALSE,PlotIt=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

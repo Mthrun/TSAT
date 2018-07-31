@@ -8,7 +8,7 @@ Aggregate Days to Weeks
 Aggregation of many Days over several years to Weeks is possible with this function
 }
 \usage{
-aggregateDays2Weeks(Time, Datavector, FUN)
+aggregateDays2Weeks(Time, Data, FUN, Header)
 }
 
 \arguments{
@@ -20,6 +20,9 @@ aggregateDays2Weeks(Time, Datavector, FUN)
 }
   \item{FUN}{
 aggegate by a function like \code{sum} or \code{mean}
+}
+  \item{Header}{
+colnames for data
 }
 }
 \details{

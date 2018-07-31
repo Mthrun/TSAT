@@ -8,7 +8,9 @@ FilterHolidays
 Filters Holidays out of daily data
 }
 \usage{
-FilterHolidays(Time, Datavector=NULL, HolidaysTime = TSAT::GermanHolidays$Time,PlotIt=FALSE))
+FilterHolidays(Time, Datavector=NULL,HolidaysTime = TSAT::GermanHolidays$Time,
+
+PlotIt=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

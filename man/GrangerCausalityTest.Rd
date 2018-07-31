@@ -8,7 +8,7 @@ Granger Causality Test
 Granger Causality Test is a statistical hypothesis test for determining whether one time series is useful in forecasting another 
 }
 \usage{
-GrangerCausalityTest(TimeSeries1, TimeSeries2, Apporach, order = 1)
+GrangerCausalityTest(TimeSeries1, TimeSeries2, Order = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

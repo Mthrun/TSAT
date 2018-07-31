@@ -52,5 +52,10 @@ import(Rcpp)
   importFrom("stats", "decompose", "simulate")
   importFrom("utils", "str")
   importFrom("stats", "predict")
-   importMethodsFrom(rugarch, plot)
+   importMethodsFrom('rugarch', plot)
+    importFrom("grDevices", "dev.new")
+  importFrom("graphics", "boxplot", "title")
+  importFrom("stats", "aggregate", "complete.cases", "cor", "cov",
+             "qnorm", "qqline", "quantile", "sd")
+  importFrom("utils", "tail")
   

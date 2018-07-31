@@ -27,10 +27,10 @@
 #REQUIRED NAMESPACE  "WaveletComp" https://cran.r-project.org/web/packages/WaveletComp/
 
 WaveletFilter = function(timeSeries, wavelet = 'd6', level = 1, plot = FALSE){
-
-  my_wt = analyze.wavelet(my.data = data.frame(timeSeries))
+requireNamespace('WaveletComp')
+  my_wt = WaveletComp::analyze.wavelet(my.data = data.frame(timeSeries))
   dev.new(width=5, height=4)
-  wt.image(my_wt)
+  WaveletComp::wt.image(my_wt)
   
   #Double the timeSeries twice (enlarge timeSeries length by factor 4)
   timeSeries_rev <- rev(timeSeries)

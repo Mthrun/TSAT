@@ -16,23 +16,28 @@ plot is Boolean for plotting. Create plot if TRUE. Default value is FALSE
 Example: WaveletFilter(timeseries, "haar", "12.5", TRUE)
 }
 \usage{
-WaveletFilter(timeseries, wavelet, percent, plot)
+WaveletFilter(timeSeries, wavelet = "d6", level = 1, plot = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
+  \item{timeSeries}{
+%%     ~~Describe \code{x} here~~
+}
+  \item{wavelet}{
+%%     ~~Describe \code{x} here~~
+}
+  \item{level}{
+%%     ~~Describe \code{x} here~~
+}
+  \item{plot}{
 %%     ~~Describe \code{x} here~~
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+to be filled
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+FilteredData
 }
 \references{
 https://cran.r-project.org/web/packages/waveslim/index.html
@@ -48,15 +53,11 @@ Q. Stier
 
 library("waveslim")
 library("WaveletComp")
-x = periodic.series(start.period = 50, length = 1024)
-x = x + 0.2 * rnorm(1024)  # add some noise
+x = periodic.series(start.period = 50, length = 128)
+x = x + 0.2 * rnorm(128)  # add some noise
 
-WaveletFilter(x, percent = "25")
+WaveletFilter(x, level=2)
 
-## The function is currently defined as
-function (x) 
-{
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

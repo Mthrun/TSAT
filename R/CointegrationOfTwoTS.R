@@ -7,8 +7,9 @@ CointegrationOfTwoTS=function(TS1,TS2,alpha=1, type='c',PlotIt=TRUE){
   adf=fUnitRoots::adfTest(CointegrationOrder1,lags=3,type=type)
   adf2=tseries::adf.test(CointegrationOrder1, alternative = "stationary",k=0)
   if(PlotIt){
+    requireNamespace('DataVisualizations')
     #if ts1und ts2 cointegrated then linear combination must be stationary
-    InspectVariable(CointegrationOrder1,N = 'Residuals') #use also dick-fueller test
+    DataVisualizations::InspectVariable(CointegrationOrder1,N = 'Residuals') #use also dick-fueller test
   }
   return(list(CointegrationOrder1,adf_test=list(adf_fUnitRoots=adf,adg_tseries=adf2)))
 }

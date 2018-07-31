@@ -8,7 +8,7 @@ Filter Weekends
 Filter Weekends Out of Daily time series 
 }
 \usage{
-FilterWeekends(Time, Datavector=NULL,EnglishOrGerman=FALSE,PlotIt=FALSE))
+FilterWeekends(Time, Datavector=NULL,EnglishOrGerman=FALSE,PlotIt=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

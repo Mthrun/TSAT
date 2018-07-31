@@ -8,9 +8,13 @@ Automatic ARIMA
 automatic autoregressive and moving average modelling with difference filter
 }
 \usage{
-autoARIMA(Data, Time, ForecastHorizon = 20, PlotIt = T,
+autoARIMA(Data, Time, ForecastHorizon, PlotIt = T,
 
-PlotBackwardInd, main = "", xlab = "Time", ylab = "Data", ...)
+
+                 PlotBackwardInd, main = "", xlab = "Time", ylab =
+                 
+                 
+                 "Data", \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

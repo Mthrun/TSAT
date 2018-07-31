@@ -8,13 +8,15 @@ Automatic Compound Model
 Automatic approach for compound model generation. Dataset is divided into training and test data by SplitDataAt.
 }
 \usage{
-autoCompoundModel(DataFrame, TimeColumnName = "Time",
+autoCompoundModel(DataFrame, TimeColumnName = "Time", 
 
-FeatureName = "Absatz", SplitDataAt, Frequency = "day",
+FeatureName ="Absatz", SplitDataAt, Frequency = "day",
 
-ForecastPeriods = 10, Holidays = c(), PlotIt, 
-
-xlab = "Time", ylab = "Feature", EquiDist=TRUE, ...)
+                 ForecastPeriods = 10, Holidays = NULL, PlotIt = TRUE,
+                 
+                 xlab = "Time", ylab = "Feature", EquiDist = TRUE,
+                 
+                 MinLowerBound = NULL, MaxUpperBound = NULL, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,7 +37,7 @@ index of row where the \code{DataFrame} is divided into test and train data, see
 
 }
   \item{ForecastPeriods}{
-how many days, weeks, ..., should the model be foracested on?
+how many days, weeks, etc,, should the model be foracested on?
 }
   \item{Holidays}{
 data frame of time and dates, see example
@@ -57,10 +59,16 @@ see ggplot2
   \item{ylab}{
 see ggplot2
 }
-  \item{Equidist}{
+  \item{EquiDist}{
 TRUE: time difference between each two points is equidisant, if not set FALSE
 }
-  \item{dots}{
+  \item{MinLowerBound}{
+due to bug from prophet does not work currently
+}
+  \item{MaxUpperBound}{
+due to bug from prophet does not work currently
+}
+  \item{\dots}{
 model paramters, see example
 }
 }
@@ -137,7 +145,7 @@ weeklyres$Accuracy
 
 #mean Prediction quality
 1-abs(mean(weeklyres$TestData$y) - weeklyres$Accuracy[2,3])/weeklyres$Accuracy[2,3]
-)
+
 #Plot components
 prophet::plot_forecast_component(weeklyres$Forecast,name = c('seasonal'))
 prophet::plot_forecast_component(weeklyres$Forecast,name = c('trend'))

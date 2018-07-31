@@ -8,7 +8,9 @@ PlotTimeSeries
 Plots time series as a ploty object for intactive purposes like zooming or investigating specific points of time with mouse
 }
 \usage{
-PlotTimeSeries(X, Y, xlab = "X", ylab = "Y", main = "Timeseries by Plotly", col = "black", SaveIt = FALSE)
+PlotTimeSeries(X, Y, xlab = "X", ylab = "Y",
+
+main = "Timeseries by Plotly", col = "black", SaveIt = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
