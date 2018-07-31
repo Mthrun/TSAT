@@ -22,10 +22,10 @@ CointegrationOfTwoTS(TS1, TS2, alpha = 1, type='c',PlotIt = TRUE)
 linear factor, do not search for right alpha with PLS statistics.
 }
   \item{type}{
-a character string describing the type of \code{\link[fUnitRoots]{adfTest)}} (the unit root regression). Valid choices are "nc" for a regression with no intercept (constant) nor time trend, and "c" for a regression with an intercept (constant) but no time trend, "ct" for a regression with an intercept (constant) and a time trend. The default is "c".
+a character string describing the type of \code{\link[fUnitRoots]{UnitrootTests}} (the unit root regression). Valid choices are "nc" for a regression with no intercept (constant) nor time trend, and "c" for a regression with an intercept (constant) but no time trend, "ct" for a regression with an intercept (constant) and a time trend. The default is "c".
 }
   \item{PlotIt}{
-TRUE: plot distribution analysis of \code{CointegrationOrder1} () which seems to be the residuals?)
+TRUE: plot distribution analysis of \code{CointegrationOrder1} ( which seems to be the residuals?)
 }
 }
 \details{
@@ -41,8 +41,8 @@ In short, A cointegration relationship exists between two (or more) time series 
 List of
 
 \item{CointegrationOrder1}{  CointegrationOrder1=TS1-alpha*TS2}
-\item{adf_fUnitRoots}{Check cointegration with \code{\link[fUnitRoots]{adfTest)}}}
-\item{adg_tseries}{Check cointegration with \code{\link[tseries]{adf.test)}}}
+\item{adf_fUnitRoots}{Check cointegration with \code{\link[fUnitRoots]{UnitrootTests}}}
+\item{adg_tseries}{Check cointegration with \code{\link[tseries]{adf.test}}}
 
 }
 \references{
