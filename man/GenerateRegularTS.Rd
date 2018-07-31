@@ -5,7 +5,7 @@
 GenerateRegularTS
 }
 \description{
-GenerateRegularTS
+Generates a regular time series out of an irregular time series.
 }
 \usage{
 GenerateRegularTS(Datavec,TimeChar,TimeResolutionBegin='secs',
@@ -45,7 +45,8 @@ tz='UTC')
 
 }
 \details{
-...
+Irregular time-series objects are scalar or vector valued time series indexed by a time-stamp of class
+\code{POSIXlt} used to represent irregularly temporal-spaced measurements.
 }
 \value{
 Regular TS of equidistance as a zoo object

@@ -8,7 +8,7 @@ Filter Weekends
 Filter Weekends Out of Daily time series 
 }
 \usage{
-FilterWeekends(Time, Datavector=NULL,PlotIt=FALSE))
+FilterWeekends(Time, Datavector=NULL,EnglishOrGerman=FALSE,PlotIt=FALSE))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,6 +17,9 @@ FilterWeekends(Time, Datavector=NULL,PlotIt=FALSE))
 }
   \item{Datavector}{
  Optional, default \code{NULL}, [1:n] either Key in case of a dataframe or vector of data
+}
+  \item{EnglishOrGerman}{
+Default: FALSE: German names of weekdays, English names of weekday, see \code{\link{weekdays}}
 }
   \item{PlotIt}{
 Default: FALSE, TRUE: Evaluates output of function versus input by plots, works only if Datavector given

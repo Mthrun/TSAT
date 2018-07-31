@@ -1,8 +1,13 @@
-FilterWeekends=function(Time,Datavector=NULL,PlotIt=FALSE){
+FilterWeekends=function(Time,Datavector=NULL,EnglishOrGerman=FALSE,PlotIt=FALSE){
   
   weekdays=weekdays(Time)
   
-  ind=which(weekdays=="Samstag"|weekdays=="Sonntag")
+  if(EnglishOrGerman){
+    ind=which(weekdays=="Saturday"|weekdays=="Sunday")
+  }else{
+    ind=which(weekdays=="Samstag"|weekdays=="Sonntag")
+  }
+
   
   weeksends=setdiff(1:length(Time),ind)
   

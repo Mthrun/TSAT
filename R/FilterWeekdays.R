@@ -1,8 +1,14 @@
-FilterWeekdays=function(Time,Datavector=NULL,PlotIt=FALSE){
+FilterWeekdays=function(Time,Datavector=NULL,EnglishOrGerman=FALSE,PlotIt=FALSE){
   
   weekdays=weekdays(Time)
   
-  ind=which(weekdays=="Samstag"|weekdays=="Sonntag")
+  
+  if(EnglishOrGerman){
+    ind=which(weekdays=="Saturday"|weekdays=="Sunday")
+  }else{
+    ind=which(weekdays=="Samstag"|weekdays=="Sonntag")
+  }
+  
   
   weeks=intersect(1:length(Time),ind)
   

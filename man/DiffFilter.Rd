@@ -2,25 +2,26 @@
 \alias{DiffFilter}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Difference Filter
+Difference Filter of 1. order
 }
 \description{
-Difference Filter  1. Ord.
+Detrending through the computation of differences. 
 }
 \usage{
 DiffFilter(x)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-timeseries values [1:n]
+[1:n] numerical vector
 }
 }
 
 \value{
 dx(1:n) = x(i)-x(lag(1)), mit  x(-1) = x(1)
 }
-
+\details{
+Trend correction is often proposed in order to avoid false regressions. 
+}
 \author{
 Michael Thrun
 }
