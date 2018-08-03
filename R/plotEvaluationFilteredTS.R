@@ -26,6 +26,14 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
   
   #page 113
   Residuals = DataBefore-DataAfter
+  out=Test4WhiteNoise(Residuals)
+  pval=out@test$p.value[1]
+  if(pval>0.001){
+    pval=round(pval,4)
+    string=paste('Residuals are not white noise with a p-value of',pval[1])
+  }else{
+    string=paste('Residuals are not white noise witha p-value <0.001')
+  }
   Residuals=Residuals[Residuals!=0]
   plot(Time,Residuals, type = 'l', ylab = 'DataBefore-DataAfter')
   pdeVal        = AdaptGauss::ParetoDensityEstimation(Residuals)
@@ -38,7 +46,7 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     xlab = 'DataBefore-DataAfter',
     ylab = 'PDE',
     col = 'blue',
-    main = 'Residuals'
+    main = string
   )
   MinD = min(Residuals, na.rm = TRUE)
   MaxD = max(Residuals, na.rm = TRUE)
@@ -64,7 +72,7 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     cex = 1,
     col = "black"
   )
- boxplot(Residuals)
+ #boxplot(Residuals)
 
   }
   par(def.par)

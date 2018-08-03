@@ -35,6 +35,7 @@ export(PlotTimeSeries)
 export(RelativeDifferenceTS)
 export(setDiffTS)
 export(SplitTime)
+export(WhiteNoiseTest)
 export(TSDistancesMatrix)
 export(WaveletFilter)
 
