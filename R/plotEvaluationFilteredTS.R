@@ -30,9 +30,9 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
   pval=out@test$p.value[1]
   if(pval>0.001){
     pval=round(pval,4)
-    string=paste('Residuals are not white noise: p-value',pval[1])
+    string=paste("Residuals are white noise: p.val",pval[1])
   }else{
-    string=paste('Residuals are not white noise: p-value <0.001')
+    string=paste("Residuals are white noise: p.val<0.001")
   }
   Residuals=Residuals[Residuals!=0]
   plot(Time,Residuals, type = 'l', ylab = 'DataBefore-DataAfter')
