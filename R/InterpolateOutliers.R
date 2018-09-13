@@ -9,7 +9,7 @@ InterpolateOutliers=function(Time,Datavector,OutliersTime,option = 'stine',PlotI
   DataAfter=imputeTS::na.interpolation(Datavector,option = option)
   
   if(PlotIt){
-    plotEvaluationFilteredTS(Time,DataBefore,DataAfter,MarkedPoints=ind)
+    plotEvaluationFilteredTS(Time=Time,DataBefore=DataBefore,DataAfter=DataAfter,MarkedPoints=ind,Short=TRUE)
   }
   return(invisible(DataAfter))
 }
