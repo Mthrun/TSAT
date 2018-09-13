@@ -1,4 +1,4 @@
-CrossCorr=function(TimeSeries1 , TimeSeries2 , nLags=2 ,type = "correlation",PlotIt=FALSE,main,...){
+CrossCorr=function(FirstTimeSeries , SecondTimeSeries , nLags=2 ,type = "correlation",PlotIt=FALSE,main,...){
 #MT auch ccf in R, naeher vergleichen
 #CROSSCORR Compute or plot sample cross-correlation function.
 #   Compute or plot the sample cross-correlation function (XCF) between
@@ -44,12 +44,12 @@ CrossCorr=function(TimeSeries1 , TimeSeries2 , nLags=2 ,type = "correlation",Plo
 #     crosscorr(x,y)                   # It should peak at the 4th lag.
 #
 # See also AUTOCORR, PARCORR, FILTER.
-if(length(TimeSeries1)!=length(TimeSeries2)) warning('Timeseries do not have to same length.')
-if(!is.vector(TimeSeries1)| !is.vector(TimeSeries2)) warning('One ore both Timeseries are not vectors, Plotting may not work, ccf function may not work.')
+if(length(FirstTimeSeries)!=length(SecondTimeSeries)) warning('Timeseries do not have to same length.')
+if(!is.vector(FirstTimeSeries)| !is.vector(SecondTimeSeries)) warning('One ore both Timeseries are not vectors, Plotting may not work, ccf function may not work.')
 
-if(sum(!is.finite(TimeSeries1))!=0 | sum(!is.finite(TimeSeries2))!=0)    warning('One ore both Timeseries have NaN values, Please check if you used the parameter na.action = na.omit correctly for ccf.')
+if(sum(!is.finite(FirstTimeSeries))!=0 | sum(!is.finite(SecondTimeSeries))!=0)    warning('One ore both Timeseries have NaN values, Please check if you used the parameter na.action = na.omit correctly for ccf.')
 
-  res1=ccf(TimeSeries1, TimeSeries2, lag.max = nLags, type = type,
+  res1=ccf(FirstTimeSeries, SecondTimeSeries, lag.max = nLags, type = type,
       plot = FALSE, na.action = na.fail,...)
   ind=which.max(abs(res1$acf))
   if(missing(main))
@@ -61,12 +61,12 @@ if(sum(!is.finite(TimeSeries1))!=0 | sum(!is.finite(TimeSeries2))!=0)    warning
       m <-
         graphics::layout(matrix(c(1, 1, 2, 2), 2, 2))
 
-    res1=ccf(TimeSeries1, TimeSeries2, lag.max = nLags, type = type,
+    res1=ccf(FirstTimeSeries, SecondTimeSeries, lag.max = nLags, type = type,
              plot = PlotIt,main=main,...)
     
    
     #The lag k value returned by ccf(x, y) estimates the correlation between x[t+k] and y[t].
-    TSslagged=cbind(LagVector(as.numeric(TimeSeries1),ind-nLags),as.numeric(TimeSeries2))
+    TSslagged=cbind(LagVector(as.numeric(FirstTimeSeries),ind-nLags),as.numeric(SecondTimeSeries))
     TSslagged=TSslagged[complete.cases(TSslagged),]
     
     if(type == "correlation"){
@@ -81,11 +81,11 @@ if(sum(!is.finite(TimeSeries1))!=0 | sum(!is.finite(TimeSeries2))!=0)    warning
     par(def.par)
    
   }
-  bounds =  c(2,-2) / sqrt(length(TimeSeries1)) 
+  bounds =  c(2,-2) / sqrt(length(FirstTimeSeries)) 
   return(invisible(res1))
   
   
-  # res2=ccf(TimeSeries1, TimeSeries2, lag.max = nLags, type = "covariance",
+  # res2=ccf(FirstTimeSeries, SecondTimeSeries, lag.max = nLags, type = "covariance",
   #     plot = PlotIt, na.action = na.fail)
 
 }

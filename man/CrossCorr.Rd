@@ -5,23 +5,23 @@
 Cross-Correlation of Time-Dependent Observations
 }
 \description{
-\code{CrossCorr} is the function for the cross-correlation or cross-covariance of two univariate series of observations. The function is a Wrapper for the \code{\link{ccf}} function with additional features.
+\code{CrossCorr} is the function for the cross-correlation or cross-covariance of two univariate series of observationsusing numerical vectors. The function is a Wrapper for the \code{\link{ccf}} function with additional features.
 
-Bewware, \code{CrossCorr} assumes implicitly that both time series have the same frequency and thus accepts simple numerical vectors.
+Beware, \code{CrossCorr} assumes implicitly that both time series have the same frequency and thus accepts simple numerical vectors.
 }
 \usage{
-CrossCorr(TimeSeries1, TimeSeries2, nLags = 2,type = "correlation",PlotIt=FALSE,main,...)
+CrossCorr(FirstTimeSeries, SecondTimeSeries, nLags = 2,type = "correlation",PlotIt=FALSE,main,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{TimeSeries1}{
+  \item{FirstTimeSeries}{
 [1:n] vector or time series, see also input of \code{\link{ccf}}
 }
-  \item{TimeSeries2}{
+  \item{SecondTimeSeries}{
 [1:n] vector or time series, see also input of \code{\link{ccf}}
 }
   \item{nLags}{
-positive scalar, the limit number of lags (in units of observations) to be inspected forward an backward,  see also input of \code{ccf}
+positive scalar, the limit number of lags (in units of observations) to be inspected forward and backward in \code{FirstTimeSeries} relative to the fixed \code{SecondTimeSeries},  see also input of \code{ccf}
 }
   \item{type}{
 character string giving the type of acf to be computed. Allowed values are "correlation" (the default), "covariance" 
@@ -37,7 +37,12 @@ further arguments passed on to output of \code{\link{ccf}}
 }
 }
 \details{
+Procecderute ist as follows: the timeseries is moved forward from \code{FirstTimeSeries[t+1]} to  \code{FirstTimeSeries[t+nLags]} and backward from \code{FirstTimeSeries[t-1]} to  \code{FirstTimeSeries[t-nLags]} and every lagged time series \code{FirstTimeSeries} is compared to \code{SecondTimeSeries}.
+
+A cross corelation at lag \code{nlag} means that the value nlag-time steps ahead of the \code{FirstTimeSeries}  correlates with the value of the current time step of the \code{SecondTimeSeries}. 
+
 Covariance is a measure indicating the extent to which two random variables change in tandem.	Correlation is a scalar measure that indicates how strongly two variables are statistically linearly related which does not mean that they are related by causality. For \code{nLags}: back shifting: positiv values, forward shifting: negative values.
+
 }
 \value{
 output of \code{\link{ccf}} in \code{\link[base]{invisible}} mode
@@ -46,7 +51,7 @@ output of \code{\link{ccf}} in \code{\link[base]{invisible}} mode
 \author{
 Michael Thrun
 }
-\note{Covoriance is not normalized, Instead it is in the multiplication of units of both time series.}
+\note{Covoriance is not normalized, Instead the normalization is in the multiplication of units of both time series.}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ccf}% use one of  RShowDoc("KEYWORDS")
