@@ -1,7 +1,7 @@
 autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods=10,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,...){
-# Note: partly programmed during working hours
   #res=autoCompoundModel(DataFrame, TimeColumnName = "Time", FeatureName = "Absatz", SplitDataAt, Frequency = "day", ForecastPeriods = 10, Holidays = c(), PlotIt, xlab = "Time", ylab = "Feature", EquiDist=TRUE)
-#
+  Rathena::autoCompoundModelv2(DataFrame,TimeColumnName,FeatureName,SplitDataAt,Frequency,ForecastPeriods,Holidays,PlotIt,xlab,ylab,EquiDist,MinLowerBound,MaxUpperBound,...)
+  #
 #     Automatic Compound Model
 #     Automatic approach for compound model generation. Dataset is divided into training and test data by SplitDataAt.
 #     training data is used for model generation, test data is used for evaluating the quality by a comparision to given data.
@@ -170,114 +170,114 @@ autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",
 #       1-abs(mean(dailyres$TestData$y) - dailyres$Accuracy[2,3])/dailyres$Accuracy[2,3]
 #     
 ### End of Examples     
-  #ToDo: Frequency Input abruefen auf tippfehler
-
-  library(Rcpp)#hier funktioniert requireNamespace nicht, description und impprt geht auch nicht :-()
-  # Error in cpp_object_initializer(.self, .refClassDef, ...) : 
-  #   could not find function "cpp_object_initializer"
-  
-  requireNamespace('prophet')
-
-  Header=colnames(DataFrame)
-  Names = paste0("\\<", FeatureName, "\\>")
-  if (length(Names) == 1) 
-    ColNum <- grep(paste0(Names), Header)
-  if (length(Names) > 1) 
-    ColNum = sapply(Names, grep, Header, ignore.case = FALSE)
-  if (length(ColNum) == 0) 
-    stop("FeatureName not found.")
-  
-  Names2 = paste0("\\<", TimeColumnName, "\\>")
-  if (length(Names2) == 1) 
-    ColNum2 <- grep(paste0(Names2), Header)
-  if (length(Names2) > 1) 
-    ColNum2 = sapply(Names2, grep, Header, ignore.case = FALSE)
-  if (length(ColNum2) == 0) 
-    stop("TimeColumnName not found.")
-  
-if(EquiDist)
-  # history <- data.frame(ds = seq(
-  #   from=as.Date(min(DataFrame[,ColNum2])), to=as.Date(max(DataFrame[,ColNum2])), by =Frequency
-  # ),
-  # y = DataFrame[,ColNum])
-  history <- data.frame(ds = as.Date(DataFrame[,ColNum2]),
-                        y = DataFrame[,ColNum])
-else{
-  history <- data.frame(ds = as.Date(DataFrame[,ColNum2]),
-  y = DataFrame[,ColNum])
-  warnings('Working progress. May not work properly yet.')
-  # su muesste man es machen
-  # x=seq(from=as.Date(min(DailySales7441884and7571348$Time)),to=as.Date(max(DailySales7441884and7571348$Time)),by='day')
-  # 
-  # y=DailySales7441884and7571348
-  # y$Time=as.Date(y$Time)
-  # 
-  # x=data.frame(Time=x,Absatz=0)
-  # x[x$Time%in%y$Time,2]=y$Absatz
-}
-  xlab=paste0(xlab,' in ',Frequency,'s')
-  
-  if(SplitDataAt>nrow(history)) stop('Number SplitDataAt is higher than number of rows in data'
-  )
-  if(!is.null(MinLowerBound)){
-    history$floor=MinLowerBound
-  }
-  if(!is.null(MaxUpperBound)){
-    history$cap=MaxUpperBound
-  }
- 
-  train=history[1:SplitDataAt,]
-  testind=seq(from=(SplitDataAt+1),to=nrow(history),by=1)
-  testdata=history[testind,]
-  
-  m <- prophet::prophet(train,holidays=Holidays,...)
-
-  #m$logistic.floor=T
-  future=prophet::make_future_dataframe(m, periods = ForecastPeriods, freq = Frequency)
- 
-  if(!is.null(MinLowerBound)){
-    future$floor=MinLowerBound
-  }
-  if(!is.null(MaxUpperBound)){
-    future$cap=MaxUpperBound
-  }
-
-  forecast <- predict(m, future)
-  
-  if(!is.null(MinLowerBound)){
-    forecast$yhat_lower[forecast$yhat_lower<=MinLowerBound]=MinLowerBound
-  }
-  if(!is.null(MaxUpperBound)){
-    forecast$yhat_upper[forecast$yhat_upper>=MaxUpperBound]=MaxUpperBound
-  }
-  if(!is.null(MinLowerBound)){
-    forecast$yhat[forecast$yhat<=MinLowerBound]=MinLowerBound
-  }
-  if(!is.null(MaxUpperBound)){
-    forecast$yhat[forecast$yhat>=MaxUpperBound]=MaxUpperBound
-  }
-  #plot(m, forecast)
-  if(!is.numeric(Frequency)){ #days weeks months,quarters and years
-    m$history$ds=as.Date(m$history$ds)
-    forecast$ds=as.Date(forecast$ds)
-  }
-  ggObject=NULL
-  ggObject = ggplot()
-  ggObject = ggObject + geom_ribbon(data = forecast, aes(x = ds, ymin = yhat_lower, ymax = yhat_upper), fill = "blue", alpha = 0.3)
-  ggObject = ggObject + geom_line(data = forecast, aes(x = ds, y = yhat), color = "darkgreen",linetype = "solid",size=1)
-  ggObject = ggObject + geom_point(data = train, aes(x = ds, y = y), size = 2)
-  ggObject = ggObject + geom_point(data = testdata, aes(x = ds, y = y), size = 2, color = 'red')
-  ggObject = ggObject+xlab(xlab)+ylab(ylab)
-  if(PlotIt){
-    print(ggObject)
-  }
-  if(EquiDist){
-  AccuracyTest=forecast::accuracy(forecast[forecast$ds %in% testdata$ds, 'yhat'], testdata$y)
-  AccuracyTrain=forecast::accuracy(forecast[forecast$ds %in% train$ds, 'yhat'], train$y)
-  acc=rbind(AccuracyTrain,AccuracyTest)
-  }else{
-    acc=matrix(ncol=0,nrow=2)
-  }
-  rownames(acc)=c('Train set', 'Test set')
-  return(list(Model=m,Forecast=forecast,TrainingData=train,TestData=testdata,ggObject=ggObject,Accuracy=acc))
+#   #ToDo: Frequency Input abruefen auf tippfehler
+# 
+#   library(Rcpp)#hier funktioniert requireNamespace nicht, description und impprt geht auch nicht :-()
+#   # Error in cpp_object_initializer(.self, .refClassDef, ...) : 
+#   #   could not find function "cpp_object_initializer"
+#   
+#   requireNamespace('prophet')
+# 
+#   Header=colnames(DataFrame)
+#   Names = paste0("\\<", FeatureName, "\\>")
+#   if (length(Names) == 1) 
+#     ColNum <- grep(paste0(Names), Header)
+#   if (length(Names) > 1) 
+#     ColNum = sapply(Names, grep, Header, ignore.case = FALSE)
+#   if (length(ColNum) == 0) 
+#     stop("FeatureName not found.")
+#   
+#   Names2 = paste0("\\<", TimeColumnName, "\\>")
+#   if (length(Names2) == 1) 
+#     ColNum2 <- grep(paste0(Names2), Header)
+#   if (length(Names2) > 1) 
+#     ColNum2 = sapply(Names2, grep, Header, ignore.case = FALSE)
+#   if (length(ColNum2) == 0) 
+#     stop("TimeColumnName not found.")
+#   
+# if(EquiDist)
+#   # history <- data.frame(ds = seq(
+#   #   from=as.Date(min(DataFrame[,ColNum2])), to=as.Date(max(DataFrame[,ColNum2])), by =Frequency
+#   # ),
+#   # y = DataFrame[,ColNum])
+#   history <- data.frame(ds = as.Date(DataFrame[,ColNum2]),
+#                         y = DataFrame[,ColNum])
+# else{
+#   history <- data.frame(ds = as.Date(DataFrame[,ColNum2]),
+#   y = DataFrame[,ColNum])
+#   warnings('Working progress. May not work properly yet.')
+#   # su muesste man es machen
+#   # x=seq(from=as.Date(min(DailySales7441884and7571348$Time)),to=as.Date(max(DailySales7441884and7571348$Time)),by='day')
+#   # 
+#   # y=DailySales7441884and7571348
+#   # y$Time=as.Date(y$Time)
+#   # 
+#   # x=data.frame(Time=x,Absatz=0)
+#   # x[x$Time%in%y$Time,2]=y$Absatz
+# }
+#   xlab=paste0(xlab,' in ',Frequency,'s')
+#   
+#   if(SplitDataAt>nrow(history)) stop('Number SplitDataAt is higher than number of rows in data'
+#   )
+#   if(!is.null(MinLowerBound)){
+#     history$floor=MinLowerBound
+#   }
+#   if(!is.null(MaxUpperBound)){
+#     history$cap=MaxUpperBound
+#   }
+#  
+#   train=history[1:SplitDataAt,]
+#   testind=seq(from=(SplitDataAt+1),to=nrow(history),by=1)
+#   testdata=history[testind,]
+#   
+#   m <- prophet::prophet(train,holidays=Holidays,...)
+# 
+#   #m$logistic.floor=T
+#   future=prophet::make_future_dataframe(m, periods = ForecastPeriods, freq = Frequency)
+#  
+#   if(!is.null(MinLowerBound)){
+#     future$floor=MinLowerBound
+#   }
+#   if(!is.null(MaxUpperBound)){
+#     future$cap=MaxUpperBound
+#   }
+# 
+#   forecast <- predict(m, future)
+#   
+#   if(!is.null(MinLowerBound)){
+#     forecast$yhat_lower[forecast$yhat_lower<=MinLowerBound]=MinLowerBound
+#   }
+#   if(!is.null(MaxUpperBound)){
+#     forecast$yhat_upper[forecast$yhat_upper>=MaxUpperBound]=MaxUpperBound
+#   }
+#   if(!is.null(MinLowerBound)){
+#     forecast$yhat[forecast$yhat<=MinLowerBound]=MinLowerBound
+#   }
+#   if(!is.null(MaxUpperBound)){
+#     forecast$yhat[forecast$yhat>=MaxUpperBound]=MaxUpperBound
+#   }
+#   #plot(m, forecast)
+#   if(!is.numeric(Frequency)){ #days weeks months,quarters and years
+#     m$history$ds=as.Date(m$history$ds)
+#     forecast$ds=as.Date(forecast$ds)
+#   }
+#   ggObject=NULL
+#   ggObject = ggplot()
+#   ggObject = ggObject + geom_ribbon(data = forecast, aes(x = ds, ymin = yhat_lower, ymax = yhat_upper), fill = "blue", alpha = 0.3)
+#   ggObject = ggObject + geom_line(data = forecast, aes(x = ds, y = yhat), color = "darkgreen",linetype = "solid",size=1)
+#   ggObject = ggObject + geom_point(data = train, aes(x = ds, y = y), size = 2)
+#   ggObject = ggObject + geom_point(data = testdata, aes(x = ds, y = y), size = 2, color = 'red')
+#   ggObject = ggObject+xlab(xlab)+ylab(ylab)
+#   if(PlotIt){
+#     print(ggObject)
+#   }
+#   if(EquiDist){
+#   AccuracyTest=forecast::accuracy(forecast[forecast$ds %in% testdata$ds, 'yhat'], testdata$y)
+#   AccuracyTrain=forecast::accuracy(forecast[forecast$ds %in% train$ds, 'yhat'], train$y)
+#   acc=rbind(AccuracyTrain,AccuracyTest)
+#   }else{
+#     acc=matrix(ncol=0,nrow=2)
+#   }
+#   rownames(acc)=c('Train set', 'Test set')
+#   return(list(Model=m,Forecast=forecast,TrainingData=train,TestData=testdata,ggObject=ggObject,Accuracy=acc))
 }
