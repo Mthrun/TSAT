@@ -9,9 +9,9 @@ WhiteNoiseTest=function(TimeSeries,lags=1,type="c",PlotIt=TRUE){
     pval=out@test$p.value[1]
     if(pval>0.001){
       pval=round(pval,4)
-      string=paste('Residuals are not Gaussian white noise with a p-value of',pval[1])
+      string=paste('TimeSeries is Gaussian white noise, p-value of',pval[1])
     }else{
-      string=paste('Residuals are not Gaussian white noise with a p-value < 0.001')
+      string=paste('TimeSeries is Gaussian white noise, p-value < 0.001')
     }
     pdeVal        = AdaptGauss::ParetoDensityEstimation(TimeSeries)
     Normaldist <- dnorm(pdeVal$kernels,m,s)

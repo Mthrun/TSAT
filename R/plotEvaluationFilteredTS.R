@@ -13,7 +13,7 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
   }else{
     
   #m <- graphics::layout(matrix(c(1, 2, 3, 1, 2, 4, 1, 2, 5), 3, 3))
-    m <- graphics::layout(matrix(c(1, 2, 3, 1, 2, 3, 4, 5, 6), 3, 3))
+   m <- graphics::layout(matrix(c(1, 2, 3, 1, 2, 3, 4, 5, 6), 3, 3))
     
   title(main)
   # par(oma = c(0, 0, 1, 0))#c(u,li,o,re) in
@@ -26,13 +26,13 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
   
   #page 113
   Residuals = DataBefore-DataAfter
-  out=Test4WhiteNoise(Residuals)
+  out=WhiteNoiseTest(Residuals,PlotIt=FALSE)
   pval=out@test$p.value[1]
   if(pval>0.001){
     pval=round(pval,4)
-    string=paste('Residuals are not white noise with a p-value of',pval[1])
+    string=paste("Residuals are white noise: p.val",pval[1])
   }else{
-    string=paste('Residuals are not white noise witha p-value <0.001')
+    string=paste("Residuals are white noise: p.val<0.001")
   }
   Residuals=Residuals[Residuals!=0]
   plot(Time,Residuals, type = 'l', ylab = 'DataBefore-DataAfter')
@@ -43,11 +43,14 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     type = 'l',
     xaxs = 'i',
     yaxs = 'i',
-    xlab = 'DataBefore-DataAfter',
+    xlab = 'Residuals (blue), Gaussian Distribution (magenta)',
     ylab = 'PDE',
     col = 'blue',
     main = string
   )
+  Normaldist <- dnorm(pdeVal$kernels,mean(Residuals,na.rm=TRUE),sd(Residuals,na.rm=TRUE))
+  points(pdeVal$kernels,Normaldist,type='l',col='magenta')
+  abline(v =0,col='red')
   MinD = min(Residuals, na.rm = TRUE)
   MaxD = max(Residuals, na.rm = TRUE)
   par(pty = "s")
@@ -72,7 +75,7 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
     cex = 1,
     col = "black"
   )
- #boxplot(Residuals)
+ boxplot(Residuals)
 
   }
   par(def.par)

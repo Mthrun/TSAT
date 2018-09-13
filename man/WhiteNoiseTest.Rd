@@ -6,7 +6,7 @@
 Test for White Noise
 }
 \description{
-test fails to reject the null hypothesis of no white noise if p-value > 0.05
+Test fails to reject the null hypothesis of no white noise if p-value < 0.05. Consequently, b the data is a (Gaussian) white noise if a p-value is below 0.05.
 }
 \usage{
 WhiteNoiseTest(TimeSeries, lags = 1, type = "c", PlotIt = TRUE)
@@ -31,7 +31,7 @@ a character string describing the type of \code{\link[fUnitRoots]{UnitrootTests}
 white noise can be described as a random process, e.g. Brownian Movement, Random Walk.
 The simplest unit-root nonstationary time series is the univariate random walk [Tsay, 2013].
 Therefore, using distribution analysis and a unit root test, this function can serve as a indication for white noise, because unit root is a feature of white noise.
-If the mean is around zero (red line visible in plot) and the pvalue is small than white noise can be assumed. It is a trying taks to generally to proof white noise. Thus, if one of the two approaches (statistical versus visual) do not agree, than the result is unclear and the residuals should be testet with other approaches.
+If the mean is around zero (red line visible in plot) and the distribution gaussian (magenta line overlaps blue line) and the pvalue is small than white noise can be assumed. It is a difficult task to try to generally to proof white noise. Thus, if one of the two approaches (statistical versus visual) do not agree, than the result is unclear and the residuals should be testet with other approaches.
 }
 \value{
 output of \code{\link[fUnitRoots]{UnitrootTests}} in mode \code{\link{invisible}}
@@ -54,8 +54,26 @@ temporal Data Mining, A.Ultsch
 }
 \examples{
 
- x = rnorm(1000) 
- WhiteNoiseTest(x)
+ Z1 = rnorm(1000) 
+ WhiteNoiseTest(Z1)
+ 
+ \donttest{
+  require(portes)
+  Z2 <- varima.sim(n=400) #Generates white noise
+  WhiteNoiseTest(Z2)
+}
+\donttest{
+#Data is not wihite noise, because not gaussian distributed
+data("airquality")
+WhiteNoiseTest(airquality$Ozone)
+
+data("airquality")
+#Data is not white noise, because not gaussian distributed
+WhiteNoiseTest(airquality$Ozone)
+
+#Data is not wihite noise, because mean not around zero
+WhiteNoiseTest(airquality$Wind)
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
