@@ -35,16 +35,19 @@ library(rvest)
   n2=nrow(Features)
   c2=ncol(Features)
   if(c2==27){
+    Time=rownames(Features)
     strings=c(4,11,19,24)
     if(sum(is.na(suppressWarnings(as.numeric(Features[,strings]))))==length(as.character(Features[,strings]))){
       Features=Features[,-strings]
       Features[which(Features=='-')]=NaN
       Features=apply(Features,2,as.numeric)
+      rownames(Features)=Time
     }else{
       warning('unexpected numerical input in string lines.')
     }
   }else{
     warning('Number of columns unexpected, something went wrong...')
   }
+  # Features=cbind(Time=as.character(a$Time),data.frame(Features))
   return(Features)
 }
