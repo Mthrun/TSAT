@@ -1,11 +1,14 @@
-GetFinancialStatement=function(Symbol){
+GetFinancialStatement=function(Symbol,URL='morningstar'){
   #GetFinancialStatement('SAP')
   
+  library(tidyverse)
+  library(rvest)
+  if(URL=='yahoo'){
   url=paste0("https://finance.yahoo.com/quote/",Symbol,"/financials?p=",Symbol)
 
-library(tidyverse)
-library(rvest)
+
   #HTML parsen:
+  
   out=read_html(url)
   out2=html_table(out)
   #Tiblemacht geschickt preprocessing
@@ -50,4 +53,25 @@ library(rvest)
   }
   # Features=cbind(Time=as.character(a$Time),data.frame(Features))
   return(Features)
+  }
+  if(URL=='investing'){
+    url='https://www.investing.com/equities/sap-ag-income-statement'
+  }
+  if(URL=='msn'){
+    url='https://www.msn.com/en-us/money/stockdetails/financials/fi-126.1.SAP.NYS'
+  }
+  if(URL=='morningstar'){
+    url=paste0('http://financials.morningstar.com/ajax/ReportProcess4CSV.html?t=XNYS:',Symbol,'&reportType=is&period=3&dataType=A&order=asc&denominatorView=raw&columnYear=5&number=3')
+    raw=read.csv(file=url,header = T,sep = ',',skip = 1,stringsAsFactors = F)
+    DF=raw[,c(2:6)]
+    Header=raw[,1]
+    Time=gsub('X','',colnames(raw)[2:6])
+    DF=t(DF)
+    colnames(DF)=Header
+    rownames(DF)=Time
+    DF[!is.finite(DF)]=NaN
+    
+    DF=DF[,setdiff(1:ncol(DF),c(4,19,22))]
+    return(DF)
+  }
 }
