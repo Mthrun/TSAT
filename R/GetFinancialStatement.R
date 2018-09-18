@@ -1,4 +1,4 @@
-GetFinancialStatement=function(Symbol,URL='morningstar'){
+GetFinancialStatement=function(Symbol='SAP',URL='morningstar'){
   #GetFinancialStatement('SAP')
   
   library(tidyverse)
@@ -61,7 +61,9 @@ GetFinancialStatement=function(Symbol,URL='morningstar'){
     url='https://www.msn.com/en-us/money/stockdetails/financials/fi-126.1.SAP.NYS'
   }
   if(URL=='morningstar'){
-    url=paste0('http://financials.morningstar.com/ajax/ReportProcess4CSV.html?t=XNYS:',Symbol,'&reportType=is&period=3&dataType=A&order=asc&denominatorView=raw&columnYear=5&number=3')
+    url=paste0('http://financials.morningstar.com/ajax/ReportProcess4CSV.html?t=XFRA:',Symbol,'&reportType=is&period=3&dataType=A&order=asc&denominatorView=raw&columnYear=5&number=3')
+    
+    tryCatch({
     raw=read.csv(file=url,header = T,sep = ',',skip = 1,stringsAsFactors = F)
     DF=raw[,c(2:6)]
     Header=raw[,1]
@@ -71,7 +73,8 @@ GetFinancialStatement=function(Symbol,URL='morningstar'){
     rownames(DF)=Time
     DF[!is.finite(DF)]=NaN
     
-    DF=DF[,setdiff(1:ncol(DF),c(4,19,22))]
+    # DF=DF[,setdiff(1:ncol(DF),c(4,19,22))]
     return(DF)
+    }, error=function(e) return(NULL))
   }
 }
