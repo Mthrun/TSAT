@@ -73,7 +73,39 @@ GetFinancialStatement=function(Symbol='SAP',URL='morningstar'){
     rownames(DF)=Time
     DF[!is.finite(DF)]=NaN
     
-    # DF=DF[,setdiff(1:ncol(DF),c(4,19,22))]
+    inddel=c()
+    share='Earnings per share'
+    indshare=which(Header==share)
+    if(length(indshare)>0){
+    colnames(DF)[indshare+1]=paste(colnames(DF)[indshare+1],share)
+    colnames(DF)[indshare+2]=paste(colnames(DF)[indshare+2],share)
+    inddel=c(inddel,indshare)
+    }
+    weight='Weighted average shares outstanding'
+    indweight=which(Header==weight)
+    if(length(indweight)>0){
+      colnames(DF)[indweight+1]=paste(colnames(DF)[indweight+1],weight)
+      colnames(DF)[indweight+2]=paste(colnames(DF)[indweight+2],weight)
+      inddel=c(inddel,indweight)
+    }
+    indoperating=which(Header=="Operating expenses")
+    if(length(indoperating)>0)   inddel=c(inddel,indoperating)
+    
+    if(length(inddel)>0)
+      DF=DF[,-inddel]
+    
+    HeaderNew=colnames(DF)
+    
+    indOther=which(HeaderNew=="Other operating expenses")
+    if(length(indOther)>0) DF[is.nan(DF[,indOther]),indOther]=0
+    
+    indOther2=which(HeaderNew=="Other")
+    if(length(indOther2)>0) DF[is.nan(DF[,indOther2]),indOther2]=0
+    
+    indOther3=which(HeaderNew=="Preferred dividend")
+    if(length(indOther3)>0) DF[is.nan(DF[,indOther3]),indOther3]=0
+
+ 
     return(DF)
     }, error=function(e) return(NULL))
   }
