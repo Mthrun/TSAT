@@ -45,20 +45,24 @@ HiddenMarkovModel=function(Data,ClusterNo,PriorClassification,PlotIt=T,Silent=F)
   }
   # vergleich der Zustaende der original Clusterung mit den HMM zustanden
   #ContingencyTable(PriorClassification,HMMcls)
-  RowCls =PriorClassification
-  ColCls =HMMcls 
-  XTable  <- dbt.ClassAnalysis::ContingencyTableSummary(PriorClassification,HMMcls);
-  if(!Silent)
-    print(XTable)
-  
-  # genauigkeit rechnen
-  if(!Silent)
-    print(Classifiers::AnalysisOfClassifier(PriorClassification,HMMcls))
-  
-  V<- Classifiers::AnalysisOfClassifier(PriorClassification,HMMcls);
-  Accuracy = sum(V$TotalAccuracy)
-  if(!Silent)
-    print(paste0('HMM Accuracy: ',round(Accuracy),' Prozent'))
-  
+  if(!missing(PriorClassification)){
+    RowCls =PriorClassification
+    ColCls =HMMcls 
+    XTable  <- dbt.ClassAnalysis::ContingencyTableSummary(PriorClassification,HMMcls);
+    if(!Silent)
+      print(XTable)
+
+    # genauigkeit rechnen
+    if(!Silent)
+      print(Classifiers::AnalysisOfClassifier(PriorClassification,HMMcls))
+    
+    V<- Classifiers::AnalysisOfClassifier(PriorClassification,HMMcls);
+    Accuracy = sum(V$TotalAccuracy)
+    if(!Silent)
+      print(paste0('HMM Accuracy: ',round(Accuracy),' Prozent'))
+  }else{
+    XTable=NULL
+    Accuracy=NULL
+  }
   return(list(HMMmodell=HMMmodell,HMMmeans=HMMmeans,HMMsdev=HMMsdev,Uebergangsmatrix=Uebergangsmatrix,VitPath=VitPath,HMMcls=HMMcls,XTable=XTable,Accuracy=Accuracy))
 }
