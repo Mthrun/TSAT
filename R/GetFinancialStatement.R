@@ -88,6 +88,23 @@ GetFinancialStatement=function(Symbol='SAP',URL='morningstar'){
       colnames(DF)[indweight+2]=paste(colnames(DF)[indweight+2],weight)
       inddel=c(inddel,indweight)
     }
+    
+    other1='Other income (expense)'
+    indother1=which(Header==other1)
+    if(length(indweight)>0){
+      indother2=which(colnames(DF)==other1)
+      indtemp1=which(Header=="Total operating expenses")
+      indtemp2=which(Header=="Total nonoperating income, net")
+      if(length(indtemp1))
+        colnames(DF)[indother2[1]]=paste(colnames(DF)[indtemp1],other1)
+      else
+        colnames(DF)[indother2[1]]=paste('FirstListed',other1[1])
+      if(length(indtemp1))
+        colnames(DF)[indother2[2]]=paste(colnames(DF)[indtemp2],other1)
+      else
+        colnames(DF)[indother2[2]]=paste('SecondListed',other1)
+    }
+    
     indoperating=which(Header=="Operating expenses")
     if(length(indoperating)>0)   inddel=c(inddel,indoperating)
     
@@ -107,6 +124,6 @@ GetFinancialStatement=function(Symbol='SAP',URL='morningstar'){
 
  
     return(DF)
-    }, error=function(e) return(NULL))
+    }, error=function(e) return(url))
   }
 }
