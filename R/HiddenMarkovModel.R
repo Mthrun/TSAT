@@ -1,68 +1,106 @@
-HiddenMarkovModel=function(Data,ClusterNo,PriorClassification,PlotIt=T,Silent=F){
-#Doku, Under Development
+HiddenMarkovModel=function(Data,ClusterNo,DistributionName='NORMAL',Iterations=500,PriorClassification,PlotIt=TRUE,Silent=TRUE){
+
 #author MT 2014
-  requireNamespace('RHmm') 
-  requireNamespace('AdaptGauss') 
-  requireNamespace('dbt.ClassAnalysis') 
-  requireNamespace('Classifiers') 
+  if (is.list(Data))
+    stop('Data is not allowed to be a list.')
+  if (!is.matrix(Data)) {
+    warning('Data is expected to be a matrix. Trying to transform..')
+    Data = as.matrix(Data)
+  }
+  requireNamespace('RHmm')
+  requireNamespace('AdaptGauss')
+  requireNamespace('dbt.ClassAnalysis')
+  requireNamespace('Classifiers')
   
-  warning('Under Development')
-  HMMmodell <- RHmm::HMMFit(obs=Data, nStates=ClusterNo,control=list(verbose=1, init= 'KMEANS'),# K-means initialisierung
-                      asymptCov=TRUE)
+  HMMmodell <-
+    RHmm::HMMFit(
+      obs = Data,
+      nStates = ClusterNo,
+      dis = DistributionName,
+      control = list(
+        verbose = 1,
+        init = 'KMEANS',
+        iter = Iterations,
+        verbose = Silent
+      ),
+      # K-means initialisierung
+      asymptCov = TRUE
+    )
   ############################################################
   # analyse des Modells
   #HMMmodell
-  if(!Silent)
-    summary(HMMmodell)
+  if (!Silent)
+    print(summary(HMMmodell))
   
-  HMMmeans = round(HMMmodell$HMM$distribution$mean,1);       print(paste0('HMMmeans ',HMMmeans ))
-  HMMsdev  = round(sqrt(HMMmodell$HMM$distribution$var),1);   print(paste0('HMMsdev  ',HMMsdev ))
+  HMM_means = round(HMMmodell$HMM$distribution$mean, 1)
+  HMM_SDs  = round(sqrt(HMMmodell$HMM$distribution$var), 1)
   
   Uebergangsmatrix = HMMmodell$HMM$transMat
-  UebergangsmatrixProzent= round(Uebergangsmatrix*100)
-   if(!Silent){
-    print(UebergangsmatrixProzent)
-    print(HMMmeans)
-   }
+  UebergangsmatrixProzent = round(Uebergangsmatrix * 100)
+  
   ########################################################################
   # viterbi Alg zur vorhersage der Zustaende
   VitPath <- RHmm::viterbi(HMMmodell, Data)
-  HMMcls <- VitPath$states ; # die vorhergesagten Klassen des HMM
+  HMMcls <- VitPath$states
+  # die vorhergesagten Klassen des HMM
   
-  C <-dbt.ClassAnalysis::ClassCount(HMMcls);
-  UniqueClasses <-C$uniqueClasses
-  CountPerClass <-C$countPerClass
-  NrOfClasses   <-C$numberOfClasses  
-  ClassPercentages <-C$classPercentages 
+  Cl = dbt.ClassAnalysis::ClassCount(HMMcls)
   
-  Weight= ClassPercentages/100;
-  IsLogDistribution= Weight*0;
-  if(PlotIt){
-
-  AdaptGauss::PlotMixtures(Data,HMMmeans ,HMMsdev,Weight,IsLogDistribution,'BaumWelch opt. HMM Output-Gaussians weights = Viterbi','TagNR','pdf(Data)')
-  abline(v=HMMmeans,col='red')
-  #dbt.ClassAnalysis::ClassPlot(TagNR,Data,HMMcls,'HMM zustaende mit Viterbi ')
+  #UniqueClasses <-Cl$UniqueClasses
+  #CountPerClass <-Cl$CountPerClass
+  #NrOfClasses   <-Cl$NumberOfClasses
+  ClassPercentages <- Cl$ClassPercentages
+  
+  HMM_weights = ClassPercentages / 100
+  
+  IsLogDistribution = HMM_weights * 0
+  
+  
+  if (PlotIt) {
+    print('Transition Matrix:')
+    print(UebergangsmatrixProzent)
+    print('Means of states:')
+    print(HMM_means)
+    print('Standard deviation of states:')
+    print(HMM_SDs)
+    AdaptGauss::PlotMixtures(
+      Data[, 1],
+      HMM_means ,
+      HMM_SDs,
+      HMM_weights,
+      IsLogDistribution,
+      main = 'BaumWelch opt. HMM Output - Gaussians weights = Viterbi',
+      xlab = 'Time',
+      ylab = 'pdf(Data) in black, model in red'
+    )
+    abline(v = HMM_means, col = 'magenta')
+    
+    #dbt.ClassAnalysis::ClassPlot(TagNR,Data,HMMcls,'HMM zustaende mit Viterbi ')
   }
   # vergleich der Zustaende der original Clusterung mit den HMM zustanden
   #ContingencyTable(PriorClassification,HMMcls)
-  if(!missing(PriorClassification)){
-    RowCls =PriorClassification
-    ColCls =HMMcls 
-    XTable  <- dbt.ClassAnalysis::ContingencyTableSummary(PriorClassification,HMMcls);
-    if(!Silent)
-      print(XTable)
-
-    # genauigkeit rechnen
-    if(!Silent)
-      print(Classifiers::AnalysisOfClassifier(PriorClassification,HMMcls))
+  if (!missing(PriorClassification)) {
+    RowCls = PriorClassification
+    ColCls = HMMcls
+    XTable  <-
+      dbt.ClassAnalysis::ContingencyTableSummary(PriorClassification, HMMcls)
     
-    V<- Classifiers::AnalysisOfClassifier(PriorClassification,HMMcls);
+    if (!Silent)
+      print(XTable)
+    
+    # genauigkeit rechnen
+    if (!Silent)
+      print(Classifiers::AnalysisOfClassifier(PriorClassification, HMMcls))
+    
+    V <-
+      Classifiers::AnalysisOfClassifier(PriorClassification, HMMcls)
+    
     Accuracy = sum(V$TotalAccuracy)
-    if(!Silent)
-      print(paste0('HMM Accuracy: ',round(Accuracy),' Prozent'))
-  }else{
-    XTable=NULL
-    Accuracy=NULL
+    if (!Silent)
+      print(paste0('HMM Accuracy: ', round(Accuracy), ' Prozent'))
+  } else{
+    XTable = NULL
+    Accuracy = NULL
   }
-  return(list(HMMmodell=HMMmodell,HMMmeans=HMMmeans,HMMsdev=HMMsdev,Uebergangsmatrix=Uebergangsmatrix,VitPath=VitPath,HMMcls=HMMcls,XTable=XTable,Accuracy=Accuracy))
+  return(list(HMMmodell=HMMmodell,HMM_means=HMM_means,HMM_SDs=HMM_SDs,HMM_means=HMM_weights,Uebergangsmatrix=Uebergangsmatrix,VitPath=VitPath,HMMcls=HMMcls,XTable=XTable,Accuracy=Accuracy))
 }

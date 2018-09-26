@@ -18,7 +18,7 @@ i.e. clustering is reproduced as output
 
 }
 \usage{
-HiddenMarkovModel(Data, ClusterNo, PriorClassification, PlotIt = T, Silent = F)
+HiddenMarkovModel(Data, ClusterNo, PriorClassification, PlotIt = TRUE, Silent = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -49,11 +49,14 @@ List of
   \item{HMMmodell}{
 please see \code{\link[Rhmm]{HMMFit}}
 }
-  \item{HMMmeans}{
+  \item{HMM_means}{
 [1:k] means of distributions, please see \code{\link[Rhmm]{distributionSet}}
 }
-  \item{HMMsdev}{
+  \item{HMM_SDs}{
 [1:k] standard deviations of distributions, please see \code{\link[Rhmm]{distributionSet}}
+}
+  \item{HMM_weights}{
+[1:k] weights of distributions
 }
   \item{Uebergangsmatrix}{
 Transition matrix, please see \code{\link[Rhmm]{HMMSet}}
@@ -89,7 +92,15 @@ Baum-Welch-Algorithmus (generalisierter EM): \code{\link[Rhmm]{HMMFit}}
 Viterbi-Algorithmus: \code{\link[Rhmm]{viterbi}},\code{\link[Rhmm]{HMMFit}}
 }
 \examples{
-#...
+data(n1d_3s)
+Data=as.matrix(obs_n1d_3s[[1]])
+model=HiddenMarkovModel(Data,3,PlotIt = T,Silent = T)
+\donttest{
+TagNR=1:nrow(Data)
+plot(TagNR,Data[,1],col=model$HMMcls,main='HMM states with Viterbi',pch=20)
+legend("topright", inset = c(-0.2, 0), legend = sort(unique(model$HMMcls)), 
+            fill =  sort(unique(model$HMMcls)))
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
