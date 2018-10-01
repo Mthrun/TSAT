@@ -44,6 +44,8 @@ export(SplitTime)
 export(WhiteNoiseTest)
 export(TSDistancesMatrix)
 export(WaveletFilter)
+export(ReadDates)
+export(WriteDates)
 
 import(ggplot2)
 import(Rcpp)
