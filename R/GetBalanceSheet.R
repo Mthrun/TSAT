@@ -1,5 +1,5 @@
-GetFinancialStatement=function(Symbol='SAP',URL='morningstar',Silent=TRUE){
-  #GetFinancialStatement('SAP')
+GetBalanceSheet=function(Symbol='SAP',URL='yahoo',Silent=TRUE){
+  #GetBalanceSheet('SAP')
   
   library(tidyverse)
   library(rvest)
@@ -31,7 +31,7 @@ GetFinancialStatement=function(Symbol='SAP',URL='morningstar',Silent=TRUE){
       
       url = paste0("https://finance.yahoo.com/quote/",
                    Symbol,
-                   "/financials?p=",
+                   "/balance-sheet?p=",
                    Symbol)
       remDr$navigate(url)
       #copy selector then put it here
@@ -84,84 +84,5 @@ GetFinancialStatement=function(Symbol='SAP',URL='morningstar',Silent=TRUE){
     url = 'https://www.msn.com/en-us/money/stockdetails/financials/fi-126.1.SAP.NYS'
   }
   if (URL == 'morningstar') {
-    url = paste0(
-      'http://financials.morningstar.com/ajax/ReportProcess4CSV.html?t=XFRA:',
-      Symbol,
-      '&reportType=is&period=3&dataType=A&order=asc&denominatorView=raw&columnYear=5&number=3'
-    )
-    
-    tryCatch({
-      raw = read.csv(
-        file = url,
-        header = T,
-        sep = ',',
-        skip = 1,
-        stringsAsFactors = F
-      )
-      DF = raw[, c(2:6)]
-      Header = raw[, 1]
-      Time = gsub('X', '', colnames(raw)[2:6])
-      DF = t(DF)
-      colnames(DF) = Header
-      rownames(DF) = Time
-      DF[!is.finite(DF)] = NaN
-      
-      inddel = c()
-      share = 'Earnings per share'
-      indshare = which(Header == share)
-      if (length(indshare) > 0) {
-        colnames(DF)[indshare + 1] = paste(colnames(DF)[indshare + 1], share)
-        colnames(DF)[indshare + 2] = paste(colnames(DF)[indshare + 2], share)
-        inddel = c(inddel, indshare)
-      }
-      weight = 'Weighted average shares outstanding'
-      indweight = which(Header == weight)
-      if (length(indweight) > 0) {
-        colnames(DF)[indweight + 1] = paste(colnames(DF)[indweight + 1], weight)
-        colnames(DF)[indweight + 2] = paste(colnames(DF)[indweight + 2], weight)
-        inddel = c(inddel, indweight)
-      }
-      
-      other1 = 'Other income (expense)'
-      indother1 = which(Header == other1)
-      if (length(indweight) > 0) {
-        indother2 = which(colnames(DF) == other1)
-        indtemp1 = which(Header == "Total operating expenses")
-        indtemp2 = which(Header == "Total nonoperating income, net")
-        if (length(indtemp1))
-          colnames(DF)[indother2[1]] = paste(colnames(DF)[indtemp1], other1)
-        else
-          colnames(DF)[indother2[1]] = paste('FirstListed', other1[1])
-        if (length(indtemp1))
-          colnames(DF)[indother2[2]] = paste(colnames(DF)[indtemp2], other1)
-        else
-          colnames(DF)[indother2[2]] = paste('SecondListed', other1)
-      }
-      
-      indoperating = which(Header == "Operating expenses")
-      if (length(indoperating) > 0)
-        inddel = c(inddel, indoperating)
-      
-      if (length(inddel) > 0)
-        DF = DF[, -inddel]
-      
-      HeaderNew = colnames(DF)
-      
-      indOther = which(HeaderNew == "Other operating expenses")
-      if (length(indOther) > 0)
-        DF[is.nan(DF[, indOther]), indOther] = 0
-      
-      indOther2 = which(HeaderNew == "Other")
-      if (length(indOther2) > 0)
-        DF[is.nan(DF[, indOther2]), indOther2] = 0
-      
-      indOther3 = which(HeaderNew == "Preferred dividend")
-      if (length(indOther3) > 0)
-        DF[is.nan(DF[, indOther3]), indOther3] = 0
-      
-      
-      return(DF)
-    }, error = function(e)
-      return(url))
   }
 }
