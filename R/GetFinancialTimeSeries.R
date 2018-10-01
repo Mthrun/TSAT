@@ -1,6 +1,7 @@
 GetFinancialTimeSeries=function(url="https://finance.yahoo.com",start = "1998-01-01",
                                 quote = "Adj",instrument='ibm',PlotIt=TRUE){
 requireNamespace('tseries')
+#atlernative: TTR:getYahooData() zu pruefen
   tryCatch({
   con <- url(url)
   if(!inherits(try(open(con), silent = TRUE), "try-error")) {
