@@ -1,8 +1,8 @@
 Package: TSAT
 Type: Package
 Title: Time Series Analysis Tools (TSAT)
-Version: 1.0.2
-Date: 2018-09-28
+Version: 1.0.3
+Date: 2018-10-02
 Author: Michael Thrun, Quirin Stier
 Maintainer: Michael Thrun <m.thrun@gmx.net>
 Description: TSAT can be used to describe event-pattern detection as a part of Complex event processing (CEP) for categorial time series and gives several approaches for numerical times series, like Filtering through FFT or Karman Filter.
