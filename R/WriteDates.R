@@ -2,16 +2,17 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),  Comments=N
   #based on ReadLRN
   #author: MT 2018
   checkFilename(FileName,Directory=OutDirectory,Extension='csv',ReadOrWrite=FALSE,NameOfFunctionCalled='WriteDates()')
-  
+  requireNamespace('dplyr')
+  requireNamespace('tibble')
   CurrentDir = getwd()
   setwd(OutDirectory)
   FileName = addext(FileName,'csv')
   
-  if(!is.tibble(TSdata)){
+  if(!tibble::is.tibble(TSdata)){
     warning("TSdata is not tibble. Please make sure that one column is a 'Date' column. Calling as.tibble...")
-    TSdata=as.tibble(TSdata)
+    TSdata=tibble::as.tibble(TSdata)
   }
-  types=summarise_all(TSdata,class)
+  types=dplyr::summarise_all(TSdata,class)
   dind=which(types=="Date")
   if(length(dind)==0){
     stop('No Date column found.')

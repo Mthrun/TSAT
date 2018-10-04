@@ -5,7 +5,8 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   
   checkFilename(FileName,Directory=InDirectory,Extension='csv',ReadOrWrite=TRUE,NameOfFunctionCalled='ReadDates()')
   currentWD=getwd() #Aktuelles verzeichnis merken
-  
+  requireNamespace('dplyr')
+  requireNamespace('tibble')
   setwd(InDirectory)
   
   FileName  = addext(FileName,'csv');     #  checks for the right extension and adds it if necessary
@@ -119,7 +120,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   } 
   DF=as.tibble(Data[,-tind])
   DF=lapply(DF,type.convert, as.is=TRUE)
-  DF=as_tibble(DF) 
+  DF=tibble::as_tibble(DF) 
   Time=as.Date(Data[,tind])
   
   #print(str(Time))
@@ -129,7 +130,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   else
     if(sum(!is.finite(Time))) warning(paste(sum(!is.finite(Time)),"Times are missing")) 
   
-  Time=as.tibble(Time)
+  Time=tibble::as.tibble(Time)
   TibbleDF=dplyr::bind_cols(Time,DF)
   colnames(TibbleDF)=Header
   
