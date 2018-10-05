@@ -14,8 +14,6 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   FileName  = addext(FileName,'csv');     #  checks for the right extension and adds it if necessary
   # see if the diretory is there and has a canonical name
   InDirectory = normalizePath(InDirectory);
-  
-  
   setwd(InDirectory) #Ins Verzeichnis wo sich Datei befindet wechseln
 
   ColNameFlag=T
@@ -123,7 +121,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
     warning("Column with name 'Time' not found. Assuming that the time is stored in the second column.")
     tind=1
   } 
-  DF=as.tibble(Data[,-tind])
+  DF=tibble::as.tibble(Data[,-tind])
   DF=lapply(DF,type.convert, as.is=TRUE)
   DF=tibble::as_tibble(DF) 
   Time=as.Date(Data[,tind])
