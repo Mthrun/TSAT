@@ -14,8 +14,14 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),  Comments=N
   }
   types=dplyr::summarise_all(TSdata,class)
   dind=which(types=="Date")
+  
   if(length(dind)==0){
-    stop('No Date column found.')
+    warning('No Date type column found.')
+    dind=0
+  }
+  if(length(dind)>1){
+    warning('More than one Date type column found. Using the first one')
+    dind=dind[1]
   }
   RowsCols=dim(TSdata)
   Rows=RowsCols[1]
@@ -29,18 +35,24 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),  Comments=N
   }
   if(length(unique(Key))!=length(Key)) stop('Key is not unique')
   
-  TibbleDF = cbind(Key=Key, Time=TSdata[,dind],TSdata[,-dind])
-  Header=colnames(TibbleDF)
+  if(dind==0){
+    TibbleDF = cbind(Key=Key, TSdata)
+  }else{
+    TibbleDF = cbind(Key=Key, Time=TSdata[,dind],TSdata[,-dind])
+    if(sum(!is.finite(TibbleDF$Time))==length(TibbleDF$Time)) 
+      stop('Time has a format which as.Date does not recognize.')
+    else
+      if(sum(!is.finite(TibbleDF$Time))) warning(paste(sum(!is.finite(TibbleDF$Time)),"lines of the Time feature are missing values.")) 
+  }
   
+  Header=colnames(TibbleDF)
   header = c(paste('%\t',Rows),paste('%\t',Cols))
-  #MT:
   if(is.character(Comments)){
     write.table(paste0('# ',Comments), FileName, quote=FALSE, row.names=FALSE, col.names=FALSE, na='NaN')
     write.table(header, FileName,append=TRUE, quote=FALSE,sep='\t', row.names=FALSE, col.names=FALSE, na='NaN')
   }else{ 
     write.table(header, FileName, quote=FALSE, row.names=FALSE, col.names=FALSE, na='NaN')
   }
-  
   
   # write 'Header'-line
   cat('% ', file=FileName, append=TRUE)

@@ -2,6 +2,8 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   #based on ReadLRN
   #author: MT 2018
   Comments=NULL
+  Key=NULL
+  Header=NULL
   
   checkFilename(FileName,Directory=InDirectory,Extension='csv',ReadOrWrite=TRUE,NameOfFunctionCalled='ReadDates()')
   currentWD=getwd() #Aktuelles verzeichnis merken
@@ -15,7 +17,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   
   
   setwd(InDirectory) #Ins Verzeichnis wo sich Datei befindet wechseln
-  Header=NULL
+
   ColNameFlag=T
   tryCatch({
     check=T
@@ -111,8 +113,11 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
     stop("Header or Comments or Data are not reasonably defined, see Subversion/PUB/ZFileFormatDocuments for further instructions")
   }
   )
+  if(!is.null(Key))
+    rownames(Data)=Key
+  else
+    warning('Key is missing, Check data.')
   
-  rownames(Data)=Key
   tind=which(Header=='Time')
   if(length(tind)==0){
     warning("Column with name 'Time' not found. Assuming that the time is stored in the second column.")
@@ -128,7 +133,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   if(sum(!is.finite(Time))==length(Time)) 
     stop('Time has a format which as.Date does not recognize.')
   else
-    if(sum(!is.finite(Time))) warning(paste(sum(!is.finite(Time)),"Times are missing")) 
+    if(sum(!is.finite(Time))) warning(paste(sum(!is.finite(Time)),"lines of the Time feature are missing values.")) 
   
   Time=tibble::as.tibble(Time)
   TibbleDF=dplyr::bind_cols(Time,DF)
