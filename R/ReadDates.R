@@ -133,6 +133,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   else
     if(sum(!is.finite(Time))) warning(paste(sum(!is.finite(Time)),"lines of the Time feature are missing values.")) 
   
+  if(length(Time)!=unique(Time)) warning('Time is not unique meaning that there are multiple days with same date.')
   Time=tibble::as.tibble(Time)
   TibbleDF=dplyr::bind_cols(Time,DF)
   colnames(TibbleDF)=Header

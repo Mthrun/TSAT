@@ -45,6 +45,8 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),  Comments=N
       if(sum(!is.finite(TibbleDF$Time))) warning(paste(sum(!is.finite(TibbleDF$Time)),"lines of the Time feature are missing values.")) 
   }
   
+  if(length(TibbleDF$Time)!=unique(TibbleDF$Time)) warning('Time is not unique meaning that there are multiple days with same date.')
+  
   Header=colnames(TibbleDF)
   header = c(paste('%\t',Rows),paste('%\t',Cols))
   if(is.character(Comments)){
