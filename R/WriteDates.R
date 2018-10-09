@@ -46,8 +46,18 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),  Comments=N
   }
   
   if(length(TibbleDF$Time)!=length(unique(TibbleDF$Time))) warning('Time is not unique meaning that there are multiple days with same date.')
+
+  HeaderRaw=colnames(TibbleDF)
+  Header=HeaderRaw
+  Header=gsub('\\.','',Header)
+  Header=gsub(' ','',Header)
+  Header=gsub('\t','',Header)
+  Header=gsub(pattern = '[ä]', replacement = "ae",Header)
+  Header=gsub(pattern = '[ü]', replacement = "ue",Header)
+  Header=gsub(pattern = '[ö]', replacement = "oe",Header)
+ 
+  if(!identical(Header,HeaderRaw)) warning('Header (ColumnNames) had either spaces, points, or german umlaute which were replaced.')
   
-  Header=colnames(TibbleDF)
   header = c(paste('%\t',Rows),paste('%\t',Cols))
   if(is.character(Comments)){
     write.table(paste0('# ',Comments), FileName, quote=FALSE, row.names=FALSE, col.names=FALSE, na='NaN')
