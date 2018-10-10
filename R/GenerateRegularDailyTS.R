@@ -1,4 +1,4 @@
-GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine', PlotIt = FALSE){
+GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine', Start,End,PlotIt = FALSE){
   
   requireNamespace('tibble')
   requireNamespace('imputeTS')
@@ -10,10 +10,25 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
     Time=TimeChar
   
   if(length(Time)!=length(unique(Time))) warning('"TimeChar" is not unique meaning that several days have the same date.')
+  
+  orderedtime=order(Time,decreasing = FALSE,na.last = NA)
+  
+  if(length(Time)!=length(orderedtime)) warning('"TimeChar" is has NA dates, they are removed from "Datavec" and "TimeChar".')
+  
+  if(!identical(Time,Time[orderedtime])) warning('"TimeChar" was not ordered from past to future. "TimeChar" and "Datavec" reordered accordingly.')
+  
+  Time=Time[orderedtime]
+  Datavec=Datavec[orderedtime]
+  
   if(is.double(na.rm)) stop('"na.rm" parameter wrongly chosen')
   if(is.na(min(Time))) stop('Wrong "format" chosen, please change.')
   
-  FullTime=seq(from=min(Time),to=max(Time),by='days')
+  if(missing(Start))
+    Start=min(Time)
+  if(missing(End))
+    End=max(Time)
+  
+  FullTime=seq(from=Start,to=End,by='days')
   
   DF=data.frame(Time=FullTime,Data=NA)
   

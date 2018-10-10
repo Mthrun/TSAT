@@ -23,9 +23,7 @@ tz = 'UTC',option = 'stine' PlotIt = FALSE)
   \item{na.rm}{
 Either \code{TRUE}, \code{FALSE}, \code{zero}, \code{mean}, \code{min}, \code{max}, \code{ff}: ForwardFill or ,\code{bf}: BackwardFill, \code{weighted_ff}, \code{weighted_bf}
 }
-  \item{option}{
-in case of \code{na.rm=TRUE} the option of interpolation: "linear",  "spline" or "stine" . Please see  \code{\link[imputeTS]{na.interpolation}} documentation for further details
-}
+
   \item{format}{
 if not default, then check \code{\link{strptime}} function
 }
@@ -33,6 +31,16 @@ if not default, then check \code{\link{strptime}} function
   sometimes durations and time difference cannot be calculated if timezone is not chosen,
                          default: 'UTC'
 }
+  \item{option}{
+in case of \code{na.rm=TRUE} the option of interpolation: "linear",  "spline" or "stine" . Please see  \code{\link[imputeTS]{na.interpolation}} documentation for further details
+}
+
+  \item{Start}{
+  Optional, \code{as.Date} object defining the beginning of the timeseries, default is the minimum point of time in \code{TimeChar}
+  }
+  \item{End}{
+  Optional, \code{as.Date} object defining the ending of the timeseries, default is the minimum point of time in \code{TimeChar}
+  }
   \item{PlotIt}{
 TRUE: plotting, FALSE: no plots
 }
