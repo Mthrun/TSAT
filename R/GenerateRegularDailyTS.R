@@ -1,4 +1,4 @@
-GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine', Start,End,PlotIt = FALSE){
+GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End,PlotIt = FALSE){
   
   requireNamespace('tibble')
   requireNamespace('imputeTS')
@@ -110,13 +110,13 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
            stop('"na.rm" parameter wrongly chosen')
          }
   )
-  
+  colnames(DF)=Header
   if(PlotIt){
     #plot(na.spline(full),col='red')
     m <-graphics::layout(matrix(c(1, 1, 2,2)))
     plot(Time,Datavec,col='blue',main='Irregular Time Series',type='l')
     
-    plot(DF$Time,DF$Data,col='blue',pch=1, main='Regular Time Series',type='l',xlab='Time',ylab='Datavec')
+    plot(DF$Time,DF$Data,col='blue',pch=1, main='Regular Time Series',type='l',xlab=Header[1],ylab=Header[2])
     
   }
 

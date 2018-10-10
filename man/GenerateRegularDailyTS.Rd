@@ -10,7 +10,7 @@ Generates a regular time series with daily resolution out of an daily but irregu
 \usage{
 GenerateRegularDailyTS(TimeChar, Datavec, na.rm = TRUE, format = '\%Y-\%m-\%d',
 
-tz = 'UTC',option = 'stine' PlotIt = FALSE)
+tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End, PlotIt = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,7 +34,9 @@ if not default, then check \code{\link{strptime}} function
   \item{option}{
 in case of \code{na.rm=TRUE} the option of interpolation: "linear",  "spline" or "stine" . Please see  \code{\link[imputeTS]{na.interpolation}} documentation for further details
 }
-
+  \item{Header}{
+  Optional, Default is \code{c('Time','Data')} vector of character defining the two column names of the tibble data frame.
+  }
   \item{Start}{
   Optional, \code{as.Date} object defining the beginning of the timeseries, default is the minimum point of time in \code{TimeChar}
   }
