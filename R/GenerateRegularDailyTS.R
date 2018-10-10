@@ -33,7 +33,10 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
   DF=data.frame(Time=FullTime,Data=NA)
   
   ind=match(Time,DF$Time)
-  DF$Data[ind]=Datavec
+  if(sum(!is.finite(ind))>0) warning('Either Start or End is before/after Minimum/Maximum of "TimeChar"')
+  
+  ind2=ind[is.finite(ind)]
+  DF$Data[ind2]=Datavec[is.finite(ind)]
   
   switch(na.rm, 
          true={
