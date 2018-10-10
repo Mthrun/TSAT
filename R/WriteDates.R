@@ -46,7 +46,11 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),  Comments=N
   }
   
   if(length(TibbleDF$Time)!=length(unique(TibbleDF$Time))) warning('Time is not unique meaning that there are multiple days with same date.')
-
+  
+  orderedtime=order(TibbleDF$Time,decreasing = FALSE,na.last = NA)
+  if(length(TibbleDF$Time)!=length(orderedtime)) warning('"Time" has NA dates, they are not removed.')
+  if(!identical(TibbleDF$Time,TibbleDF$Time[orderedtime])) warning('"Time" was not ordered from past to future. "Time" and Data is not reordered accordingly.')
+  
   HeaderRaw=colnames(TibbleDF)
   Header=HeaderRaw
   Header=gsub('\\.','',Header)

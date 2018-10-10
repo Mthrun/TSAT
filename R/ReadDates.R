@@ -134,9 +134,15 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
     if(sum(!is.finite(Time))) warning(paste(sum(!is.finite(Time)),"lines of the Time feature are missing values.")) 
   
   if(length(Time)!=length(unique(Time))) warning('Time is not unique meaning that there are multiple days with same date.')
+  
+  
   Time=tibble::as.tibble(Time)
   TibbleDF=dplyr::bind_cols(Time,DF)
   colnames(TibbleDF)=Header
+  
+  orderedtime=order(TibbleDF$Time,decreasing = FALSE,na.last = NA)
+  if(length(TibbleDF$Time)!=length(orderedtime)) warning('"Time" has NA dates, they are not removed.')
+  if(!identical(TibbleDF$Time,TibbleDF$Time[orderedtime])) warning('"Time" was not ordered from past to future. "Time" and Data is not reordered accordingly.')
   
   if(SilentComments){
     if(!is.null(Comments)){
