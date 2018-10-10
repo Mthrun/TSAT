@@ -116,7 +116,7 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
     m <-graphics::layout(matrix(c(1, 1, 2,2)))
     plot(Time,Datavec,col='blue',main='Irregular Time Series',type='l')
     
-    plot(DF$Time,DF$Data,col='blue',pch=1, main='Regular Time Series',type='l',xlab=Header[1],ylab=Header[2])
+    plot(DF[,1],DF[,2],col='blue',pch=1, main='Regular Time Series',type='l',xlab=Header[1],ylab=Header[2])
     
   }
 
