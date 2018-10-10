@@ -6,6 +6,8 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
   requireNamespace('lubridate')
   if(!lubridate::is.Date(TimeChar))
     Time=as.Date(strptime(TimeChar,format = format,tz = tz))
+  else
+    Time=TimeChar
   
   if(length(Time)!=length(unique(Time))) warning('"TimeChar" is not unique meaning that several days have the same date.')
   if(is.double(na.rm)) stop('"na.rm" parameter wrongly chosen')
