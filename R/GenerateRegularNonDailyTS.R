@@ -1,4 +1,4 @@
-GenerateRegularTS=function(Datavec,TimeChar,TimeResolutionBegin='secs',TimeResolutionEnd='mins',Minutes=1,PlotIt=FALSE,formating='(%y-%m-%d %H:%M:%S)',tz = 'UTC'){
+GenerateRegularNonDailyTS=function(Datavec,TimeChar,TimeResolutionBegin='secs',TimeResolutionEnd='mins',Minutes=1,PlotIt=FALSE,formating='(%y-%m-%d %H:%M:%S)',tz = 'UTC'){
   
   #TimeChar=as.POSIXct(Time,origin = '1970-01-01',tz = 'UTC')
   #author: MT 02/2018
@@ -12,7 +12,7 @@ GenerateRegularTS=function(Datavec,TimeChar,TimeResolutionBegin='secs',TimeResol
   #     TimeChar=strptime(as.character(TimeChar),format=formating,tz = tz) 
   #   }
   # }
-  
+  if(TimeResolutionBegin=='days') stop('Please use the "GenerateRegularDailyTS" function.')
   ind=!duplicated(TimeChar)
   outage.zoo <- zoo::as.zoo(x = Datavec[ind], order.by=TimeChar[ind])
   

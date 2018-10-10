@@ -1,14 +1,14 @@
-\name{GenerateRegularTS}
-\alias{GenerateRegularTS}
+\name{GenerateRegularNonDailyTS}
+\alias{GenerateRegularNonDailyTS}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-GenerateRegularTS
+GenerateRegularNonDailyTS
 }
 \description{
-Generates a regular time series out of an irregular time series.
+Generates a non daily regular time series out of an non-daily irregular time series.
 }
 \usage{
-GenerateRegularTS(Datavec,TimeChar,TimeResolutionBegin='secs',
+GenerateRegularNonDailyTS(Datavec,TimeChar,TimeResolutionBegin='secs',
 
 TimeResolutionEnd='mins',Minutes=1,PlotIt=FALSE,
 
@@ -22,16 +22,16 @@ tz='UTC')
 }
 
   \item{TimeChar}{[1:n]
-		Time, a chron object or a POSIXlt object or a character vector,  Devicespezifische Zeit, 
+		Time, a chron object or a POSIXlt object or a character vector,  Devices sepcific time, 
 		if not chron object, please adjust format neceassry
 		It hast to be convertible to character
 }
-\item{TimeResolutionBegin}{to be filled...
+\item{TimeResolutionBegin}{'secs','mins','hours' but not 'days'
 }
-\item{TimeResolutionEnd}{to be filled...
+\item{TimeResolutionEnd}{'secs','mins','hours' but not 'days'
 }
 
-\item{Minutes}{to be filled...
+\item{Minutes}{timedifference between two points in time in minutes
 }
 \item{PlotIt}{TRUE: plotting, FALSE: no plots
 }
@@ -47,6 +47,7 @@ tz='UTC')
 \details{
 Irregular time-series objects are scalar or vector valued time series indexed by a time-stamp of class
 \code{POSIXlt} used to represent irregularly temporal-spaced measurements.
+For daily time see please \code{\link{GenerateRegularDailyTS}}
 }
 \value{
 Regular TS of equidistance as a zoo object
@@ -57,5 +58,11 @@ Regular TS of equidistance as a zoo object
 \author{
 Michael Thrun
 }
+
+
+\seealso{
+\code{\link{GenerateRegularDailyTS}}
+}
+
 \keyword{irregular ts}% use one of  RShowDoc("KEYWORDS")
 \keyword{regular ts}% __ONLY ONE__ keyword per line
