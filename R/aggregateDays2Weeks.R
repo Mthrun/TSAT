@@ -1,4 +1,4 @@
-aggregateDays2Weeks=function(Time,Data,FUN,Header){
+aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
   
   # requireNamespace('lubridate')
   # b=lubridate::isoweek(x = Time)
@@ -42,7 +42,7 @@ aggregateDays2Weeks=function(Time,Data,FUN,Header){
   DF=data.frame(Time=Time,Data=Data)
   DF$Time=cut(Time,breaks='weeks')
   
-  dsummary = aggregate(DF$Data ~ DF$Time, FUN=FUN,    data=DF)
+  dsummary = aggregate(DF$Data ~ DF$Time, data=DF,FUN=FUN,...)
   
   colnames(dsummary)=c('Time',Header)
   
