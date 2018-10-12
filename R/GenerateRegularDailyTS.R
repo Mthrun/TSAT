@@ -31,7 +31,7 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
   FullTime=seq(from=Start,to=End,by='days')
   
   DF=data.frame(Time=FullTime,Data=NA)
-  
+
   ind=match(Time,DF$Time)
   if(sum(!is.finite(ind))>0) warning('Either Start or End is before/after Minimum/Maximum of "TimeChar"')
   
@@ -77,16 +77,24 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
          weighted_bf={
            DF$WertNotmiert=NaN
            nonmissingind=which(is.finite(DF$Data))
+           
+           indStart=seq(from=1,to=nonmissingind[1],by=1) #take start to first nonmissing
+           nstart=length(indStart)
+           DF$WertNotmiert[indStart]=DF$Data[nonmissingind[1]]/nstart
+           
            for(i in 2:length(nonmissingind)){
-      
               ind=seq(from=nonmissingind[i-1]+1,to=nonmissingind[i],by=1)
               n=length(ind)
-
               DF$WertNotmiert[ind]=DF$Data[nonmissingind[i]]/n
            }
-           if(nonmissingind[1]==1)
-            DF$WertNotmiert[1]=DF$Data[1]
-
+           # if(nonmissingind[1]==1&Start==Time[1]) #Anfaenge ueberlappen
+           #    DF$WertNotmiert[1]=DF$Data[1]
+          
+           # if(Start<Time[1]){#Regulaere ZR beginnt frueher 
+           #    ind=seq(from=1,to=nonmissingind[1],by=1)
+           #    n=length(ind)
+           #    DF$WertNotmiert[ind]=DF$Data[nonmissingind[i]]/n
+           # } 
            DF2=DF[,c('Time','Data')]
            DF2$Data=DF$WertNotmiert
            DF=DF2
@@ -99,9 +107,17 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
              n=length(ind)
              DF$WertNotmiert[ind]=DF$Data[nonmissingind[i]]/n
            }
-           if(tail(nonmissingind,1)==nrow(DF))
-             DF$WertNotmiert[nrow(DF)]=DF$Data[nrow(DF)]
-           
+           indEnde=seq(from=tail(nonmissingind,1),to=nrow(DF),by=1) #take last non missing to end
+           nEnde=length(indEnde)
+           DF$WertNotmiert[indEnde]=DF$Data[tail(nonmissingind,1)]/nEnde
+           # if(tail(nonmissingind,1)==nrow(DF)) #Ende der regulaeren ZR ist ende der irregulaeren und mit wert
+           #   DF$WertNotmiert[nrow(DF)]=DF$Data[nrow(DF)]
+           # 
+           # if(tail(nonmissingind,1)<nrow(DF)){ #Regulaere ZR ist groesser
+           #   ind=seq(from=nonmissingind[i],to=nrow(DF),by=1)
+           #   n=length(ind)
+           #   DF$WertNotmiert[ind]=DF$Data[nonmissingind[i]]/n
+           # } 
            DF2=DF[,c('Time','Data')]
            DF2$Data=DF$WertNotmiert
            DF=DF2
