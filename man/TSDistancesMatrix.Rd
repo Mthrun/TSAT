@@ -74,7 +74,7 @@ DistanceMatrix[1:m,1:m]
 }
 
 \references{
-Mörchen, Fabian. Time series knowledge mining. Görich & Weiershäuser, 2006.
+[Moerchen, 2006]	Moerchen, Fabian. Time series knowledge mining. Goerich & Weiershaeuser, 2006.
 }
 \author{
 Michael Thrun
