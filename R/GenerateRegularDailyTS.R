@@ -1,4 +1,4 @@
-GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End,PlotIt = FALSE){
+GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End,AggregateFun=sum,PlotIt = FALSE){
   
   requireNamespace('tibble')
   requireNamespace('imputeTS')
@@ -9,16 +9,24 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
   else
     Time=TimeChar
   
-  if(length(Time)!=length(unique(Time))) warning('"TimeChar" is not unique meaning that several days have the same date.')
-  
   orderedtime=order(Time,decreasing = FALSE,na.last = NA)
   
   if(length(Time)!=length(orderedtime)) warning('"TimeChar" is has NA dates, they are removed from "Datavec" and "TimeChar".')
   
   if(!identical(Time,Time[orderedtime])) warning('"TimeChar" was not ordered from past to future. "TimeChar" and "Datavec" reordered accordingly.')
   
+  if(length(Time)!=length(Datavec)) stop('Length of "TimeChar" and "Datavec" has to be equal.')
+  
   Time=Time[orderedtime]
   Datavec=Datavec[orderedtime]
+  
+  if(length(Time)!=length(unique(Time))){
+    warning('"TimeChar" is not unique meaning that several days have the same date. Trying to use aggregate to solve this problem.')
+    DF=aggregate(Datavec~Time,FUN = AggregateFun,na.rm=TRUE)
+    colnames(DF)=c('Time','Datavec')
+    Time=DF$Time
+    Datavec=DF$Datavec
+  } 
   
   if(is.double(na.rm)) stop('"na.rm" parameter wrongly chosen')
   if(is.na(min(Time))) stop('Wrong "format" chosen, please change.')

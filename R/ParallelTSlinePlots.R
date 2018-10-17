@@ -14,8 +14,12 @@ ParallelTSlinePlots=function(Data,Time,DailyRegular=TRUE,scales = list(y = "same
       dat=ts(Data,frequency = 1,start = min(Time),end = max(Time))
     }else{
       requireNamespace('lubridate')
+      requireNamespace('tibble')
       # lubridate::month(min(Time))*30
       # lubridate::day(min(Time))
+      if(tibble::is.tibble(Time)){
+        Time = as.Date(as.matrix(V2[,1]))
+      }
       ref_date=as.Date(paste0(lubridate::year(min(Time)),'-01-01'))
       first_date=min(Time)
       days=difftime(first_date,ref_date,units = "days")
