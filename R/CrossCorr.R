@@ -50,7 +50,7 @@ if(!is.vector(FirstTimeSeries)| !is.vector(SecondTimeSeries)) warning('One ore b
 if(sum(!is.finite(FirstTimeSeries))!=0 | sum(!is.finite(SecondTimeSeries))!=0)    warning('One ore both Timeseries have NaN values, Please check if you used the parameter na.action = na.omit correctly for ccf.')
 
   res1=ccf(FirstTimeSeries, SecondTimeSeries, lag.max = nLags, type = type,
-      plot = FALSE, na.action = na.fail,...)
+      plot = FALSE,...)
   ind=which.max(abs(res1$acf))
   if(missing(main))
     main=paste('Maximum of ccf(TS1,TS2) =',round(res1$acf[ind],2),'at lag =',ind-nLags)

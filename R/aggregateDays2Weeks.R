@@ -29,16 +29,28 @@ aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
   #   warning('Length is not equal. please transform manually')
   # return(list(WeeklyTime=WeeklyTime,WeeklyData=WeeklyData))     
   
-  if(missing(Header)){
-    if(is.matrix(Data)|is.data.frame(Data)){
-      if(length(Time)!=nrow(Data)) stop('Unequal number of rows in Data compared to Time')
-      Header=colnames(Data)
-    }else{
-      Header='Data'
-      if(length(Time)!=length(Data)) stop('Unequal length in Data compared to Time')
+  requireNamespace('tibble')
+  if(tibble::is.tibble(Data)){
+    requireNamespace('dplyr')
+    Time=as.Date(as.matrix(Time))
+    Data$WeekTime=cut(Time,breaks='weeks')
+    
+    df = dplyr::group_by(Data,WeekTime)
+    df2=dplyr::summarize_all(df,sum,na.rm=T)
+    
+    return(df2)
+  }else{
+    if(missing(Header)){
+      if(is.matrix(Data)|is.data.frame(Data)){
+        if(length(Time)!=nrow(Data)) stop('Unequal number of rows in Data compared to Time')
+        Header=colnames(Data)
+      }else{
+        Header='Data'
+        if(length(Time)!=length(Data)) stop('Unequal length in Data compared to Time')
+      }
     }
-  }
-    if(!is.vector(Data)) warning('May not Work with more than one column of data')
+  if(!is.vector(Data)) warning('May not Work with more than one column of data')
+ 
   DF=data.frame(Time=Time,Data=Data)
   DF$Time=cut(Time,breaks='weeks')
   
@@ -48,7 +60,7 @@ aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
   
   dsummary$Time=as.Date(dsummary$Time)
   return(dsummary)
-   
+  }
 }
 
 # AggegateDaysToWeeks=function(Data,Time,method='sum'){

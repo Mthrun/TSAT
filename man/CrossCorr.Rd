@@ -37,7 +37,7 @@ further arguments passed on to output of \code{\link{ccf}}
 }
 }
 \details{
-Procecderute ist as follows: the timeseries is moved forward from \code{FirstTimeSeries[t+1]} to  \code{FirstTimeSeries[t+nLags]} and backward from \code{FirstTimeSeries[t-1]} to  \code{FirstTimeSeries[t-nLags]} and every lagged time series \code{FirstTimeSeries} is compared to \code{SecondTimeSeries}.
+Procedure ist as follows: the timeseries is moved forward from \code{FirstTimeSeries[t+1]} to  \code{FirstTimeSeries[t+nLags]} and backward from \code{FirstTimeSeries[t-1]} to  \code{FirstTimeSeries[t-nLags]} and every lagged time series \code{FirstTimeSeries} is compared to \code{SecondTimeSeries}.
 
 A cross corelation at lag \code{nlag} means that the value nlag-time steps ahead of the \code{FirstTimeSeries}  correlates with the value of the current time step of the \code{SecondTimeSeries}. 
 

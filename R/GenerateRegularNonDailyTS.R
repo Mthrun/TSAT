@@ -12,7 +12,7 @@ GenerateRegularNonDailyTS=function(Datavec,TimeChar,TimeResolutionBegin='secs',T
   #     TimeChar=strptime(as.character(TimeChar),format=formating,tz = tz) 
   #   }
   # }
-  if(TimeResolutionBegin=='days') stop('Please use the "GenerateRegularDailyTS" function.')
+  if(TimeResolutionBegin=='days') warning('Please use the "GenerateRegularDailyTS" function.')
   ind=!duplicated(TimeChar)
   outage.zoo <- zoo::as.zoo(x = Datavec[ind], order.by=TimeChar[ind])
   
