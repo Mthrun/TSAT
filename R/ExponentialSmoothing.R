@@ -15,12 +15,16 @@ ExponentialSmoothing=function(Time,Data,Type='StateSpaceModel',PlotIt,...){
   plot(model)
   },
   
-  HoltWinters={mod1 <- HoltWinters(Weekly$Data, alpha=0.1, beta=FALSE, gamma=FALSE)
+  HoltWinters={mod1 <- HoltWinters(Weekly$Data, ...)#alpha=0.1, beta=FALSE, gamma=FALSE)
   predict(mod1, n.ahead=12)
   },
   #http://uc-r.github.io/ts_exp_smoothing
-  StateSpaceModel={qcement.hw <- ets(dat, , model = "MAM")#model = "AAA")
+  StateSpaceModel={qcement.hw <- ets(dat, model = "MAM",...)#model = "AAA")
   autoplot(forecast(qcement.hw))
+  },
+  
+  StructTS={
+    StructTS(dat,...)
   }
   )
 }
