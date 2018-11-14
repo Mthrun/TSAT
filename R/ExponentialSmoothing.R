@@ -3,11 +3,13 @@ ExponentialSmoothing=function(Time,Data,Type='StateSpaceModel',PlotIt,...){
   # require(smooth)
   # require(greybox)
   # require(Mcomp)
+  requireNamespace('lubridate')
+    requireNamespace('forecast')
   warning('UnderDevelopment')
   
   switch(Type)(
   
-  SSOE={dat=ts(Weekly$Data, freq=365.25/7, start=decimal_date(ymd(min(Weekly$Time))))
+  SSOE={dat=ts(Weekly$Data, freq=365.25/7, start=lubridate::decimal_date(lubridate::ymd(min(Weekly$Time))))
   a=smooth::es(dat, h=18, holdout=TRUE, silent=FALSE, model=c("CCC","ANN","AAN","AAdN","ANA","AAA","AAdA"))
   },
   
