@@ -35,7 +35,7 @@ Becker, R. A., Chambers, J. M. and Wilks, A. R. (1988) The New S Language. Wadsw
 Michael Thrun
 }
 \note{
-%%  ~~further notes~~
+Internal \code{Frequency} of weekly data is estimated with 365.25/7 in the \code{\link{ts}} function.
 }
 
 \seealso{
