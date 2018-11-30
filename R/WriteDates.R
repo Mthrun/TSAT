@@ -12,6 +12,15 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),  Comments=N
     warning("TSdata is not tibble. Please make sure that one column is a 'Date' column. Calling as.tibble...")
     TSdata=tibble::as.tibble(TSdata)
   }
+  TSdata[] <- lapply(TSdata, gsub, pattern="\t", replacement=" ")
+  TSdata[] <- lapply(TSdata, gsub, pattern="\n", replacement=" ")
+  TSdata[] <- lapply(TSdata, gsub, pattern="\r", replacement=" ")
+  TSdata[] <- lapply(TSdata, gsub, pattern="     ", replacement=" ")
+  TSdata[] <- lapply(TSdata, gsub, pattern="    ", replacement=" ")
+  TSdata[] <- lapply(TSdata, gsub, pattern="   ", replacement=" ")
+  TSdata[] <- lapply(TSdata, gsub, pattern="  ", replacement=" ")
+
+  
   types=dplyr::summarise_all(TSdata,class)
   dind=which(types=="Date")
   

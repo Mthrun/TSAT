@@ -103,7 +103,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   },warning=function(e){
     warning(e)
     warning('Please check row and column numbers, Trying to bypass error...')
-    Z = read.table(FileName, comment.char = "%", header=FALSE,  fill=TRUE, stringsAsFactors = FALSE, na.strings=c('NA','NaN'),skip=beginHeader+3)
+    Z = read.table(FileName, comment.char = "%", header=FALSE,  fill=TRUE, stringsAsFactors = FALSE, na.strings=c('NA','NaN'),skip=beginHeader+2,sep = '\t')
     Key=as.vector(Z[,keyind])
     Data=Z[,-keyind]
   },stop=function(f){
