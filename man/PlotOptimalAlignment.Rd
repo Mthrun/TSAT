@@ -19,7 +19,7 @@ PlotOptimalAlignment(FirstVector, SecondVector, Type = "threeway", FirstTime, Se
 [1:m] numerical vector
 }
   \item{Type}{
-Optional, Type alignment plot: \cod{twoway}, \code{threeway}, \code{density}
+Optional, Type alignment plot: \code{twoway}, \code{threeway}, \code{density}, \code{alignment}
 }
   \item{FirstTime}{
 Optional, [1:n] vector, time object of class Date, see \code{\link{ConvertNumerical2TSobject}}
@@ -35,12 +35,14 @@ Optional, arguments passed on to \code{\link{DTWdistance}}
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+For Plot types see either pictures in [Giorgino, 2009] or \code{\link[dtw]{dtwPlot}} documentation.
 }
 \value{
 Output in invisible mode of \code{\link[dtw]{dtwPlot}}
 }
 \references{
+[Giorgino, 2009]  Giorgino, T.: Computing and visualizing dynamic time warping alignments in R: the dtw package, Journal of statistical Software, Vol. 31(7), pp. 1-24. 2009.
+
 Rabiner, L. R., & Juang, B.-H. (1993). Chapter 4 in Fundamentals of speech recognition. Englewood Cliffs, NJ: Prentice Hall.
 }
 \author{
