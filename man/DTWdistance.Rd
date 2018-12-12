@@ -29,7 +29,7 @@ Currently only implemented for time series of same length. Distances in \code{Di
 [1:d,1:d] symmetric matrix of distances
 }
 \references{
-Toni Giorgino. Computing and Visualizing Dynamic Time Warping Alignments in R: The dtw Package. Journal of Statistical Software, 31(7), 1-24. http://www.jstatsoft.org/v31/i07/ 
+[Giorgino, 2009]  Giorgino, T.: Computing and visualizing dynamic time warping alignments in R: the dtw package, Journal of statistical Software, Vol. 31(7), pp. 1-24. 2009.
 }
 \author{
 Michael Thrun

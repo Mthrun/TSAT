@@ -12,7 +12,7 @@ PlotOptimalAlignment=function(FirstVector,SecondVector,Type='threeway',FirstTime
 # dtw object in invisible mode
   #author: MT, 2018
   #[Giorgino, 2009]  Giorgino, T.: Computing and visualizing dynamic time warping alignments in R: the dtw package, Journal of statistical Software, Vol. 31(7), pp. 1-24. 2009.
-  
+  requireNamespace('dtw')
    if(missing(Frequency)) Frequency='days'
   
   if(missing(FirstTime)){

@@ -1,5 +1,5 @@
 DTWdistance=function(Data,DistanceFunction=proxy::dist,...){
-
+  requireNamespace('dtw')
   d=ncol(Data)
   Distance=matrix(NaN,d,d)
   diag(Distance)=0
