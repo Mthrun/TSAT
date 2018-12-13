@@ -55,10 +55,22 @@ aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
   DF$Time=cut(Time,breaks='weeks')
   
   dsummary = aggregate(DF$Data ~ DF$Time, data=DF,FUN=FUN,...)
+
+  dsummary$'DF$Time'=as.Date(dsummary$'DF$Time')
   
-  colnames(dsummary)=c('Time',Header)
-  
-  dsummary$Time=as.Date(dsummary$Time)
+  if(length(Header)==1)
+    colnames(dsummary)=c('Time',Header)
+  else{
+    if(length(Header)==length(colnames(dsummary))){
+      colnames(dsummary)=Header
+    }else if(length(Header)==(-1+length(colnames(dsummary)))){
+      colnames(dsummary)=c('Time',Header)
+    }else{
+      warning('Length of Header is not matched by number of columns')
+      colnames(dsummary)=c('Time',Header)
+    }
+  }
+
   return(dsummary)
   }
 }
