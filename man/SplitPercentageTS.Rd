@@ -31,13 +31,13 @@ List with
 [1:k] vector, first k entries of \code{Datavector}
 }
   \item{TrainingTime}{
-Optional, [1:k] vector, first k entries of \code{Time}
+Either \code{NULL} or [1:k] vector, first k entries of \code{Time}, if \code{Time} given
 }
-  \item{Time}{
+  \item{TestSet}{
 TestSet, [1:m] vector, last m entries of \code{Datavector}
 }
-  \item{Time}{
-TestTime, [1:m] vector, last m entries of \code{Time}
+  \item{TestTime}{
+Either \code{NULL} or [1:m] vector, last m entries of \code{Time}, if \code{Time} given
 }
 }
 
