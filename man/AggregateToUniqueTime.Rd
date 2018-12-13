@@ -26,7 +26,7 @@ further arguments passed on to \code{Fun}
 }
 }
 \details{
-Generalized Aggregation to Unique Time by any function defined by \codde{sum}
+Generalized Aggregation to Unique Time by any function defined by \code{sum}
 }
 \value{
 Lixt with

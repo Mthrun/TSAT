@@ -7,7 +7,7 @@ ExponentialSmoothing=function(Time,Data,Type='StateSpaceModel',PlotIt,...){
     requireNamespace('forecast')
   warning('UnderDevelopment')
   
-  switch(Type)(
+  switch(Type,
   
   SSOE={dat=ts(Weekly$Data, freq=365.25/7, start=lubridate::decimal_date(lubridate::ymd(min(Weekly$Time))))
   a=smooth::es(dat, h=18, holdout=TRUE, silent=FALSE, model=c("CCC","ANN","AAN","AAdN","ANA","AAA","AAdA"))
@@ -27,6 +27,9 @@ ExponentialSmoothing=function(Time,Data,Type='StateSpaceModel',PlotIt,...){
   
   StructTS={
     StructTS(dat,...)
+  },
+  {
+    stop('No Method chosen')
   }
   )
 }
