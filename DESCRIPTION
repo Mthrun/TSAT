@@ -8,7 +8,7 @@ Maintainer: Michael Thrun <m.thrun@gmx.net>
 Description: TSAT can be used to describe event-pattern detection as a part of Complex event processing (CEP) for categorial time series and gives several approaches for numerical times series, like Filtering through FFT or Karman Filter.
 License: GPL-3
 Imports: DataVisualizations, ggplot2, Rcpp, rugarch
-Suggests: xts, imputeTS, AdaptGauss, signal, chron, WaveletComp, dlm, TSdist, zoo, xts, fanplot, forecast, prophet, lmtest, vars, fUnitRoots, tseries, dtw, RHmm, plotly, dplyr, tibble, htmlwidgets,latticeExtra, Classifiers, dbt.ClassAnalysis, dbt.Transforms
+Suggests: xts, imputeTS, AdaptGauss, signal, chron, WaveletComp, dlm, TSdist, zoo, xts, fanplot, forecast, prophet, lmtest, vars, fUnitRoots, tseries, dtw,randomForest, RHmm, plotly, dplyr, tibble, htmlwidgets,latticeExtra, Classifiers, dbt.ClassAnalysis, dbt.Transforms
 LinkingTo: Rcpp
 Depends: R (>= 3.0)
 NeedsCompilation: no
