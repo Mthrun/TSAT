@@ -1,4 +1,4 @@
-AggregateToUniqueTime=function(Time,DataVectorOrMatrix,Fun=sum,...){
+aggregateToUniqueTime=function(Time,DataVectorOrMatrix,Fun=sum,...){
 
   ind=order(Time,decreasing = F,na.last = T)
   Time=Time[ind]

@@ -1,5 +1,5 @@
-\name{AggregateToUniqueTime}
-\alias{AggregateToUniqueTime}
+\name{aggregateToUniqueTime}
+\alias{aggregateToUniqueTime}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Aggregate to Unique Time
@@ -8,7 +8,7 @@ Aggregate to Unique Time
 Aggregation to Unique Time by any function
 }
 \usage{
-AggregateToUniqueTime(Time, DataVectorOrMatrix, Fun = sum, ...)
+aggregateToUniqueTime(Time, DataVectorOrMatrix, Fun = sum, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -50,5 +50,5 @@ Michael Thrun
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{AggregateToUniqueTime}% use one of  RShowDoc("KEYWORDS")
-\keyword{Aggregate}% __ONLY ONE__ keyword per line
+\keyword{aggregate}% __ONLY ONE__ keyword per line
 \keyword{Aggregation}% __ONLY ONE__ keyword per line

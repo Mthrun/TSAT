@@ -1,6 +1,8 @@
 export(AddCounts)
 export(aggregateDays2Weeks)
+export(aggregateDays2Months)
 export(aggregateTime2Days)
+export(aggregateToUniqueTime)
 export(autoCompoundModel)
 export(autoARIMA)
 export(AutoCorr)
