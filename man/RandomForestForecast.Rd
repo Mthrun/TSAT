@@ -58,7 +58,6 @@ Michael Thrun
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 \seealso{
  \code{\link[randomForest]{randomForest}}
- }
 }
 \examples{
 ##ToDo
