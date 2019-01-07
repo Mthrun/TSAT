@@ -31,7 +31,7 @@ This function was taken from DatabionicSwarm::RelativeDifferences and slightly a
 
 The nominator is contrary to [Ultsch, 2008] in absolute values of \code{X} and \code{Y}.
 Contrary to other approaches in this cases the range of values lies between [-100,100] in percent. The approach is only valid for positive and negative values of\code{X} and \code{Y}.
-The realtive difference \code{R} is defined with \deqn{SMAPE=100/n * \frac{Y-X}{(abs(X)+abs(Y))}}
+The realtive difference \code{R} is defined with \deqn{SMAPE=100/n * \frac{abs(Y-X)}{(abs(X)+abs(Y))}}
 
 Negative value indicate that \code{X}  is higher than \code{Y} and positive values that \code{X} is lower than \code{Y}.
 }

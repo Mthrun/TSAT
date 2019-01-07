@@ -10,16 +10,15 @@ SMAPE =function(X,Y,epsilon=10^-10,na.rm=FALSE){
     Y <- Y[noNaNInd]
   }
   if(length(X)!=length(Y)) stop('Length of X and Y do not match.')
-  if(length(X)>1) return(sum(mapply(X,FUN = RelativeDifference,Y))/length(X))
-  oben=Y-X
+  if(length(X)>1) return(sum(mapply(X,FUN = SMAPE,Y))/length(X))
+  oben=abs(Y-X)
+  #idee: eigentlich muesste man negative und positive betraege getrennt aufsummieren und betrachten, vielleicht als wurzel und dann als komplexe zahl
   unten=abs(X)+abs(Y)
   if(!is.finite(unten)) stop('Some of your values are not finite. Please use na.rm=TRUE')
   if(abs(unten)<epsilon){
     warning('X and Y are too small to calcualte Relative Differences. Returning 0')
     return(0)
   }
-  if(X<0) stop('Not defined for negative X values')
-  if(Y<0) stop('Not defined for negative Y values')
   return(100*oben/unten)
   #  smooth::SMAPE(actual, forecast, digits = 3) # does not use same formula...
 }
