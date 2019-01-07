@@ -5,8 +5,7 @@
 Symmetric mean absolute percentage error
 }
 \description{
-Calculates the realtive difference between positive x and y values [Armstrong,1985]. 
-
+Calculates the realtive difference between X (forecast) and y (historical data) [Armstrong,1985]. 
 }
 \usage{
 SMAPE(X, Y, epsilon = 10^-10,na.rm=FALSE)
@@ -29,7 +28,8 @@ Optional, function does not work with non finite values. If these cases should b
 \details{
 This function was taken from DatabionicSwarm::RelativeDifferences and slightly adjusted: 
 
-The nominator is contrary to [Ultsch, 2008] in absolute values of \code{X} and \code{Y}.
+The nominator is contrary to [Ultsch, 2008] in absolute values of \code{X} and \code{Y} resulting in the problem that SMAPE ist not symmetric regarding different forecasts since over- and under-forecasts are not treated equally (see example for further details). 
+
 Contrary to other approaches in this cases the range of values lies between [-100,100] in percent. The approach is only valid for positive and negative values of\code{X} and \code{Y}.
 The realtive difference \code{R} is defined with \deqn{SMAPE=100/n * \frac{abs(Y-X)}{(abs(X)+abs(Y))}}
 
@@ -46,7 +46,7 @@ SMAPE
 Michael Thrun
 }
 \note{
-Contrary to the relative differences, it is not symmetric since over- and under-forecasts are not treated equally. See example.
+Contrary to the relative differences, SMAPE is not symmetric.
 }
 \seealso{
 DatabionicSwarm::RelativeDifferences
