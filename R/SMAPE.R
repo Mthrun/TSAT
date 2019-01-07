@@ -1,24 +1,25 @@
-SMAPE=function(actual, forecast, digits = 3){
-  smooth::SMAPE(actual, forecast, digits = 3)
-  #for seasonal MASE see https://stackoverflow.com/questions/11092536/forecast-accuracy-no-mase-with-two-vectors-as-arguments
-
-  # computeMASE <- function(forecast,train,test,period){
-  #   
-  #   # forecast - forecasted values
-  #   # train - data used for forecasting .. used to find scaling factor
-  #   # test - actual data used for finding MASE.. same length as forecast
-  #   # period - in case of seasonal data.. if not, use 1
-  #   
-  #   forecast <- as.vector(forecast)
-  #   train <- as.vector(train)
-  #   test <- as.vector(test)
-  #   
-  #   n <- length(train)
-  #   scalingFactor <- sum(abs(train[(period+1):n] - train[1:(n-period)])) / (n-period)
-  #   
-  #   et <- abs(test-forecast)
-  #   qt <- et/scalingFactor
-  #   meanMASE <- mean(qt)
-  #   return(meanMASE)
-  # }
+SMAPE =function(X,Y,epsilon=10^-10,na.rm=FALSE){
+# Symmetric mean absolute percentage error
+# Armstrong, J. S. (1985) Long-range Forecasting: From Crystal Ball to Computer, 2nd. ed. Wiley. ISBN 978-0-471-82260-8
+# Ultsch, A.: Is Log Ratio a Good Value for Measuring Return in Stock Investments? GfKl 2008, pp, 505-511, 2008.
+  
+  
+  if(isTRUE(na.rm)){ #achtung irgendwas stimmt hier nicht
+    noNaNInd <- which(is.finite(X)&is.finite(Y))
+    X <- X[noNaNInd]
+    Y <- Y[noNaNInd]
+  }
+  if(length(X)!=length(Y)) stop('Length of X and Y do not match.')
+  if(length(X)>1) return(sum(mapply(X,FUN = RelativeDifference,Y))/length(X))
+  oben=Y-X
+  unten=abs(X)+abs(Y)
+  if(!is.finite(unten)) stop('Some of your values are not finite. Please use na.rm=TRUE')
+  if(abs(unten)<epsilon){
+    warning('X and Y are too small to calcualte Relative Differences. Returning 0')
+    return(0)
+  }
+  if(X<0) stop('Not defined for negative X values')
+  if(Y<0) stop('Not defined for negative Y values')
+  return(100*oben/unten)
+  #  smooth::SMAPE(actual, forecast, digits = 3) # does not use same formula...
 }
