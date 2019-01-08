@@ -9,7 +9,7 @@ ForecastingListe=list()
 CreationDate=c()
 mae=c()
 ##Hier ind parLapply arbeiten, damit schneller
-for(date in Steps{
+for(date in Steps){
   DFcur=head(DF,N-date)#Daten bis Tag date entnehmen - Training und Test
   TimeTestCur=tail(head(Time,N-date+Horizon),Horizon) #Zeit der TestDaten selektieren
   CreationDate=c(CreationDate,as.character(tail(head(Time,N-date+Horizon),Horizon+1)[1]))#Wann wird ein forecast durchgefuehrt
