@@ -26,7 +26,7 @@ plots results
 }
 }
 \details{
-if NULL than autocorralation defined by Horizon is used as praediktor 
+if NULL than autocorralation defined by Horizon is used as predictor 
 }
 \value{
 List with
@@ -58,7 +58,6 @@ Michael Thrun
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 \seealso{
  \code{\link[randomForest]{randomForest}}
- }
 }
 \examples{
 ##ToDo

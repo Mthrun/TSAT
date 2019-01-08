@@ -1,9 +1,12 @@
 GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End,AggregateFun=sum,PlotIt = FALSE){
-  
+#GenerateRegularDailyTS(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End,AggregateFun=sum,PlotIt = FALSE)
   requireNamespace('tibble')
   requireNamespace('imputeTS')
   requireNamespace('tidyr')
   requireNamespace('lubridate')
+  
+  if(is.vector(Datavec)){
+
   if(!lubridate::is.Date(TimeChar))
     Time=as.Date(strptime(TimeChar,format = format,tz = tz))
   else
@@ -145,4 +148,30 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
   }
 
   return(tibble::as.tibble(DF))
+  }else{#datavec is matrix/df/tibble
+    Data=Datavec
+    d=ncol(Data)
+    names=colnames(Data)
+    for(i in 1:d){
+      if(i==1){
+      tibbledf=as.matrix(GenerateRegularDailyTS(TimeChar, Datavec=Data[,i], na.rm,
+                                      format,tz,option,Header=c('Time',names[1]),
+                                      Start,End,AggregateFun,PlotIt = FALSE))
+      }else{
+        tibbledftmp=as.matrix(GenerateRegularDailyTS(TimeChar, Datavec=Data[,i], na.rm,
+                                        format,tz,option,Header,
+                                        Start,End,AggregateFun,PlotIt = FALSE))
+        tibbledf=cbind(tibbledf,tibbledftmp[,2])
+        
+        # y=as.vector(as.matrix(tibbledftmp)[,2])
+        # tibbledf=tibble::add_column(tibbledf,y)
+        colnames(tibbledf)[i+1]=names[i]
+        # print(y)
+        # print(tibbledf)
+      }
+      
+    }
+    #colnames(tibbledf)=names
+    return(tibble::as.tibble(tibbledf))
+  }
   }
