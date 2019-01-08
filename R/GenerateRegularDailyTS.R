@@ -147,11 +147,15 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
     
   }
 
-  return(tibble::as.tibble(DF))
+  #return(tibble::as.tibble(DF))
+  return(as.data.frame(DF, stringsAsFactors = FALSE))
   }else{#datavec is matrix/df/tibble
     Data=Datavec
     d=ncol(Data)
     names=colnames(Data)
+    if(is.null(names)){
+      names=paste0('C',seq(from=1,to=d,by=1))
+    }
     for(i in 1:d){
       if(i==1){
       tibbledf=as.matrix(GenerateRegularDailyTS(TimeChar, Datavec=Data[,i], na.rm,
@@ -172,6 +176,7 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
       
     }
     #colnames(tibbledf)=names
-    return(tibble::as.tibble(tibbledf))
+    # return(tibble::as.tibble(tibbledf))
+    return(as.data.frame(tibbledf, stringsAsFactors = FALSE))
   }
   }

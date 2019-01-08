@@ -5,7 +5,7 @@
 Aggregate Days to Weeks
 }
 \description{
-Aggregation of many Days over several years to Weeks is possible with this function
+An either univariate or multivariate time series consisting of \code{Time} of many Days over several years, and \code{Data} is aggregated to weeks.
 }
 \usage{
 aggregateDays2Weeks(Time, Data, FUN, Header)
@@ -13,10 +13,10 @@ aggregateDays2Weeks(Time, Data, FUN, Header)
 
 \arguments{
   \item{Time}{
-[1:n] \code{POSIXlt} or \code{POSIXct}
+[1:n] \code{POSIXlt} or \code{POSIXct} or \code{as.Date} object
 }
  \item{Data}{
-[1:n,1:d] matrix or dataframe, d can be also 1 , then vector
+[1:n,1:d] matrix or dataframe, d can be also 1, then vector
 }
   \item{FUN}{
 aggegate by a function like \code{sum} or \code{mean}
@@ -26,10 +26,14 @@ colnames for data
 }
 }
 \details{
-A week is defined here by the ISO 8601 system, which uses a reoccurring leap week. Aggegation works even if several different years are used.
+A week is defined here by the ISO 8601 system, which uses a reoccurring leap week. 
+Especially this means that every week starts with mondays and all values from monday to sunday are aggreagted to monday. In other words, a time stamp returned by this function has all values aggregated starting from the time stamp until the 7th day (a sunday) in advance.
+If the timeseres does not begin with a monday, all values before monday are aggregated to the monday before the first monday of the time series. The internal functions of R doing this aggregation assume a regular daily time series. If this is not the case, a warning is given back and a regular time series is generated using \code{\link{GenerateRegularDailyTS}} with the Parameter \code{na.rm='zero'}. Depending on the aggregation function \code{FUN} it could result in an incorrect aggregation.
+
+Aggegation works even if several different years are used.
 }
 \value{
-dataframe[1:m,1:(d+1)] with m<n and first column beeing the time in \code{as.Date} format
+Dataframe[1:m,1:(d+1)] with m<n, where m are the number of wees, and the first column beeing the time in \code{as.Date} format.
 }
 
 \author{
