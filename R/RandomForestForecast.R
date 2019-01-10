@@ -1,4 +1,4 @@
-RandomForestForecast=function(DF,formula=NULL,Horizon,PlotIt=TRUE){
+RandomForestForecast=function(DF,formula=NULL,Package='randomForest',Horizon,NoOfTree=200,PlotIt=TRUE,...){
   
   requireNamespace('randomForest')
 
@@ -12,20 +12,48 @@ RandomForestForecast=function(DF,formula=NULL,Horizon,PlotIt=TRUE){
 
     Ntrain=nrow(as.matrix(Splitted$TrainingSet))
     Praediktor=c(tail(Splitted$TrainingSet,Horizon),head(Splitted$TrainingSet,Ntrain-Horizon))
-    model = randomForest::randomForest(x=Splitted$TrainingSet,y=Praediktor,
-                                       ntree=100)
+    
+    switch (Package,
+            randomForest = {
+              model = randomForest::randomForest(x=Splitted$TrainingSet,y=Praediktor,
+                                                 ntree=NoOfTree,...)
+              y_pred = predict(model,newdata = as.matrix(PraediktorTest))
+            },
+            ranger={
+              model = ranger::ranger(data=Splitted$TrainingSet,formula=Praediktor~.,
+                                     num.trees=NoOfTree,classification=FALSE,...)
+              y_pred = predict(model,data = Splitted$TestSet)$predictions
+            },
+            {stop("Please choose either 'ranger' or 'randomForest'.")}
+    )
+
+    
     
     Ntest=nrow(as.matrix(Splitted$TestSet))
     PraediktorTest=c(tail(Splitted$TestSet,Horizon),head(Splitted$TestSet,Ntest-Horizon))
-    y_pred = predict(model,newdata = as.matrix(PraediktorTest))
+
     
   }else{
 
-  model = randomForest::randomForest(formula=formula,
-                           data=Splitted$TrainingSet,
-                           ntree=100)
 
-  y_pred = predict(model,newdata = Splitted$TestSet)
+  switch (Package,
+          randomForest = {
+            model = randomForest::randomForest(formula=formula,
+                                               data=Splitted$TrainingSet,
+                                               ntree=NoOfTree,...)
+            y_pred = predict(model,newdata = Splitted$TestSet)
+          },
+          ranger={
+            model = ranger::ranger(data=Splitted$TrainingSet,formula=formula,
+                                   num.trees=NoOfTree,classification=FALSE,...)
+          
+            y_pred = predict(model,data = Splitted$TestSet)$predictions
+            
+          },
+          {stop("Please choose either 'ranger' or 'randomForest'.")}
+  )
+  
+ 
 
   }
 
