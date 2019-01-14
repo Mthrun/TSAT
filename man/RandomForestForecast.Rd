@@ -2,36 +2,47 @@
 \alias{RandomForestForecast}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Random Forest for Forecast
+Random Forest for Forecasting
 }
 \description{
-RandomForestForecast
+Random forest for forecasting using multivariate regression as published in [Breiman, 2001].
+
+This function was succesfully used in [Thrun et al., 2019].
 }
 \usage{
-RandomForestForecast(DF, formula = NULL,
+RandomForestForecast(Time, DF, formula = NULL,Horizon,
 
-Package='randomForest',NoOfTree=100, Horizon,
+Package='randomForest', AutoCorrelation,NoOfTree=100,
 
  PlotIt = TRUE,\dots)
 }
 \arguments{
+  \item{Time}{
+Time [1:n] bector of objects of \code{as.Date}, if not missing all possible saisonalites are used as indicators for the predictor. \code{formula} should be set to "\code{predictor} ~ ." in order that Time is used. This idea is applied in [Thrun et al., 2019] was not published in [Breiman, 2001].
+
+}
   \item{DF}{
-dataframe [1:n,1:d]
+Dataframe [1:n,1:d] with \code{d} variables defined by \code{d-1} indicators and one predictor.
 }
   \item{formula}{
-either a formula describing praediktors or NULL
+Either a formula describing praediktors and indicators or NULL. Usually set to \code{formula} should be set to "\code{predictor} ~ ." if all \code{d-1} indicators should be used. 
+}
+  \item{Horizon}{
+Forecast horizon as a number of days. The test set is defined by \code{[n-Horizon,n,1:d]} and the trainings set by \code{[1:(n-Horizon),1:d]}.
 }
   \item{Package}{
-either 'ranger' or 'randomForest'
+Either 'ranger' or 'randomForest'
 }
+  \item{AutoCorrelation}{
+If not missing a name of variable stored in DF can be given, it should be the predictor and be also defined in \code{formula}. The lag of autocorrelation is defined by Horizon and the strength can be checkt by \code{\link[TSAT]{AutoCorr}}
+}
+
   \item{NoOfTree}{
 Number of trees to grow, [Hastie et al., 2013] suggests that random forest often stabilize aroundd 200, for big numbers there is no improvement contrary to boosting.
 }
-  \item{Horizon}{
-forecast horizon
-}
+
   \item{PlotIt}{
-plots results
+Plots MAE results, but if \code{formula=NULL} plots time series of forecasted values of test set.
 }
   \item{\dots}{
 Further parameters of random forest such as \code{mtry}, \code{nodesize}, \code{maxnodes}, or \code{min.node.size}.
@@ -49,25 +60,27 @@ if NULL than autocorralation defined by Horizon is used as predictor.
 \value{
 List with
   \item{Forecast}{
-vector
+Vector [1:Horizon] of predicted forecast values of the test data, names if  \code{Time} given
 }
   \item{Model}{
-output of either \code{\link[randomForest]{randomForest}} or  \code{\link[ranger]{ranger}}
+Output of either \code{\link[randomForest]{randomForest}} or  \code{\link[ranger]{ranger}}
 }
   \item{Accuracy}{
-output of  \code{\link[forecast]{accuracy}}
+Output of \code{\link[forecast]{accuracy}}
 }
   \item{TestData}{
-data.frame
+data.frame, see \code{Horizon} for definiton, rownames are defined by \code{Time} if given.
 }
   \item{TrainData}{
-data.frame
+data.frame, see \code{Horizon} for definiton, rownames are defined by \code{Time} if given.
 }
 }
 \references{
-Breiman, L. (2001), Random Forests, Machine Learning 45(1), 5-32.
+[Breiman, 2001]  Breiman, L., Random Forests, Machine Learning 45(1), 5-32, 2001.
 
-Hastie, TREVOR, Tibshirani, ROBERT, Friedman, JH: The elements of statistical learning: data mining, inference, and prediction, pages 587ff, 2013.
+[Hastie, 2014]  Hastie, TREVOR, Tibshirani, ROBERT, Friedman, JH: The elements of statistical learning: data mining, inference, and prediction, pages 587ff, 2013.
+
+[Thrun et al., 2019]   Thrun, M., Maerte, J., Boehme, P, and Gehlert, T.: Applying Two Theorems of Machine Learning to the Forecasting of Biweekly Arrivals at a Call Center, Proceedings of ECDA, submitted, Bayreuth, 2019.
 
 }
 \author{
@@ -81,6 +94,8 @@ Michael Thrun
 }
 \examples{
 ##ToDo
+}
+\note{For n=1 example of forecasting [Thrun et al.,2019] it was visible to the data scientist that even with the choice of the same parameters and data \pkg{randomForest} extremly outperformed \pkg{ranger}. The reason is unknown and this information remains unpublished.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

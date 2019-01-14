@@ -1,11 +1,49 @@
-RandomForestForecast=function(DF,formula=NULL,Package='randomForest',Horizon,NoOfTree=200,PlotIt=TRUE,...){
-  
-  requireNamespace('randomForest')
-
+RandomForestForecast=function(Time, DF,formula=NULL,Horizon,Package='randomForest',
+                              AutoCorrelation,NoOfTree=200,PlotIt=TRUE,...){
   N=nrow(as.matrix(DF))
-  Splitted=list(
+  if(!missing(Time)&!is.null(formula)){
+    if(!is.Date(Time)){
+      warning('Time is not a date, calling "as.Date".')
+      Time=as.Date(Time)
+    }
+    if(length(Time)!=N){
+      warning('Time has not the length of No. of rows of DF. Algorithm could be failing.')
+    }
+    requireNamespace('lubridate')
+    DF$Weekdays=lubridate::wday(Time)
+    DF$WeekNo=lubridate::isoweek(Time)
+    DF$Months=lubridate::month(Time)
+    DF$Quarters=lubridate::quarter(Time)
+    DF$Years=lubridate::year(Time)
+    
+    #Feiertage reinrechnen ----
+    hols=TSAT::GermanHolidays
+    hols$Time=as.Date(hols$Time)
+    DF$Holidays=Time %in% hols$Time
+    
+    TestTime=tail(Time,Horizon)
+    TrainingTime = head(Time,N-Horizon)
+  }else{
+    Time=NULL
+    TestTime=NULL
+    TrainingTime=NULL
+  }
+  #Autokorellation reinrechnen ----
+  if(!missing(AutoCorrelation)&!is.null(formula)){
+    DF$DaysPrior=TSAT::LagVector(DF[,AutoCorrelation],Horizon)
+    if((2*Horizon+1)<N){
+      DF$DaysPrior[1:Horizon]=mean(DF$DaysPrior[(Horizon+1):(2*Horizon)],na.rm = T)
+    }else{
+      DF$DaysPrior[1:Horizon]=0
+    }
+  }
+    requireNamespace('randomForest')
+
+
+    Splitted=list(
     TrainingSet = head(DF,N-Horizon),
     TestSet = tail(DF,Horizon))
+
 
   if(is.null(formula)){
     #zyklisch zuruecksetzen leads to autocorralation
@@ -55,8 +93,18 @@ RandomForestForecast=function(DF,formula=NULL,Package='randomForest',Horizon,NoO
   
  
 
-  }
+  }# end is.null(formula)
 
+  Forecast = y_pred
+  TestData=Splitted$TestSet
+  TrainData=Splitted$TrainingSet
+  if(!is.null(TestTime)){
+    names(Forecast)=as.character(TestTime)
+    rownames(TestData)=as.character(TestTime)
+    rownames(TrainData)=as.character(TrainingTime)
+    
+  }
+  
   if(is.null(formula)){#no idea how to omplement otherwise
     if(PlotIt){
       plot(1:Horizon,Splitted$TestSet,type='l',col='black')
@@ -66,10 +114,17 @@ RandomForestForecast=function(DF,formula=NULL,Package='randomForest',Horizon,NoO
      acc=forecast::accuracy(y_pred,Splitted$TestSet)
   }else{
   acc=NULL
+  if(PlotIt){
+    if(!is.null(Time))
+      plot(TestTime,Forecast,type='l')
+    else
+      plot(1:Horizon,Forecast,type='l')
   }
+  }
+  
   return(list(
-    Forecast = y_pred,
-    TestData =Splitted$TestSet,
+    Forecast=Forecast,
+    TestData =TestData,
     QualityMeasures=acc,
     Model = model,
     TrainData=Splitted$TrainingSet
