@@ -17,7 +17,7 @@ ForecastingLineChart=function(X,Y,F_y,xlab='Time',y1lab='Test data Y',y2lab='For
 	p
   if(SaveIt){
     requireNamespace('htmlwidgets')
-    htmlwidgets::saveWidget(p, file = "DualAxisLineChart.html")
+    htmlwidgets::saveWidget(p, file = "ForecastingLineChart.html")
   }
   return(p)
 }
