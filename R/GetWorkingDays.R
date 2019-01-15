@@ -1,6 +1,6 @@
-GetWorkingDays=function(Time,HolidaysTime){
+GetWorkingDays=function(Time,HolidaysTime,GermanBridgeDay=TRUE){
   requireNamespace('lubridate')
-  if(!is.Date(Time)){
+  if(!lubridate::is.Date(Time)){
     warning('Time is not a date, calling "as.Date".')
     Time=as.Date(Time)
   }
@@ -11,7 +11,11 @@ GetWorkingDays=function(Time,HolidaysTime){
   if(missing(HolidaysTime)){
     hols=TSAT::GermanHolidays
     hols$Time=as.Date(hols$Time)
-    HolidayDay=Time %in% hols$Time
+    if(GermanBridgeDay){
+      HolidayDay=Time %in% hols$Time
+    }else{
+      HolidayDay=Time %in% hols$Time[hols$Description!="Brueckentag"]
+    }
   }else{
     HolidayDay=Time %in% as.Date(HolidaysTime)
   }
