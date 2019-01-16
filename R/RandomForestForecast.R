@@ -21,6 +21,7 @@ RandomForestForecast=function(Time, DF,formula=NULL,Horizon,Package='randomFores
     hols$Time=as.Date(hols$Time)
     DF$Holidays=Time %in% hols$Time
     
+  
     TestTime=tail(Time,Horizon)
     TrainingTime = head(Time,N-Horizon)
   }else{
@@ -28,14 +29,38 @@ RandomForestForecast=function(Time, DF,formula=NULL,Horizon,Package='randomFores
     TestTime=NULL
     TrainingTime=NULL
   }
+  
+  #Dauer zwischen zwei Messungen
+  duration=rep(1,nrow(DF))
+  for(i in 1:(nrow(DF)-1)){
+    duration[i+1]=as.numeric(Time[i]-Time[i-1],units='days')
+  }
+  DF$Duration=duration
   #Autokorellation reinrechnen ----
   if(!missing(AutoCorrelation)&!is.null(formula)){
-    DF$DaysPrior=TSAT::LagVector(DF[,AutoCorrelation],Horizon)
+    x=DF[,AutoCorrelation]
+    DF$DaysPrior=TSAT::LagVector(x,Horizon)
     if((2*Horizon+1)<N){
       DF$DaysPrior[1:Horizon]=mean(DF$DaysPrior[(Horizon+1):(2*Horizon)],na.rm = T)
     }else{
       DF$DaysPrior[1:Horizon]=0
     }
+    #Renditen
+    DF$Renditen=DatabionicSwarm::RelativeDifference(LagVector(DF[,AutoCorrelation],1),DF)
+    #Aehnlichsten Punkte
+    dist=matrix(x,length(x),length(x))
+    for(i in 1:length(x)){
+      for(j in 1:length(x))
+        if(j<j){
+          dist[i,j]=x[i]-x[j]
+        }
+    }
+    distvect=as.numeric(dist)
+    distvect[!is.nan(distvect)]
+    q=quantile(distvect,c(0.05,0.99))
+    ind=which(dist<=q[1],arr.ind=T)
+    DF$Similar=rep(q[2],length(x))
+    DF$Similar[ind[,1]]=ind[,2]
   }
     requireNamespace('randomForest')
 
