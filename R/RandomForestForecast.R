@@ -54,7 +54,10 @@ RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomFore
     }
     lastvalue[1]=mean(lastvalue[(1+1):(2*1)],na.rm = T)
     #Renditen
-    DF$Renditen=DatabionicSwarm::RelativeDifference(x,lastvalue,na.rm = T,epsilon = 10^-14)
+    x2=x
+    x2[x2<0]=0
+    lastvalue[lastvalue<0]=0
+    DF$Renditen=DatabionicSwarm::RelativeDifference(x2,lastvalue,na.rm = T,epsilon = 10^-14)
     #Aehnlichsten Punkte
     distance=matrix(NaN,length(x),length(x))
     for(i in 1:length(x)){
