@@ -63,7 +63,7 @@ RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomFore
           distance[i,j]=abs(x[i]-x[j])
         }
     }
-    distvect=as.numeric(distance[upper.tri(dist,F)])
+    distvect=as.numeric(distance[upper.tri(distance,F)])
     q=quantile(distvect,c(0.05,0.99),na.rm = T)
     ind=which(distance<=q[1],arr.ind=T)
     DF$Similar=rep(q[2],length(x))
