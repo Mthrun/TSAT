@@ -1,15 +1,16 @@
-RandomForestForecast=function(Time, DF,formula=NULL,Horizon,Package='randomForest',
-                              AutoCorrelation,NoOfTree=200,PlotIt=TRUE,...){
+RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomForest',
+                              AutoCorrelation,NoOfTree=200,PlotIt=TRUE,Holidays,...){
   N=nrow(as.matrix(DF))
+  requireNamespace('lubridate')
   if(!missing(Time)&!is.null(formula)){
-    if(!is.Date(Time)){
+    if(!lubridate::is.Date(Time)){
       warning('Time is not a date, calling "as.Date".')
       Time=as.Date(Time)
     }
     if(length(Time)!=N){
       warning('Time has not the length of No. of rows of DF. Algorithm could be failing.')
     }
-    requireNamespace('lubridate')
+
     DF$Weekdays=lubridate::wday(Time)
     DF$WeekNo=lubridate::isoweek(Time)
     DF$Months=lubridate::month(Time)
@@ -17,11 +18,15 @@ RandomForestForecast=function(Time, DF,formula=NULL,Horizon,Package='randomFores
     DF$Years=lubridate::year(Time)
     
     #Feiertage reinrechnen ----
+    if(missing(Holidays)){
     hols=TSAT::GermanHolidays
+    }else{
+      hols=Holidays
+    }
     hols$Time=as.Date(hols$Time)
     DF$Holidays=Time %in% hols$Time
-    
-  
+    DF$Workingdays=GetWorkingDays(Time,HolidaysTime = hols$Time,GermanBridgeDay = F)$WorkingDay
+
     TestTime=tail(Time,Horizon)
     TrainingTime = head(Time,N-Horizon)
   }else{
@@ -31,36 +36,44 @@ RandomForestForecast=function(Time, DF,formula=NULL,Horizon,Package='randomFores
   }
   
   #Dauer zwischen zwei Messungen
-  duration=rep(1,nrow(DF))
-  for(i in 1:(nrow(DF)-1)){
-    duration[i+1]=as.numeric(Time[i]-Time[i-1],units='days')
+  duration=rep(1,length(Time))
+  for(i in 2:(length(Time))){
+    duration[i]=difftime(Time[i],Time[i-1],units = 'days')#as.numeric(Time[i]-Time[i-1],units='days')
   }
   DF$Duration=duration
   #Autokorellation reinrechnen ----
   if(!missing(AutoCorrelation)&!is.null(formula)){
     x=DF[,AutoCorrelation]
     DF$DaysPrior=TSAT::LagVector(x,Horizon)
+    lastvalue=TSAT::LagVector(x,1)
     if((2*Horizon+1)<N){
       DF$DaysPrior[1:Horizon]=mean(DF$DaysPrior[(Horizon+1):(2*Horizon)],na.rm = T)
+      
     }else{
       DF$DaysPrior[1:Horizon]=0
     }
+    lastvalue[1]=mean(lastvalue[(1+1):(2*1)],na.rm = T)
     #Renditen
-    DF$Renditen=DatabionicSwarm::RelativeDifference(LagVector(DF[,AutoCorrelation],1),DF)
+    DF$Renditen=DatabionicSwarm::RelativeDifference(x,lastvalue,na.rm = T,epsilon = 10^-14)
     #Aehnlichsten Punkte
-    dist=matrix(x,length(x),length(x))
+    distance=matrix(NaN,length(x),length(x))
     for(i in 1:length(x)){
       for(j in 1:length(x))
-        if(j<j){
-          dist[i,j]=x[i]-x[j]
+        if(i<j){
+          distance[i,j]=abs(x[i]-x[j])
         }
     }
-    distvect=as.numeric(dist)
-    distvect[!is.nan(distvect)]
-    q=quantile(distvect,c(0.05,0.99))
-    ind=which(dist<=q[1],arr.ind=T)
+    distvect=as.numeric(distance[upper.tri(dist,F)])
+    q=quantile(distvect,c(0.05,0.99),na.rm = T)
+    ind=which(distance<=q[1],arr.ind=T)
     DF$Similar=rep(q[2],length(x))
-    DF$Similar[ind[,1]]=ind[,2]
+    u=sort(unique(ind[,1]))
+    
+    for(l in u){
+      indi=sort(which(ind[,1]==l),decreasing = F)
+      DF$Similar[l]=distance[ind[indi[1],1],ind[indi[1],2]]
+    }
+     
   }
     requireNamespace('randomForest')
 
@@ -105,12 +118,15 @@ RandomForestForecast=function(Time, DF,formula=NULL,Horizon,Package='randomFores
                                                data=Splitted$TrainingSet,
                                                ntree=NoOfTree,...)
             y_pred = predict(model,newdata = Splitted$TestSet)
+            Importance=randomForest::importance(model)
           },
           ranger={
             model = ranger::ranger(data=Splitted$TrainingSet,formula=formula,
                                    num.trees=NoOfTree,classification=FALSE,...)
           
             y_pred = predict(model,data = Splitted$TestSet)$predictions
+            Importance=ranger::importance(model)
+            
             
           },
           {stop("Please choose either 'ranger' or 'randomForest'.")}
@@ -147,9 +163,15 @@ RandomForestForecast=function(Time, DF,formula=NULL,Horizon,Package='randomFores
   }
   }
   
+
+  
+
+  ordered=order(Importance,decreasing = T)
+  Importance=Importance[ordered,]
   return(list(
     Forecast=Forecast,
     TestData =TestData,
+    FeatureImportance=Importance,
     QualityMeasures=acc,
     Model = model,
     TrainData=Splitted$TrainingSet

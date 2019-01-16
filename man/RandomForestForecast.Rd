@@ -44,6 +44,11 @@ Number of trees to grow, [Hastie et al., 2013] suggests that random forest often
   \item{PlotIt}{
 Plots MAE results, but if \code{formula=NULL} plots time series of forecasted values of test set.
 }
+  \item{Holidays}{
+Either German Holidays are used if missing, else a data frame or vector of \code{as.Date} objects defining the holidays.
+
+\code{Holidays} will only be used if \code{Time} given.
+}
   \item{\dots}{
 Further parameters of random forest such as \code{mtry}, \code{nodesize}, \code{maxnodes}, or \code{min.node.size}.
 }
@@ -65,6 +70,10 @@ Vector [1:Horizon] of predicted forecast values of the test data, names if  \cod
   \item{Model}{
 Output of either \code{\link[randomForest]{randomForest}} or  \code{\link[ranger]{ranger}}
 }
+\item{FeatureImportance}{
+	Importance of Features for Forecast, see \code{\link[randomForest]{importance} or \code{\link[ranger]{importance}} for details }
+}
+
   \item{Accuracy}{
 Output of \code{\link[forecast]{accuracy}}
 }
