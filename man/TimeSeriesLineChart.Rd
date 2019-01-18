@@ -1,29 +1,26 @@
-\name{ForecastingLineChart}
-\alias{ForecastingLineChart}
+\name{TimeSeriesLineChart}
+\alias{TimeSeriesLineChart}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Forecasting Line Chart
+Time Series Line Chart
 }
 \description{
-A line chart to compare a forecast against historical time series
+A plotly line chart to visualize a time series
 }
 \usage{
-ForecastingLineChart(X,Y,F_y,
+TimeSeriesLineChart(X,Y,xlab='Time',
 
-xlab='Time',y1lab='Test data Y',
+y1lab='Values of Time Series',y2lab='Approximated Curve',
 
-y2lab='Forecast F',main='Forecasting Line Chart',
+main='Time Series',cols=c('black','red'),
 
-cols=c('black','red'),SaveIt=FALSE)
+SaveIt=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{X}{[1:n] vector, both lines require the same xvalues, e.g. the time of the time series, \code{POSIXlt} or \code{POSIXct} or code{as.Date} are accepted}
   \item{Y}{
 [1:n] vector of histroical time series, usually test data
-}
-  \item{F_y}{
-Forecast F
 }
   \item{xlab}{
 Optional, string for xlabel
@@ -45,7 +42,7 @@ Optional, default FALSE; TRUE if you want to save plot as html in \code{getwd()}
 }
 }
 \details{
-enables to visualize to lines in one plot overlaying them using ploty (e.g. two time series with one ranges of values)
+enables to visualize to lines and points in one plot overlaying them using ploty
 
 }
 \value{
@@ -63,4 +60,4 @@ Adjusted version of \code{\link[DataVisualizations]{DualAxisLineChart}}
 \keyword{AxisLineChart}% use one of  RShowDoc("KEYWORDS")
 \keyword{Line Chart}% __ONLY ONE__ keyword per line
 \keyword{Axis Line Chart}
-\keyword{Forecasting Line Chart}
+\keyword{Time Series Line Chart}
