@@ -56,7 +56,7 @@ Optional, default FALSE; TRUE if you want to save plot as html in \code{getwd()}
 or
 "Monthly"
 selected, further aggregation arguments for \code{\link{aggregateDays2Weeks}}
-or  \code{\link{aggregateDays2Months}}, \{FUN} has to be set, e.g. FUN=sum
+or  \code{\link{aggregateDays2Months}}, \code{FUN} has to be set, e.g. \code{FUN=sum}
 }
 }
 \details{
