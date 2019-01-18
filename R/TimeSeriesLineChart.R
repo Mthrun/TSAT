@@ -1,4 +1,4 @@
-TimeSeriesLineChart=function(Time,Values,xlab='Time',Resolution='AsIs',y1lab='Values of Time Series',y2lab='Approximated Curve',main='Time Series',cols=c('black','red'),LegendPos='topright',SaveIt=FALSE,...){
+TimeSeriesLineChart=function(Time,Values,xlab='Time',Resolution='AsIs',y1lab='Values of Time Series',y2lab='Approximated Curve',main='Time Series',cols=c('black','red'),LegendPos='topright',Save=FALSE,...){
   requireNamespace('plotly')
 
   switch(Resolution,
@@ -56,9 +56,9 @@ TimeSeriesLineChart=function(Time,Values,xlab='Time',Resolution='AsIs',y1lab='Va
       
     )
 	p
-  if(SaveIt){
+  if(isTRUE(Save)){
     requireNamespace('htmlwidgets')
-    htmlwidgets::saveWidget(p, file = "ForecastingLineChart.html")
+    htmlwidgets::saveWidget(p, file = paste0(Resolution,"_",main,".html"))
   }
   return(p)
 }

@@ -14,7 +14,7 @@ y1lab='Values of Time Series',y2lab='Approximated Curve',
 
 main='Time Series',cols=c('black','red'),
 
-LegendPos='topright',SaveIt=FALSE,\dots)
+LegendPos='topright',Save=FALSE,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -47,7 +47,7 @@ Optional, color of two lines
 Position of Legend in Plot, Either 'topleft', 'topright', bottomleft or 'bottomright'
 }
 
-  \item{SaveIt}{
+  \item{Save}{
 Optional, default FALSE; TRUE if you want to save plot as html in \code{getwd()} directory
 }
   \item{\dots}{
