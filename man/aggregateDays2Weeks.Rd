@@ -39,6 +39,9 @@ Dataframe[1:m,1:(d+1)] with m<n, where m are the number of wees, and the first c
 \author{
 Michael Thrun
 }
-
+\notes{
+If the error "no rows to aggregate" arrises, it may be beause the data contains nans. in such a case add
+\code{na.rm=TRUE} and \code{na.action=na.pass} to the function input parameters.
+}
 \keyword{aggregateDays2Weeks}% use one of  RShowDoc("KEYWORDS")
 \keyword{aggregate}% __ONLY ONE__ keyword per line
