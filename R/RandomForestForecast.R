@@ -1,5 +1,5 @@
 RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomForest',
-                              AutoCorrelation,NoOfTree=200,PlotIt=TRUE,Holidays,...){
+                              AutoCorrelation,NoOfTree=200,PlotIt=TRUE,Holidays,SimilarPoints=TRUE,...){
   N=nrow(as.matrix(DF))
   requireNamespace('lubridate')
   if(!missing(Time)&!is.null(formula)){
@@ -27,8 +27,9 @@ RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomFore
     DF$Holidays=Time %in% hols$Time
     DF$Workingdays=GetWorkingDays(Time,HolidaysTime = hols$Time,GermanBridgeDay = F)$WorkingDay
 
-    TestTime=tail(Time,Horizon)
+ 
     TrainingTime = head(Time,N-Horizon)
+    TestTime=tail(Time,Horizon)
   }else{
     Time=NULL
     TestTime=NULL
@@ -58,25 +59,26 @@ RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomFore
     x2[x2<0]=0
     lastvalue[lastvalue<0]=0
     DF$Renditen=DatabionicSwarm::RelativeDifference(x2,lastvalue,na.rm = T,epsilon = 10^-14)
-    #Aehnlichsten Punkte
-    distance=matrix(NaN,length(x),length(x))
-    for(i in 1:length(x)){
-      for(j in 1:length(x))
-        if(i<j){
-          distance[i,j]=abs(x[i]-x[j])
-        }
+    if(isTRUE(SimilarPoints)){
+      #Aehnlichsten Punkte
+      distance=matrix(NaN,length(x),length(x))
+      for(i in 1:length(x)){
+        for(j in 1:length(x))
+          if(i<j){
+            distance[i,j]=abs(x[i]-x[j])
+          }
+      }
+      distvect=as.numeric(distance[upper.tri(distance,F)])
+      q=quantile(distvect,c(0.05,0.99),na.rm = T)
+      ind=which(distance<=q[1],arr.ind=T)
+      DF$Similar=rep(q[2],length(x))
+      u=sort(unique(ind[,1]))
+      
+      for(l in u){
+        indi=sort(which(ind[,1]==l),decreasing = F)
+        DF$Similar[l]=distance[ind[indi[1],1],ind[indi[1],2]]
+      }
     }
-    distvect=as.numeric(distance[upper.tri(distance,F)])
-    q=quantile(distvect,c(0.05,0.99),na.rm = T)
-    ind=which(distance<=q[1],arr.ind=T)
-    DF$Similar=rep(q[2],length(x))
-    u=sort(unique(ind[,1]))
-    
-    for(l in u){
-      indi=sort(which(ind[,1]==l),decreasing = F)
-      DF$Similar[l]=distance[ind[indi[1],1],ind[indi[1],2]]
-    }
-     
   }
     requireNamespace('randomForest')
 
