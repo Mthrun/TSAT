@@ -4,7 +4,7 @@ RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomFore
   requireNamespace('lubridate')
 
   if(!is.null(formula)){
-    char=all.vars(fm)
+    char=all.vars(formula)
     char=char[char!='.']
     Predictor=char[1]
   }
