@@ -10,11 +10,11 @@ Random forest for forecasting using multivariate regression as published in [Bre
 This function was succesfully used in [Thrun et al., 2019].
 }
 \usage{
-RandomForestForecast(Time, DF, formula = NULL,Horizon,
+RandomForestForecast(Time, DF, formula=NULL,Horizon,
 
-Package='randomForest', AutoCorrelation,NoOfTree=100,
+Package='randomForest', AutoCorrelation,NoOfTree=200,
 
- PlotIt = TRUE,\dots)
+PlotIt=TRUE,Holidays,SimilarPoints=TRUE,...)
 }
 \arguments{
   \item{Time}{
@@ -47,8 +47,11 @@ Plots MAE results, but if \code{formula=NULL} plots time series of forecasted va
   \item{Holidays}{
 Either German Holidays are used if missing, else a data frame or vector of \code{as.Date} objects defining the holidays.
 
-\code{Holidays} will only be used if \code{Time} given.
+will only be used if \code{Time} given, 
 }
+\item{SimilarPoints}{highly experimental, please set FALSE if you want to publish your results
+}
+
   \item{\dots}{
 Further parameters of random forest such as \code{mtry}, \code{nodesize}, \code{maxnodes}, or \code{min.node.size}.
 }
@@ -67,6 +70,11 @@ List with
   \item{Forecast}{
 Vector [1:Horizon] of predicted forecast values of the test data, names if  \code{Time} given
 }
+  \item{TestDataPredictor}{
+Vector [1:Horizon], it is assumed that the predictor is the first feature in \code{formula}, if formula not given an univariate case is assumed.
+
+See also \code{Horizon} for definiton, rownames are defined by \code{Time} if given.
+}
   \item{Model}{
 Output of either \code{\link[randomForest]{randomForest}} or  \code{\link[ranger]{ranger}}
 }
@@ -77,11 +85,14 @@ Output of either \code{\link[randomForest]{randomForest}} or  \code{\link[ranger
   \item{Accuracy}{
 Output of \code{\link[forecast]{accuracy}}
 }
-  \item{TestData}{
-data.frame, see \code{Horizon} for definiton, rownames are defined by \code{Time} if given.
+
+  \item{TestDataIndicators}{
+data.frame[1:(d-1),1:Horizon], in the multivariate case all variables except predictor, in the other case NULL. 
+
+See also \code{Horizon} for definiton of length, rownames are defined by \code{Time} if given.
 }
   \item{TrainData}{
-data.frame, see \code{Horizon} for definiton, rownames are defined by \code{Time} if given.
+data.frame[1:d,1:k], see \code{Horizon} for definiton, rownames are defined by \code{Time} if given.
 }
 }
 \references{
@@ -89,7 +100,7 @@ data.frame, see \code{Horizon} for definiton, rownames are defined by \code{Time
 
 [Hastie, 2014]  Hastie, TREVOR, Tibshirani, ROBERT, Friedman, JH: The elements of statistical learning: data mining, inference, and prediction, pages 587ff, 2013.
 
-[Thrun et al., 2019]   Thrun, M., Maerte, J., Boehme, P, and Gehlert, T.: Applying Two Theorems of Machine Learning to the Forecasting of Biweekly Arrivals at a Call Center, Proceedings of ECDA, submitted, Bayreuth, 2019.
+[Thrun et al., 2019]   Thrun, M., Maerte, J., Boehme, P, and Gehlert, T.: Applying Two Theorems of Machine Learning to the Forecasting of Biweekly Arrivals at a Call Center, Proceedings of ECDA, accepted, Bayreuth, 2019.
 
 }
 \author{
