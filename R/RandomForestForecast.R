@@ -155,10 +155,11 @@ if(is.null(formula)){#does not work with seasonal components
  
   TestData=subset(Splitted$TestSet,select=Predictor)
   ind=which(colnames(Splitted$TestSet)==Predictor)
-    if(length(ind)==1)
+    if(length(ind)==1){
       TestDataIndicators=Splitted$TestSet[,-ind]
-    else
+    }else{
       TestDataIndicators=Splitted$TestSet
+    }
   }# end is.null(formula)
 
   Forecast = y_pred
@@ -171,23 +172,29 @@ if(is.null(formula)){#does not work with seasonal components
     
   }
   
-  if(is.null(formula)){#no idea how to omplement otherwise
-    if(PlotIt){
-      plot(1:Horizon,Splitted$TestSet,type='l',col='black')
-      points(1:Horizon,y_pred,type='l',col='red')
-    }
-     requireNamespace('forecast')
-     acc=forecast::accuracy(y_pred,Splitted$TestSet)
-  }else{
-  acc=NULL
+  # if(is.null(formula)){
+  #   if(PlotIt){
+  #     plot(1:Horizon,Splitted$TestSet,type='l',col='black')
+  #     points(1:Horizon,y_pred,type='l',col='red')
+  #   }
+  #    requireNamespace('forecast')
+  #    acc=forecast::accuracy(y_pred,Splitted$TestSet)
+  # # }else{
+  #   plot(1:Horizon,Splitted$TestSet,type='l',col='black')
+  #   points(1:Horizon,y_pred,type='l',col='red')
+    
+  # acc=NULL
   if(PlotIt){
-    if(!is.null(Time))
-      plot(TestTime,Forecast,type='l')
-    else
-      plot(1:Horizon,Forecast,type='l')
+    if(!is.null(TestTime)){
+      plot(1:Horizon,TestData[,1],type='l',col='black')
+      points(1:Horizon,y_pred,type='l',col='red')
+    }else{
+      plot(TestTime,TestData[,1],type='l',col='black')
+      points(TestTime,y_pred,type='l',col='red')
+    }
   }
-  }
-  
+  # }
+  acc=forecast::accuracy(y_pred,TestData[,1])
 
   
 
@@ -199,7 +206,8 @@ if(is.null(formula)){#does not work with seasonal components
     FeatureImportance=Importance,
     QualityMeasures=acc,
     Model = model,
-    TrainData=Splitted$TrainingSet,
-    TestDataIndicators=TestDataIndicators
+    TestDataIndicators=TestDataIndicators,
+    TrainData=Splitted$TrainingSet
+
   ))
 }
