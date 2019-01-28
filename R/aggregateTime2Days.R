@@ -1,4 +1,4 @@
-aggregateTime2Days=function(Time,Data,fun,Header){
+aggregateTime2Days=function(Time,Data,FUN,Header,...){
   
   if(missing(Header)){
     if(is.matrix(Data)|is.data.frame(Data)){
@@ -14,7 +14,7 @@ aggregateTime2Days=function(Time,Data,fun,Header){
   DF=data.frame(Time=Time,Data=Data)
   DF$Time=cut(Time,breaks='days')
   
-  dsummary = aggregate(DF$Data ~ DF$Time, FUN=fun,    data=DF)
+  dsummary = aggregate(DF$Data ~ DF$Time, FUN=FUN,    data=DF,...)
 
   colnames(dsummary)=c('Time',Header)
 

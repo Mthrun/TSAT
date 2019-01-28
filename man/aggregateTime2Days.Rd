@@ -8,7 +8,7 @@ aggregate Time to Days
 aggregates a Time vector of POSIX format to Days
 }
 \usage{
-aggregateTime2Days(Time, Data, fun, Header)
+aggregateTime2Days(Time, Data, FUN, Header,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,11 +18,14 @@ aggregateTime2Days(Time, Data, fun, Header)
   \item{Data}{
 [1:n,1:d] matrix or dataframe, d can be also 1 , then vector
 }
-  \item{fun}{
+  \item{FUN}{
 aggegation function, e.g. \code{mean} or \code{sum}
 }
   \item{Header}{
 Names of Outputfeatures minus Time column
+}
+  \item{\dots}{
+further arguments passed on to \code{FUN}
 }
 }
 \details{

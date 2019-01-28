@@ -6,6 +6,19 @@ aggregateDays2Months=function(Time,Data,FUN,Header,...){
     warning("'Time' is not a date. Calling as.Date()")
     Time=as.Date(Time)
   }
+
+  if(is.vector(Data)){
+    Boolean=TRUE
+  }else if(!is.null(ncol(Data))){
+    if(ncol(Data)==1){
+      Boolean=TRUE
+    }else{
+      Boolean=FALSE
+    }
+  }else{
+    Boolean=FALSE
+  }
+  if(isTRUE(Boolean)){
   Dt=tibble::as.tibble(data.frame(TimeTmp=Time,Data=Data))
   
   Monthly =dplyr::group_by(Dt,Time=lubridate::floor_date(TimeTmp,'month')) 
@@ -25,5 +38,22 @@ aggregateDays2Months=function(Time,Data,FUN,Header,...){
       }
     }
   }
-  return(as.data.frame(Monthly))
+    return(as.data.frame(Monthly))
+  }else{
+    Monthly=c()
+    DateTemp=Data
+    for(i in 1:ncol(DateTemp)){
+      if(i==1)
+        Monthly=as.data.frame(aggregateDays2Months(Time=Time,Data = DateTemp[,i],FUN=FUN,Header=Header,...))
+      else
+        Monthly=cbind(Monthly,as.data.frame(aggregateDays2Months(Time=Time,Data = DateTemp[,i],FUN=FUN,Header=Header,...))$Data)
+    }
+    if(!is.null(colnames(DateTemp))){
+      colnames(Monthly)=c('Time',colnames(DateTemp))
+    }else{
+      colnames(Monthly)=c('Time',paste0('C',1:ncol(DateTemp)))
+    }
+    return(Monthly)
+  }
+  
 }

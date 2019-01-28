@@ -8,12 +8,12 @@ Aggregate Days to Weeks
 An either univariate or multivariate time series consisting of \code{Time} of many Days over several years, and \code{Data} is aggregated to weeks.
 }
 \usage{
-aggregateDays2Weeks(Time, Data, FUN, Header)
+aggregateDays2Weeks(Time, Data, FUN, Header,\dots)
 }
 
 \arguments{
   \item{Time}{
-[1:n] \code{POSIXlt} or \code{POSIXct} or \code{as.Date} object
+[1:n] vector of \code{POSIXlt} or \code{POSIXct} or \code{as.Date} objects
 }
  \item{Data}{
 [1:n,1:d] matrix or dataframe, d can be also 1, then vector
@@ -23,6 +23,9 @@ aggegate by a function like \code{sum} or \code{mean}
 }
   \item{Header}{
 colnames for data
+}
+  \item{\dots}{
+further arguments passed on to \code{FUN}
 }
 }
 \details{

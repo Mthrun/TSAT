@@ -8,15 +8,15 @@ Aggregate Days to Months
 Aggregation of many Days over several years to Months is possible with this function
 }
 \usage{
-aggregateDays2Months(x)
+aggregateDays2Months(Time,Data,FUN,Header,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Time}{
-[1:n] \code{POSIXlt} or \code{POSIXct}
+[1:n] vector of \code{POSIXlt} or \code{POSIXct} or \code{as.Date} obects
 }
  \item{Data}{
-[1:n,1:d] matrix or dataframe, d can be also 1 , then vector
+[1:n,1:d] matrix or dataframe, d can be also 1, then vector
 }
   \item{FUN}{
 aggegate by a function like \code{sum} or \code{mean}
@@ -24,9 +24,12 @@ aggegate by a function like \code{sum} or \code{mean}
   \item{Header}{
 colnames for data
 }
+  \item{\dots}{
+further arguments passed on to \code{FUN}
+}
 }
 \details{
-Aggregation is not testet for d>1
+A shortcut for aggregation using \pkg{dplyr}
 }
 \value{
 dataframe[1:m,1:(d+1)] with m<n and first column beeing the time in \code{as.Date} format
@@ -35,5 +38,5 @@ dataframe[1:m,1:(d+1)] with m<n and first column beeing the time in \code{as.Dat
 Michael Thrun
 }
 
-\keyword{aggregateDays2Weeks}% use one of  RShowDoc("KEYWORDS")
+\keyword{aggregateDays2Months}% use one of  RShowDoc("KEYWORDS")
 \keyword{aggregate}% __ONLY ONE__ keyword per line
