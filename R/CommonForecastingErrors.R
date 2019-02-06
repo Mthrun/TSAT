@@ -16,7 +16,6 @@ CommonForecastingErrors=function(TestdataY,ForecastingF,epsilon=10^-4,na.rm=TRUE
   }
   if(!missing(digits)){
     exponent=abs(signif(log(epsilon,base = 10),1))
-    print(exponent)
     if(digits>=exponent){
       digits=exponent-1
       warning('Rounding has to be to less digits than the exponent of epsilon. Reducing number of digits for rounding.')
