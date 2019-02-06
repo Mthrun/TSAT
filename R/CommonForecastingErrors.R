@@ -5,11 +5,11 @@ CommonForecastingErrors=function(TestdataY,ForecastingF,epsilon=10^-4,na.rm=TRUE
     TestdataY <- TestdataY[noNaNInd]
   }
   AD=abs(TestdataY-ForecastingF)
-  if(isTRUE(any(!is.finite(AD)))) stop('Some of your values are not finite. Please use na.rm=TRUE')
+  if(isTRUE(any(!is.finite(AD)))) stop('Some of your values are not finite. Please use "na.rm=TRUE".')
   
   ind=which(TestdataY<epsilon & (-TestdataY)>(-epsilon))
   if(length(ind)>0){
-    warning('TestdataY are too small to calcualte some errors. Setting to Epsilon')
+    warning('TestdataY value(s) is/are too small to calculate MAPE. Setting these value(s) to "epsilon".')
     TestdataYTMP=epsilon
   }else{
     TestdataYTMP=TestdataY
@@ -23,7 +23,19 @@ CommonForecastingErrors=function(TestdataY,ForecastingF,epsilon=10^-4,na.rm=TRUE
   
   requireNamespace('Metrics')
   RMSE=Metrics::rmse(TestdataY,ForecastingF)
-  MASE=Metrics::mase(TestdataY,ForecastingF, step_size = Stepsize)
+  
+  u=unique(TestdataY)
+  if(length(u)==1&length(TestdataY)>1){
+    warning('Only one unique value in Test data. Adding some minor randomness defined by "epsilon" for Test data of MASE in order to get a finite value.')
+    if(u==0)
+      TestdataYmase=TestdataY+runif(length(TestdataY),min = u-epsilon,max = u+epsilon)
+    else
+      TestdataYmase=TestdataY+runif(length(TestdataY),min = -u*epsilon,max = u*epsilon)
+    
+    MASE=round(Metrics::mase(TestdataYmase,ForecastingF, step_size = Stepsize),2)
+  }else{
+    MASE=Metrics::mase(TestdataY,ForecastingF, step_size = Stepsize)
+  }
   requireNamespace('Rathena')
   Bias=Rathena::RootDeviance(TestdataY,ForecastingF)$bias
   MRD=Rathena::RootDeviance(TestdataY,ForecastingF)$MRD

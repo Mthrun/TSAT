@@ -2,7 +2,7 @@
 \alias{CommonForecastingErrors}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+Common Forecasting Errors
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
