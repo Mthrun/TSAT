@@ -25,3 +25,5 @@ DTWdistance=function(Data,DistanceFunction=proxy::dist,...){
   
 return(Distance)
 }
+
+#alternative, vieleicht schneller: IncDTW::dtw_dismat()
