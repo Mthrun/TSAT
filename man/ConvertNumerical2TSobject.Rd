@@ -8,7 +8,9 @@ Converts a Numerical to a Time Series Object
 Converts a numerical vector or matrix to a time series object of the stats package
 }
 \usage{
-ConvertNumerical2TSobject(NumericVectorOrMatrix, Time, Frequency = "days")
+ConvertNumerical2TSobject(NumericVectorOrMatrix, Time, 
+
+Frequency = "days")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,7 +44,9 @@ Internal \code{Frequency} of weekly data is estimated with 365.25/7 in the \code
 \code{\link{ts}} 
 }
 \examples{
-tsobject=ConvertNumerical2TSobject(WeeklySalesUniformRandom$Sales,WeeklySalesUniformRandom$Time,"weeks")
+tsobject=ConvertNumerical2TSobject(WeeklySalesUniformRandom$Sales,
+
+WeeklySalesUniformRandom$Time,"weeks")
 \donttest{
 plot(tsobject)
 }

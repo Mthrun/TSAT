@@ -5,7 +5,7 @@ GetBalanceSheet=function(Symbol='SAP',URL='yahoo',Silent=TRUE){
   library(rvest)
   if (URL == 'yahoo') {
     tryCatch({
-      library(RSelenium)
+      require(RSelenium)
       library(wdman)
       library(dplyr)
       #clicks via chrome rightklick on inspect, then you can copy the relevant strings for button clicks

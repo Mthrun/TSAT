@@ -17,16 +17,16 @@ ConvertNumerical2TSobject=function(NumericVectorOrMatrix,Time,Frequency='days'){
                        frequency = 365)
           },
           weeks = { 
-            TSobject=ts(NumericVectorOrMatrix, freq=365.25/7, start=lubridate::decimal_date(lubridate::ymd(min(Time))))
+            TSobject=ts(NumericVectorOrMatrix, frequency=365.25/7, start=lubridate::decimal_date(lubridate::ymd(min(Time))))
           },
           months = {
-            TSobject=ts(NumericVectorOrMatrix, freq=12, start=c(year,lubridate::month(min(Time))))
+            TSobject=ts(NumericVectorOrMatrix, frequency=12, start=c(year,lubridate::month(min(Time))))
           },
           quarters = {
-            TSobject=ts(NumericVectorOrMatrix, freq=4, start=c(year,lubridate::quarter(min(Time))))
+            TSobject=ts(NumericVectorOrMatrix, frequency=4, start=c(year,lubridate::quarter(min(Time))))
           },
           years = {
-            TSobject=ts(NumericVectorOrMatrix, freq=1, start=year)
+            TSobject=ts(NumericVectorOrMatrix, frequency=1, start=year)
           },
           {
             stop('unknown Frequency set')

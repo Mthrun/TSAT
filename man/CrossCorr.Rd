@@ -10,7 +10,9 @@ Cross-Correlation of Time-Dependent Observations
 Beware, \code{CrossCorr} assumes implicitly that both time series have the same frequency and thus accepts simple numerical vectors.
 }
 \usage{
-CrossCorr(FirstTimeSeries, SecondTimeSeries, nLags = 2,type = "correlation",PlotIt=FALSE,main,...)
+CrossCorr(FirstTimeSeries, SecondTimeSeries, 
+
+nLags = 2,type = "correlation",PlotIt=FALSE,main,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

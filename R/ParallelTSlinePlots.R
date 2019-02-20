@@ -18,7 +18,7 @@ ParallelTSlinePlots=function(Data,Time,DailyRegular=TRUE,scales = list(y = "same
       # lubridate::month(min(Time))*30
       # lubridate::day(min(Time))
       if(tibble::is.tibble(Time)){
-        Time = as.Date(as.matrix(V2[,1]))
+        Time = as.Date(as.matrix(Time))
       }
       ref_date=as.Date(paste0(lubridate::year(min(Time)),'-01-01'))
       first_date=min(Time)

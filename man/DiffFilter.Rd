@@ -33,6 +33,6 @@ temporal data mining, Prof. Dr. Ultsch
 }
 
 \examples{
-DiffFilter(DiffFilter(c(4,5,2.87,5.2)),BackTransformation = T)
+DiffFilter(c(4,5,2.87,5.2))
 }
 \keyword{Difference Filter}% use one of  RShowDoc("KEYWORDS")

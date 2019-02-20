@@ -1,4 +1,4 @@
-StocksVolatility=function(AdjClose,NumberOfDay=10){
+StocksVolatility=function(AdjClose,NumberOfDays=10){
   
   #ToDo: Verstehen und Anwenden
   requireNamespace('TTR')

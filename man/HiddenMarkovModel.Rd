@@ -18,7 +18,9 @@ i.e. clustering is reproduced as output
 
 }
 \usage{
-HiddenMarkovModel(Data, ClusterNo, PriorClassification, PlotIt = TRUE, Silent = TRUE)
+HiddenMarkovModel(Data,ClusterNo,DistributionName='NORMAL',
+
+Iterations=500,PriorClassification,PlotIt=TRUE,Silent=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,6 +29,13 @@ HiddenMarkovModel(Data, ClusterNo, PriorClassification, PlotIt = TRUE, Silent = 
 }
   \item{ClusterNo}{
 number of states, \code{k}
+}
+
+  \item{DistributionName}{
+Normal==gaussian distributions
+}
+  \item{Iterations}{
+number of maximal iteration steps
 }
   \item{PriorClassification}{
 Optional, to be compared with HMM
@@ -92,10 +101,12 @@ Baum-Welch-Algorithmus (generalisierter EM): \code{\link[Rhmm]{HMMFit}}
 Viterbi-Algorithmus: \code{\link[Rhmm]{viterbi}},\code{\link[Rhmm]{HMMFit}}
 }
 \examples{
+\donttest{
+requireNamespace('Rhmm')
 data(n1d_3s)
 Data=as.matrix(obs_n1d_3s[[1]])
 model=HiddenMarkovModel(Data,3,PlotIt = T,Silent = T)
-\donttest{
+
 TagNR=1:nrow(Data)
 plot(TagNR,Data[,1],col=model$HMMcls,main='HMM states with Viterbi',pch=20)
 legend("topright", inset = c(-0.2, 0), legend = sort(unique(model$HMMcls)), 

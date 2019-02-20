@@ -71,14 +71,15 @@ List with
 Vector [1:Horizon] of predicted forecast values of the test data, names if  \code{Time} given
 }
   \item{TestDataPredictor}{
-data.frame[1:Horizon,1], it is assumed that the predictor is the first feature in \code{formula}, if formula not given an univariate case is assumed.
 
 See also \code{Horizon} for definiton, rownames are defined by \code{Time} if given.
 }
 
+
 \item{FeatureImportance}{
-	Importance of Features for Forecast, see \code{\link[randomForest]{importance} or \code{\link[ranger]{importance}} for details }
+	Importance of Features for Forecast, see \code{\link[randomForest]{importance}} or \code{\link[ranger]{importance}} for details 
 }
+
   \item{Accuracy}{
 Output of \code{\link[forecast]{accuracy}}
 }

@@ -8,7 +8,9 @@ GetFinancialStatement
 Get data of quaterly Financial Statements
 }
 \usage{
-GetFinancialStatement(Symbol='SAP',URL='morningstar')
+GetFinancialStatement(Symbol='SAP',
+
+URL='morningstar', Silent = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,6 +20,9 @@ ticker string
   \item{URL}{
 provider of data as a string
 }
+  \item{Silent}{
+if no warnings=TRUE
+}
 }
 \details{
 yahoo and morningstar work currently
@@ -26,16 +31,14 @@ yahoo and morningstar work currently
 dataframe of financial statements
 }
 \references{
-to be filled
+Thrun, M.C., Knowledge Discovery in Quarterly Financial Data of Stocks Based on the Prime Standard using a Hybrid of a Swarm with SOM, in European Symposium on Artificial Neural Networks, Computational Intelligence and Machine Learning (ESANN), M. Verleysen, Editor. 2019: Bruges, Belgium
 }
 \author{
-Michael Thrun
+Michael Thrun, Hamza Tayyab
 }
 \note{
 morningstar api shuts requests randomly out
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{GetFinancialTimeSeries}}

@@ -9,7 +9,7 @@ MovingStandardDeviation = function(Datavec, lag,Robust=FALSE,na.rm=TRUE){
 # FilteredData[1:n,1:d]   the filtered Datavector
 # author: MCT
 
-AnzDatavec = lenght(Datavec)
+AnzDatavec = length(Datavec)
 MovingStandardDeviation=Datavec*NaN
 for(i in 1:AnzDatavec){
 Ind = c((i-lag):(i+lag))

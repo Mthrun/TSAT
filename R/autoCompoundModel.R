@@ -262,6 +262,7 @@ else{
   }
   ggObject=NULL
   ggObject = ggplot()
+  #todo aes toi aes_string
   ggObject = ggObject + geom_ribbon(data = forecast, aes(x = ds, ymin = yhat_lower, ymax = yhat_upper), fill = "blue", alpha = 0.3)
   ggObject = ggObject + geom_line(data = forecast, aes(x = ds, y = yhat), color = "darkgreen",linetype = "solid",size=1)
   ggObject = ggObject + geom_point(data = train, aes(x = ds, y = y), size = 2)

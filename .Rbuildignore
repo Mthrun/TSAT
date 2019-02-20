@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 installdependencies.R
 .Rhistory
+.tgitconfig

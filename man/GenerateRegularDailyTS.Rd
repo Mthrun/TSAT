@@ -45,7 +45,7 @@ in case of \code{na.rm=TRUE} the option of interpolation: "linear",  "spline" or
   \item{End}{
   Optional, \code{as.Date} object defining the ending of the timeseries, default is the minimum point of time in \code{TimeChar}
   }
-    \item{AggregateFunction}{
+    \item{AggregateFun}{
   Optional, in the special case that there are several values in \code{Datavec} per date in \code{TimeChar} a warning is given back but the  Datavec values can be aggregated by a function defined with this argument. This function has to have an \code{na.rm} argument, such like \code{\link{mean}} or \code{\link{sum}} because missing values are ignored in the aggregation process. 
   }
   

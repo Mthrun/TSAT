@@ -55,7 +55,7 @@ enables to visualize to lines in one plot overlaying them using ploty (e.g. two 
 Michael Thrun
 }
 \seealso{
-Adjusted version of \code{\link[DataVisualizations]{DualAxisLineChart}}
+Adjusted version of \code{\link[DataVisualizations]{DualaxisLinechart}}
 }
 \examples{
 #ToDo

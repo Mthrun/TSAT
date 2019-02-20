@@ -1,6 +1,8 @@
 export(AddCounts)
+export(AdditiveDecompositionModel)
 export(aggregateDays2Weeks)
 export(aggregateDays2Months)
+export(aggregateDays2FiskalMonths)
 export(aggregateTime2Days)
 export(aggregateToUniqueTime)
 export(autoCompoundModel)
@@ -85,4 +87,7 @@ import(Rcpp)
   importFrom("stats", "aggregate", "complete.cases", "cor", "cov",
              "qnorm", "qqline", "quantile", "sd")
   importFrom("utils", "tail")
-  
+    importFrom("stats", "HoltWinters", "KalmanForecast", "StructTS",
+             "arima", "diffinv", "dnorm", "filter", "glm", "runif", "ts")
+  importFrom("utils", "read.csv", "read.table", "type.convert",
+             "write.table")

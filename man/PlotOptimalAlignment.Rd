@@ -8,7 +8,9 @@ Plot Optimal Alignment
 Plot Optimal Alignment between two time series
 }
 \usage{
-PlotOptimalAlignment(FirstVector, SecondVector, Type = "threeway", FirstTime, SecondTime, Frequency, ...)
+PlotOptimalAlignment(FirstVector, SecondVector,
+
+ Type = "threeway", FirstTime, SecondTime, Frequency, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

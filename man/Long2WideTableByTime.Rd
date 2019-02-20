@@ -31,9 +31,7 @@ The feautures are together a long table. Currently only use for a special case, 
 \value{
 [1:n,1:d] data matrix (wide table) of n cases and d features
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
+
 \author{
 Michael Thrun
 }

@@ -1,4 +1,4 @@
-\name{aggregateDays2Months}
+\name{aggregateDays2FiskalMonths}
 \alias{aggregateDays2FiskalMonths}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{

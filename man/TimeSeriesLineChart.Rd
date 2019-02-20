@@ -8,13 +8,13 @@ Time Series Line Chart
 A plotly line chart to visualize a time series
 }
 \usage{
-TimeSeriesLineChart(Time,Values,Resolution='AsIs',xlab='Time',
+TimeSeriesLineChart(Time,Values,xlab='Time',Resolution='AsIs',
 
 y1lab='Values of Time Series',y2lab='Approximated Curve',
 
-main='Time Series',cols=c('black','red'),
+main='Time Series',cols=c('black','red'),LegendPos='topright',
 
-LegendPos='topright',Save=FALSE,\dots)
+Save=FALSE,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -70,7 +70,7 @@ enables to visualize to lines and points in one plot overlaying them using ploty
 Michael Thrun
 }
 \seealso{
-Adjusted version of \code{\link[DataVisualizations]{DualAxisLineChart}}
+Adjusted version of \code{\link[DataVisualizations]{DualaxisLinechart}}
 }
 \examples{
 #ToDo

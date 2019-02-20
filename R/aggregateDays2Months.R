@@ -19,7 +19,9 @@ aggregateDays2Months=function(Time,Data,FUN,Header,Period="month",...){
     Boolean=FALSE
   }
   if(isTRUE(Boolean)){
-  Dt=tibble::as.tibble(data.frame(TimeTmp=Time,Data=Data))
+    xx=data.frame(Time,Data)
+    colnames(xx)=c('TimeTmp','Data')
+  Dt=tibble::as.tibble(xx)
   
   Monthly =dplyr::group_by(Dt,Time=lubridate::floor_date(TimeTmp,Period)) 
   Monthly = dplyr::summarise(Monthly,Data=FUN(Data,...))
