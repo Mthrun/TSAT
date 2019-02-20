@@ -1,4 +1,4 @@
-aggregateDays2Months=function(Time,Data,FUN,Header,...){
+aggregateDays2Months=function(Time,Data,FUN,Header,Period="month",...){
   requireNamespace('tibble')
   requireNamespace('dplyr')
   requireNamespace('lubridate')
@@ -21,7 +21,7 @@ aggregateDays2Months=function(Time,Data,FUN,Header,...){
   if(isTRUE(Boolean)){
   Dt=tibble::as.tibble(data.frame(TimeTmp=Time,Data=Data))
   
-  Monthly =dplyr::group_by(Dt,Time=lubridate::floor_date(TimeTmp,'month')) 
+  Monthly =dplyr::group_by(Dt,Time=lubridate::floor_date(TimeTmp,Period)) 
   Monthly = dplyr::summarise(Monthly,Data=FUN(Data,...))
 
   if(!missing(Header)){

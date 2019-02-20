@@ -8,7 +8,7 @@ Aggregate Days to Months
 Aggregation of many Days over several years to Months is possible with this function
 }
 \usage{
-aggregateDays2Months(Time,Data,FUN,Header,\dots)
+aggregateDays2Months(Time,Data,FUN,Header,Period="month", \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +24,9 @@ aggegate by a function like \code{sum} or \code{mean}
   \item{Header}{
 colnames for data
 }
+  \item{Period}{
+string defining the period, but only \code{"month"} was tested
+}
   \item{\dots}{
 further arguments passed on to \code{FUN}
 }
@@ -36,6 +39,14 @@ dataframe[1:m,1:(d+1)] with m<n and first column beeing the time in \code{as.Dat
 }
 \author{
 Michael Thrun
+}
+\examples{
+#Generating Data
+data(Sales)
+Time=seq(from=as.Date('1970-01-01'),by='1 day',length.out = 2*length(Sales))
+#Aggregation
+Monthly=aggregateDays2Months(Time,c(Sales,Sales),sum)
+str(Monthly)
 }
 
 \keyword{aggregateDays2Months}% use one of  RShowDoc("KEYWORDS")
