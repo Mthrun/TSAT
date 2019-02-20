@@ -110,28 +110,33 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
     MonthlyL=c()
     DateTemp=Data
     for(i in 1:ncol(DateTemp)){
-      print(i)
       if(i==1)
-        MonthlyL=list(as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,i],FUN=FUN,Header=Header,...)$Data))
+        MonthlyL=list(as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,i],FUN=FUN,Header=Header,...)))
       else
-        MonthlyL=c(MonthlyL,list(as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,i],FUN=FUN,Header=Header,...))$Data))
+        MonthlyL=c(MonthlyL,list(as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,i],FUN=FUN,Header=Header,...))))
     }
+    Monthly=MonthlyL[[1]]
+    for(i in 2:length(MonthlyL)){
+      Monthly=merge(Monthly,MonthlyL[[i]],by.x="Time",by.y="Time",all=T)
+    }
+    
+    #der folgende code sortier fehlende werte am anfang ans ende der matrix
     # print(str(MonthlyL))
-    nn=unlist(lapply(MonthlyL,length))
-    print(nn)
-    TimeOut=as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,which.max(nn)],FUN=FUN,Header=Header,...)$Time)
+    # nn=unlist(lapply(MonthlyL,length))
+    # print(nn)
+    # TimeOut=as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,which.max(nn)],FUN=FUN,Header=Header,...)$Time)
     # print(TimeOut)
-    requireNamespace('rowr')
-    addcol=function(...){
-      rowr::cbind.fill(...,fill=NaN)
-    }
-    Monthly=do.call(addcol,MonthlyL)
-    Monthly=cbind(TimeOut,Monthly)
-    if(!is.null(colnames(DateTemp))){
-      colnames(Monthly)=c('Time',colnames(DateTemp))
-    }else{
-      colnames(Monthly)=c('Time',paste0('C',1:ncol(DateTemp)))
-    }
+    # 
+    # addcol=function(...){
+    #   rowr::cbind.fill(...,fill=NaN)
+    # }
+    # Monthly=do.call(addcol,MonthlyL)
+    # Monthly=cbind(TimeOut,Monthly)
+    # if(!is.null(colnames(DateTemp))){
+    #   colnames(Monthly)=c('Time',colnames(DateTemp))
+    # }else{
+    #   colnames(Monthly)=c('Time',paste0('C',1:ncol(DateTemp)))
+    # }
     return(Monthly)
   }
   
