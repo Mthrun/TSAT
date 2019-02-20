@@ -17,8 +17,17 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
     Boolean=FALSE
   }
   if(isTRUE(Boolean)){
-    #
-    Weekly=aggregateDays2Weeks(Time = Time,Data = Data,FUN=FUN,Header = c('Time','Data'))
+    requireNamespace('zoo')
+    Weekly=aggregateDays2Weeks(Time = Time,Data = Data,FUN=FUN,Header = c('Time','Data'),...)
+    outage.zoo <- zoo::as.zoo(x = Weekly$Data, order.by=as.Date(Weekly$Time))
+    
+    fprior=zoo::zoo(, seq(from = as.Date(start(outage.zoo)), to = as.Date(end(outage.zoo)), 
+                          by = "7 days"))
+    tempful=merge(outage.zoo, fprior, all = T)
+    WeeklyNa=data.frame(Time=as.Date(zoo::index(tempful)),Data=tempful)
+    WeeklyNa$Data[is.na(WeeklyNa$Data)]=0
+    Weekly=WeeklyNa
+    
     yearlycls=c(1,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,10,11,11,11,11,12,12,12,12)
     years=lubridate::year(Weekly$Time)
     uy=unique(years)
@@ -28,10 +37,12 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
      TimeCur=Weekly$Time[ind]
      DataCur=Weekly$Data[ind]
      yearcur=years[ind]
-     indw=lubridate::week(TimeCur) #number of complete seven day periods that have occurred between the date and January 1st
-     indw=indw[indw>0&indw<53] 
-     ycur=yearlycls[indw]
-
+     weekno=lubridate::week(TimeCur) #number of complete seven day periods that have occurred between the date and January 1st
+     indweekno=which(weekno>0&weekno<53)
+     ycur=yearlycls[weekno[weekno>0&weekno<53]] #here wie put in the real number below week 53 because we defined the cls
+     TimeCur=TimeCur[indweekno] #here we require the indize because we did not define the input
+     DataCur=DataCur[indweekno] #here we require the indize because we did not define the input
+     yearcur=yearcur[indweekno] #here we require the indize because we did not define the input
      DFcur=data.frame(Data=DataCur,Cls=ycur)
      TimeM=TimeCur[!duplicated(ycur)]
      
@@ -96,14 +107,26 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
     }
     return(as.data.frame(Monthly))
   }else{
-    Monthly=c()
+    MonthlyL=c()
     DateTemp=Data
     for(i in 1:ncol(DateTemp)){
+      print(i)
       if(i==1)
-        Monthly=as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,i],FUN=FUN,Header=Header,...))
+        MonthlyL=list(as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,i],FUN=FUN,Header=Header,...)$Data))
       else
-        Monthly=cbind(Monthly,as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,i],FUN=FUN,Header=Header,...))$Data)
+        MonthlyL=c(MonthlyL,list(as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,i],FUN=FUN,Header=Header,...))$Data))
     }
+    # print(str(MonthlyL))
+    nn=unlist(lapply(MonthlyL,length))
+    print(nn)
+    TimeOut=as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,which.max(nn)],FUN=FUN,Header=Header,...)$Time)
+    # print(TimeOut)
+    requireNamespace('rowr')
+    addcol=function(...){
+      rowr::cbind.fill(...,fill=NaN)
+    }
+    Monthly=do.call(addcol,MonthlyL)
+    Monthly=cbind(TimeOut,Monthly)
     if(!is.null(colnames(DateTemp))){
       colnames(Monthly)=c('Time',colnames(DateTemp))
     }else{
