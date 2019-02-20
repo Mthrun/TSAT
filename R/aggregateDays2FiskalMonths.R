@@ -132,11 +132,11 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
     # }
     # Monthly=do.call(addcol,MonthlyL)
     # Monthly=cbind(TimeOut,Monthly)
-    # if(!is.null(colnames(DateTemp))){
-    #   colnames(Monthly)=c('Time',colnames(DateTemp))
-    # }else{
-    #   colnames(Monthly)=c('Time',paste0('C',1:ncol(DateTemp)))
-    # }
+    if(!is.null(colnames(DateTemp))){
+      colnames(Monthly)=c('Time',colnames(DateTemp))
+    }else{
+      colnames(Monthly)=c('Time',paste0('C',1:ncol(DateTemp)))
+    }
     return(Monthly)
   }
   
