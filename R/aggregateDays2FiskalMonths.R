@@ -44,7 +44,7 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
      DataCur=DataCur[indweekno] #here we require the indize because we did not define the input
      yearcur=yearcur[indweekno] #here we require the indize because we did not define the input
      DFcur=data.frame(Data=DataCur,Cls=ycur)
-     TimeM=TimeCur[!duplicated(ycur)]
+     TimeM=TimeCur[!duplicated(ycur,fromLast=FALSE)]#first week of month will be rowname
      
      uniqueClasses <- sort(na.last = T, unique(DFcur$Cls))
      numberOfClasses <- length(uniqueClasses)
@@ -58,9 +58,9 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
        resultPerClass[i, ] <- apply(X = x, FUN = FUN, MARGIN = 2, 
                                     ...)
      }
-     y=data.frame(Time=TimeM,Data=resultPerClass,MonthNo=ycur[!duplicated(ycur)],YearNo=yearcur[!duplicated(ycur)])
+     y=data.frame(Time=TimeM,Data=resultPerClass,MonthNo=ycur[!duplicated(ycur,fromLast=FALSE)],YearNo=yearcur[!duplicated(ycur,fromLast=FALSE)])
      
-     rownames(y)=ycur[!duplicated(ycur)]
+     rownames(y)=ycur[!duplicated(ycur,fromLast=FALSE)]#first week of month will be rowname
      out=c(out,list(MonthlyCur=y))
 
     }
@@ -117,9 +117,11 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
     }
     Monthly=MonthlyL[[1]]
     for(i in 2:length(MonthlyL)){
-      Monthly=merge(Monthly,MonthlyL[[i]],by.x="Time",by.y="Time",all=T)
+      Monthly=merge(Monthly,MonthlyL[[i]],by.x="Time",by.y="Time",all=T)#bigger f the two sets defines the time frame of data
     }
-    
+    nn=lapply(MonthlyL, nrow)
+    TT=rownames(MonthlyL[[which.max(nn)]])
+    rownames(Monthly)=TT #as the biggest df defines the time, it can also define the rownames
     #der folgende code sortier fehlende werte am anfang ans ende der matrix
     # print(str(MonthlyL))
     # nn=unlist(lapply(MonthlyL,length))
@@ -137,6 +139,7 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
     }else{
       colnames(Monthly)=c('Time',paste0('C',1:ncol(DateTemp)))
     }
+
     return(Monthly)
   }
   
