@@ -12,7 +12,9 @@ The three parameters have to be set between zero and one.
 The parameters describe the memory decay rate, the higher they are the faster the method "forgets" its past average, season or trend.
 }
 \usage{
-AdditiveDecompositionModel(Data, SeasonalLength, NoSteps, alpha, beta, gamma)
+AdditiveDecompositionModel(Data, SeasonalLength, NoSteps,
+
+ alpha, beta, gamma,Silent=FALSE)
 }
 \arguments{
   \item{Data}{
@@ -35,6 +37,10 @@ Trend smoothing factor: If you choose the big number (near to 1) for beta, it me
   \item{gamma}{
 Seasonal change smoothing factor: If you choose the big number (near to 1) for gamma, it means you rely more on past data's seasonality and you believe the seasonality factors will remain in future.
 }
+
+  \item{Silent}{
+FALSE: Warnings are printed, TRUE: no Warnings are printed
+  }
 }
 \details{
 This approach called exponential, because the formula is mulitplied with itself for each value and added a mulitplication of the previous weight before the current one,  recursivly. The parameter alpha is defined in such a way to be sure that all weights for an weighted average (level) sum up to one (the same goes for trend and seasonal). It is called smoothing because a moving average smooths the current values of a time series by forecasting future values (e.g. outliers are "averaged") if you look at the formula form the point of view of a graph.

@@ -1,9 +1,56 @@
-AdditiveDecompositionModel=function(Data,SeasonalLength,NoSteps,alpha,beta,gamma){
+AdditiveDecompositionModel=function(Data,SeasonalLength,NoSteps,alpha,beta,gamma,Silent=FALSE){
   #author: MCT
-  if(any(c(alpha,beta,gamma))<0|any(c(alpha,beta,gamma)>0)){
-	warning('Parameters alpha beta and gamma have to be between zero and one.')#
-	return(rep(Inf,length(Data)+NoSteps))#we do not stop the function, because optimizers may still work with this if they are unable to optimize parameters in range.
-  }
+  if(length(Data)<(2*SeasonalLength)-1) warning('Data is to small for Seasonal length. Either generarate more data or reduce the length of season.')
+
+    if(alpha>1){
+      if(isTRUE(Silent)){
+      warning(
+        'Please set alpha only below one.'
+      )
+      }
+     alpha=0.999
+    }  
+    if(alpha<0){
+      if(isTRUE(Silent)){
+      warning(
+        'Please set alpha only above zero.'
+      )
+      }
+      alpha=0.001
+    }
+    if(beta>1){
+      if(isTRUE(Silent)){
+      warning(
+        'Please set beta only below one.'
+      )
+      }
+      beta=0.999
+    }  
+    if(beta<0){
+      if(isTRUE(Silent)){
+      warning(
+        'Please set beta only above zero.'
+      )
+      }
+      beta=0.001
+    }
+    if(gamma>1){
+      if(isTRUE(Silent)){
+      warning(
+        'Please set gamma only below one.'
+      )
+      }
+      gamma=0.999
+    }  
+    if(gamma<0){
+      if(isTRUE(Silent)){
+      warning(
+        'Please set gamma only above zero.'
+      )
+      }
+      gamma=0.001
+    }
+  
   ## Trend part ----
   InitialTrend=0
   for(i in 1:(SeasonalLength)){

@@ -77,7 +77,7 @@ See also \code{Horizon} for definiton, rownames are defined by \code{Time} if gi
 
 
 \item{FeatureImportance}{
-	Importance of Features for Forecast, see \code{\link[randomForest]{importance}} or \code{\link[ranger]{importance}} for details 
+	Importance of Features for Forecast, see \code{\link[randomForest]{importance}} or \code{importance} in \pkg{ranger} for details 
 }
 
   \item{Accuracy}{

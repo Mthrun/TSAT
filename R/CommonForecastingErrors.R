@@ -42,9 +42,9 @@ CommonForecastingErrors=function(TestdataY,ForecastingF,epsilon=10^-4,na.rm=TRUE
   }else{
     MASE=Metrics::mase(TestdataY,ForecastingF, step_size = stepsize)
   }
-  requireNamespace('Rathena')
-  Bias=Rathena::RootDeviance(TestdataY,ForecastingF)$bias
-  MRD=Rathena::RootDeviance(TestdataY,ForecastingF)$MRD
+  #requireNamespace('Rathena')
+  Bias=TSAT::RootDeviance(TestdataY,ForecastingF)$bias
+  MRD=TSAT::RootDeviance(TestdataY,ForecastingF)$MRD
   ForecastErrors=c(MAE,MAPE,smape,MASE,RMSE,Bias,MRD)
   names(ForecastErrors)=c('MAE','MAPE','SMAPE','MASE','RMSE','BIAS','MRD')
   if(!missing(digits)){

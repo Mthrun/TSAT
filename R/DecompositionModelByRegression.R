@@ -1,8 +1,8 @@
-autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods=10,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,...){
-  #res=autoCompoundModel(DataFrame, TimeColumnName = "Time", FeatureName = "Absatz", SplitDataAt, Frequency = "day", ForecastPeriods = 10, Holidays = c(), PlotIt, xlab = "Time", ylab = "Feature", EquiDist=TRUE)
+DecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods=10,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,...){
+  #res=DecompositionModelByRegressio(DataFrame, TimeColumnName = "Time", FeatureName = "Absatz", SplitDataAt, Frequency = "day", ForecastPeriods = 10, Holidays = c(), PlotIt, xlab = "Time", ylab = "Feature", EquiDist=TRUE)
 #
-#     Automatic Compound Model
-#     Automatic approach for compound model generation. Dataset is divided into training and test data by SplitDataAt.
+#     Additive a or mutliplikative Decomposition Model by Regression
+#     Automatic approach for Decomposition model generation. Dataset is divided into training and test data by SplitDataAt.
 #     training data is used for model generation, test data is used for evaluating the quality by a comparision to given data.
 #     Usually, a model should also have a third part of data only used once  and for manual verification.
 #  
@@ -96,7 +96,7 @@ autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",
 #       
 #       ##Forcasting 10 weeks of 166 weeks data of sales
 #       
-#       weeklyres=autoCompoundModel(DataFrame = WeeklySalesUniformRandom,TimeColumnName ='Time' ,
+#       weeklyres=DecompositionModelByRegressio(DataFrame = WeeklySalesUniformRandom,TimeColumnName ='Time' ,
 #                                   
 #                                   FeatureName = 'Sales',SplitDataAt = 156,Frequency = 'week',
 #                                   
@@ -132,7 +132,7 @@ autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",
 #       #calculate all
 #       for (i in seq_len(nrow(prophetGrid))) {
 #         parameters <- prophetGrid[i, ]
-#         temp=autoCompoundModel(
+#         temp=DecompositionModelByRegressio(
 #           DataFrame = DailySales,TimeColumnName ='Time' ,
 #           FeatureName = 'Sales',SplitDataAt = 1093,Frequency = 'day',
 #           ForecastPeriods = 30,PlotIt = F,Holidays = holidays2,
@@ -150,7 +150,7 @@ autoCompoundModel=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",
 #       #best paramters found
 #       DailyParameters <- prophetGrid3[prophetGrid3results == min(results[,1]), ]
 #       
-#       dailyres=autoCompoundModel(DataFrame = DailySales,TimeColumnName ='Time',
+#       dailyres=DecompositionModelByRegressio(DataFrame = DailySales,TimeColumnName ='Time',
 #                                  
 #                                  FeatureName = 'Sales',SplitDataAt = 1093,Frequency = 'day',
 #                                  

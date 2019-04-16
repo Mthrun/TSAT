@@ -1,14 +1,14 @@
-\name{autoCompoundModel}
-\alias{autoCompoundModel}
+\name{DecompositionModelByRegression}
+\alias{DecompositionModelByRegression}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Automatic Compound Model
+Automatic Decomposition Model By Regression
 }
 \description{
-Automatic approach for compound model generation. Dataset is divided into training and test data by SplitDataAt.
+Automatic approach for additive of multiplicative decomposition model generation. Dataset is divided into training and test data by SplitDataAt.
 }
 \usage{
-autoCompoundModel(DataFrame, TimeColumnName = "Time", 
+DecompositionModelByRegression(DataFrame, TimeColumnName = "Time", 
 
 FeatureName ="Absatz", SplitDataAt, Frequency = "day",
 
@@ -131,7 +131,7 @@ data('WeeklySalesUniformRandom')
 
 ##Forcasting 10 weeks of 166 weeks data of sales
 
-weeklyres=autoCompoundModel(DataFrame = WeeklySalesUniformRandom,TimeColumnName ='Time' ,
+weeklyres=DecompositionModelByRegression(DataFrame = WeeklySalesUniformRandom,TimeColumnName ='Time' ,
 
 FeatureName = 'Sales',SplitDataAt = 156,Frequency = 'week',
 
@@ -167,7 +167,7 @@ results <- matrix(NaN, ncol=2,nrow = nrow(prophetGrid))
 #calculate all
 for (i in seq_len(nrow(prophetGrid))) {
   parameters <- prophetGrid[i, ]
-  temp=autoCompoundModel(
+  temp=DecompositionModelByRegression(
     DataFrame = DailySales,TimeColumnName ='Time' ,
     FeatureName = 'Sales',SplitDataAt = 1093,Frequency = 'day',
     ForecastPeriods = 30,PlotIt = F,Holidays = holidays2,
@@ -185,7 +185,7 @@ prophetGrid <- cbind(prophetGrid, results[,1])
 #best paramters found
 DailyParameters <- prophetGrid3[prophetGrid3results == min(results[,1]), ]
 
-dailyres=autoCompoundModel(DataFrame = DailySales,TimeColumnName ='Time',
+dailyres=DecompositionModelByRegression(DataFrame = DailySales,TimeColumnName ='Time',
 
 FeatureName = 'Sales',SplitDataAt = 1093,Frequency = 'day',
 
@@ -203,9 +203,20 @@ dailyres$Accuracy
 
 1-abs(mean(dailyres$TestData$y) - dailyres$Accuracy[2,3])/dailyres$Accuracy[2,3]
 }
+
+##multiplikative
+
+data(AirPassengers)
+DF=ConvertTS2DF(AirPassengers)
+model=DecompositionModelByRegression(DataFrame = DF,TimeColumnName ='Time' ,
+
+FeatureName = 'Data',SplitDataAt = 120,Frequency = 'month',
+
+ForecastPeriods = 24,PlotIt = T,seasonality.mode = 'multiplicative')
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{compound}% use one of  RShowDoc("KEYWORDS")
-\keyword{compound model}% __ONLY ONE__ keyword per line
+\keyword{decomposition}% use one of  RShowDoc("KEYWORDS")
+\keyword{decomposition model}% __ONLY ONE__ keyword per line
 \keyword{prophet}%
