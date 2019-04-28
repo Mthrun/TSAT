@@ -1,4 +1,4 @@
-DecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods=10,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,...){
+DecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,...){
   #res=DecompositionModelByRegressio(DataFrame, TimeColumnName = "Time", FeatureName = "Absatz", SplitDataAt, Frequency = "day", ForecastPeriods = 10, Holidays = c(), PlotIt, xlab = "Time", ylab = "Feature", EquiDist=TRUE)
 #
 #     Additive a or mutliplikative Decomposition Model by Regression
@@ -176,7 +176,10 @@ DecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureN
   #   could not find function "cpp_object_initializer"
   
   requireNamespace('prophet')
+  requireNamespace('dplyr') 
+  library(dplyr) #schalter warnungen ab die ansosnten kommen
 
+  
   Header=colnames(DataFrame)
   Names = paste0("\\<", FeatureName, "\\>")
   if (length(Names) == 1) 
@@ -226,58 +229,90 @@ else{
   }
  
   train=history[1:SplitDataAt,]
-  testind=seq(from=(SplitDataAt+1),to=nrow(history),by=1)
-  testdata=history[testind,]
-  
-  m <- prophet::prophet(train,holidays=Holidays,...)
+    if(SplitDataAt<nrow(history)){
+    testind=seq(from=(SplitDataAt+1),to=nrow(history),by=1)
+    testdata=history[testind,]
+    if(missing(ForecastPeriods)){
+      ForecastPeriods=nrow(testdata)
+    }
+  }else{
+    if(missing(ForecastPeriods)){
+      ForecastPeriods=1
+    }
+    testdata=history[SplitDataAt,]
+    for(rr in 2:(ForecastPeriods+1))
+      testdata=rbind(testdata,history[SplitDataAt,])
 
+    testdata$ds=seq(from=testdata$ds[1],length.out = ForecastPeriods+1,by = Frequency)
+    testdata=testdata[-1,]
+  }
+
+  #Create Prophet object with parametter settings
+  m <- prophet::prophet(holidays=Holidays,...)
+  if(Frequency=='month'){
+    #m <- prophet::prophet(weekly.seasonality=FALSE)
+    m <- prophet::add_seasonality(m, name='monthly', period=30.5, fourier.order=24,prior.scale = 80)
+    m <- prophet::add_seasonality(m, name='quaterly', period=365.25/4, fourier.order=8,prior.scale = 80)
+    m <- prophet::add_seasonality(m, name='yearly', period=365.25,fourier.order = 5,prior.scale = 80)
+    #m <- prophet::prophet(m,train,holidays=Holidays,fit=T,...)  
+  } 
+  #train model
+  m <- prophet::fit.prophet(m, train)
   #m$logistic.floor=T
-  future=prophet::make_future_dataframe(m, periods = ForecastPeriods, freq = Frequency)
- 
+  #fitmodel
+  PastAndfuture=prophet::make_future_dataframe(m, periods = ForecastPeriods, freq = Frequency,include_history=T)
+ #print(future)
   if(!is.null(MinLowerBound)){
-    future$floor=MinLowerBound
+    PastAndfuture$floor=MinLowerBound
   }
   if(!is.null(MaxUpperBound)){
-    future$cap=MaxUpperBound
+    PastAndfuture$cap=MaxUpperBound
   }
 
-  forecast <- predict(m, future)
+  regression <- predict(m, PastAndfuture)
   
   if(!is.null(MinLowerBound)){
-    forecast$yhat_lower[forecast$yhat_lower<=MinLowerBound]=MinLowerBound
+    regression$yhat_lower[regression$yhat_lower<=MinLowerBound]=MinLowerBound
   }
   if(!is.null(MaxUpperBound)){
-    forecast$yhat_upper[forecast$yhat_upper>=MaxUpperBound]=MaxUpperBound
+    regression$yhat_upper[regression$yhat_upper>=MaxUpperBound]=MaxUpperBound
   }
   if(!is.null(MinLowerBound)){
-    forecast$yhat[forecast$yhat<=MinLowerBound]=MinLowerBound
+    regression$yhat[regression$yhat<=MinLowerBound]=MinLowerBound
   }
   if(!is.null(MaxUpperBound)){
-    forecast$yhat[forecast$yhat>=MaxUpperBound]=MaxUpperBound
+    regression$yhat[regression$yhat>=MaxUpperBound]=MaxUpperBound
   }
   #plot(m, forecast)
   if(!is.numeric(Frequency)){ #days weeks months,quarters and years
     m$history$ds=as.Date(m$history$ds)
-    forecast$ds=as.Date(forecast$ds)
+    regression$ds=as.Date(regression$ds)
   }
   ggObject=NULL
   ggObject = ggplot()
   #todo aes toi aes_string
-  ggObject = ggObject + geom_ribbon(data = forecast, aes(x = ds, ymin = yhat_lower, ymax = yhat_upper), fill = "blue", alpha = 0.3)
-  ggObject = ggObject + geom_line(data = forecast, aes(x = ds, y = yhat), color = "darkgreen",linetype = "solid",size=1)
+  ggObject = ggObject + geom_ribbon(data = regression, aes(x = ds, ymin = yhat_lower, ymax = yhat_upper), fill = "blue", alpha = 0.3)
+  ggObject = ggObject + geom_line(data = regression, aes(x = ds, y = yhat), color = "darkgreen",linetype = "solid",size=1)
   ggObject = ggObject + geom_point(data = train, aes(x = ds, y = y), size = 2)
   ggObject = ggObject + geom_point(data = testdata, aes(x = ds, y = y), size = 2, color = 'red')
   ggObject = ggObject+xlab(xlab)+ylab(ylab)
   if(PlotIt){
     print(ggObject)
   }
+  forecast=regression[regression$ds %in% testdata$ds,]
   if(EquiDist){
-  AccuracyTest=forecast::accuracy(forecast[forecast$ds %in% testdata$ds, 'yhat'], testdata$y)
-  AccuracyTrain=forecast::accuracy(forecast[forecast$ds %in% train$ds, 'yhat'], train$y)
+    #AccuracyTest=c(0,0)
+    # print(forecast[, 'yhat'])
+    # print(forecast[forecast$ds %in% testdata$ds, 'yhat'])
+    # print(testdata$y)
+  AccuracyTest=forecast::accuracy(forecast[, 'yhat'], testdata$y)
+  #print(forecast[forecast$ds %in% train$ds, 'yhat'])
+  #print(train$y)
+  AccuracyTrain=forecast::accuracy(regression[regression$ds %in% train$ds, 'yhat'], train$y)
   acc=rbind(AccuracyTrain,AccuracyTest)
   }else{
     acc=matrix(ncol=0,nrow=2)
   }
   rownames(acc)=c('Train set', 'Test set')
-  return(list(Model=m,Forecast=forecast,TrainingData=train,TestData=testdata,ggObject=ggObject,Accuracy=acc))
+  return(list(Forecast=forecast,Accuracy=acc,TestData=testdata,Model=m,TrainingData=train,ggObject=ggObject))
 }

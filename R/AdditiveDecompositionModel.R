@@ -50,7 +50,9 @@ AdditiveDecompositionModel=function(Data,SeasonalLength,NoSteps,alpha,beta,gamma
       }
       gamma=0.001
     }
-  
+  if(sum(alpha+beta+gamma)>1){
+    warning('Sum of parameters should not be higher than one.')
+  }
   ## Trend part ----
   InitialTrend=0
   for(i in 1:(SeasonalLength)){

@@ -76,18 +76,20 @@ model paramters, see example
 training data is used for model generation, test data is used for evaluating the quality by a comparision to given data.
 }
 \value{
-  \item{Model}{
-model paramters, see example
-}
+
   \item{Forecast}{
 Forecast, see example
-}
-  \item{TrainingData}{
-TrainingData, see example
 }
   \item{TestData}{
 TestData, see example
 }
+  \item{TrainingData}{
+TrainingData, see example
+}
+  \item{Model}{
+model paramters, see example
+}
+
   \item{ggObject}{
 ggplot object to change plot with
 
@@ -99,9 +101,7 @@ red dots: prediction
 
 blue range: confidence intervall of model
 }
-  \item{Accuracy}{
-ME, RMSE, MAE, MPE, MAPE of training and test dataset in a matrix
-}
+
 }
 \references{
 About the package behind it
@@ -139,13 +139,15 @@ ForecastPeriods = 10,PlotIt = T,
 
 Holidays = holidays)
 
+\dontshow{
+#decrapricated
 #complete accurcay showing among other things
 # average sales difference between prediction and data (MAE)
-weeklyres$Accuracy
+#weeklyres$Accuracy
 
 #mean Prediction quality
-1-abs(mean(weeklyres$TestData$y) - weeklyres$Accuracy[2,3])/weeklyres$Accuracy[2,3]
-
+#1-abs(mean(weeklyres$TestData$y) - weeklyres$Accuracy[2,3])/weeklyres$Accuracy[2,3]
+}
 #Plot components
 prophet::plot_forecast_component(weeklyres$Forecast,name = c('seasonal'))
 prophet::plot_forecast_component(weeklyres$Forecast,name = c('trend'))
