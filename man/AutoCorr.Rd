@@ -8,7 +8,7 @@ acf
 AutoCorrelation
 }
 \usage{
-AutoCorr(TimeSeries, nLags = 2, PlotIt = FALSE)
+AutoCorr(TimeSeries, nLags = 2, PlotIt = FALSE,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +20,9 @@ AutoCorr(TimeSeries, nLags = 2, PlotIt = FALSE)
 }
   \item{PlotIt}{
 %%     ~~Describe \code{PlotIt} here~~
+}
+  \item{\dots}{
+further arguments passed on to output of \code{\link{ccf}}
 }
 }
 \details{

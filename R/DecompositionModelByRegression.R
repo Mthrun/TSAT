@@ -1,4 +1,4 @@
-DecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,...){
+DecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,Cycles=list(),...){
   #res=DecompositionModelByRegressio(DataFrame, TimeColumnName = "Time", FeatureName = "Absatz", SplitDataAt, Frequency = "day", ForecastPeriods = 10, Holidays = c(), PlotIt, xlab = "Time", ylab = "Feature", EquiDist=TRUE)
 #
 #     Additive a or mutliplikative Decomposition Model by Regression
@@ -249,13 +249,27 @@ else{
 
   #Create Prophet object with parametter settings
   m <- prophet::prophet(holidays=Holidays,...)
-  if(Frequency=='month'){
+  
+  if(!is.null(Cycles[["monthly"]])){
+    if(isTRUE(Cycles[["monthly"]]))
+      m <- prophet::add_seasonality(m, name='monthly', period=30.5, fourier.order=24,prior.scale = 80)
+    
+  }
+  if(!is.null(Cycles[["quaterly"]])){
+    if(isTRUE(Cycles[["quaterly"]]))
+      m <- prophet::add_seasonality(m, name='quaterly', period=365.25/4, fourier.order=8,prior.scale = 80)
+  }
+  if(!is.null(Cycles[["biyearly"]])){
+    if(isTRUE(Cycles[["biyearly"]]))
+      m <- prophet::add_seasonality(m, name='biyearly', period=2*365.25,fourier.order = 5,prior.scale = 80)
+    
+  }
+  
+  #if(Frequency=='month'){
     #m <- prophet::prophet(weekly.seasonality=FALSE)
-    m <- prophet::add_seasonality(m, name='monthly', period=30.5, fourier.order=24,prior.scale = 80)
-    m <- prophet::add_seasonality(m, name='quaterly', period=365.25/4, fourier.order=8,prior.scale = 80)
-    m <- prophet::add_seasonality(m, name='yearly', period=365.25,fourier.order = 5,prior.scale = 80)
+    
     #m <- prophet::prophet(m,train,holidays=Holidays,fit=T,...)  
-  } 
+  #} 
   #train model
   m <- prophet::fit.prophet(m, train)
   #m$logistic.floor=T
