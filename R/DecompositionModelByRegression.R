@@ -229,6 +229,7 @@ else{
   }
  
   train=history[1:SplitDataAt,]
+
     if(SplitDataAt<nrow(history)){
     testind=seq(from=(SplitDataAt+1),to=nrow(history),by=1)
     testdata=history[testind,]
@@ -246,7 +247,19 @@ else{
     testdata$ds=seq(from=testdata$ds[1],length.out = ForecastPeriods+1,by = Frequency)
     testdata=testdata[-1,]
   }
-
+  if(!is.null(Cycles[["Mirrored"]])){
+    if(isTRUE(Cycles[["Mirrored"]])){
+      indtrain=1:nrow(train)
+      Time=train$ds
+      Time2=seq(from=as.Date(min(Time)),length.out =3*nrow(train)+1,by=paste0('-1 ',Frequency))
+      Time2=sort(Time2,decreasing = FALSE)
+      train=rbind(train[rev(indtrain),],train,train[rev(indtrain),],train)
+      #train=rbind(train[rev(indtrain),],train)
+      
+      train$ds=c(Time2,Time[-1])
+    }
+    
+  }
   #Create Prophet object with parametter settings
   m <- prophet::prophet(holidays=Holidays,...)
   
@@ -314,19 +327,20 @@ else{
     print(ggObject)
   }
   forecast=regression[regression$ds %in% testdata$ds,]
-  if(EquiDist){
-    #AccuracyTest=c(0,0)
-    # print(forecast[, 'yhat'])
-    # print(forecast[forecast$ds %in% testdata$ds, 'yhat'])
-    # print(testdata$y)
-  AccuracyTest=forecast::accuracy(forecast[, 'yhat'], testdata$y)
-  #print(forecast[forecast$ds %in% train$ds, 'yhat'])
-  #print(train$y)
-  AccuracyTrain=forecast::accuracy(regression[regression$ds %in% train$ds, 'yhat'], train$y)
-  acc=rbind(AccuracyTrain,AccuracyTest)
-  }else{
-    acc=matrix(ncol=0,nrow=2)
-  }
+  acc=matrix(ncol=0,nrow=2)
+  # if(EquiDist){
+  #   #AccuracyTest=c(0,0)
+  #   # print(forecast[, 'yhat'])
+  #   # print(forecast[forecast$ds %in% testdata$ds, 'yhat'])
+  #   # print(testdata$y)
+  # AccuracyTest=forecast::accuracy(forecast[, 'yhat'], testdata$y)
+  # #print(forecast[forecast$ds %in% train$ds, 'yhat'])
+  # #print(train$y)
+  # AccuracyTrain=forecast::accuracy(regression[regression$ds %in% train$ds, 'yhat'], train$y)
+  # acc=rbind(AccuracyTrain,AccuracyTest)
+  # }else{
+  #   acc=matrix(ncol=0,nrow=2)
+  # }
   rownames(acc)=c('Train set', 'Test set')
   return(list(Forecast=forecast,Accuracy=acc,TestData=testdata,Model=m,TrainingData=train,ggObject=ggObject))
 }

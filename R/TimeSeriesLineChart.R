@@ -43,7 +43,8 @@ TimeSeriesLineChart=function(Time,Values,xlab='Time',Resolution='AsIs',y1lab='Va
   )
   p <- plotly::plot_ly() 
     p <- plotly::add_lines(p,x = ~Time, y = ~Values, name = y2lab, type='scatter', line = list(color=cols[1])) 
-    p <-  plotly::add_trace(p,x = ~Time,y = ~Values, name= y1lab, type='scatter',mode='marker',marker = list(size = 10,color=cols[2]))
+    if(cols[2]!='white')
+      p <-  plotly::add_trace(p,x = ~Time,y = ~Values, name= y1lab, type='scatter',mode='marker',marker = list(size = 10,color=cols[2]))
     p <-  plotly::layout(p,
       title = main, 
       xaxis = list(title=xlab,

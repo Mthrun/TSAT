@@ -139,14 +139,17 @@ if(is.null(formula)){#does not work with seasonal components
                                                ntree=NoOfTree,...)
             y_pred = predict(model,newdata = Splitted$TestSet)
             Importance=randomForest::importance(model)
+            ordered=order(Importance,decreasing = T)
+            Importance=Importance[ordered,]
           },
           ranger={
             model = ranger::ranger(data=Splitted$TrainingSet,formula=formula,
-                                   num.trees=NoOfTree,classification=FALSE,...)
+                                   num.trees=NoOfTree,classification=FALSE,importance = 'permutation',...)
           
             y_pred = predict(model,data = Splitted$TestSet)$predictions
-            Importance=ranger::importance(model)
-            
+            Importance=model$variable.importance#ranger::importance(model)
+            ordered=order(Importance,decreasing = T)
+            Importance=Importance[ordered]
             
           },
           {stop("Please choose either 'ranger' or 'randomForest'.")}
@@ -198,8 +201,7 @@ if(is.null(formula)){#does not work with seasonal components
 
   
 
-  ordered=order(Importance,decreasing = T)
-  Importance=Importance[ordered,]
+
   return(list(
     Forecast=Forecast,
     TestDataPredictor =TestData,
