@@ -327,6 +327,7 @@ else{
     print(ggObject)
   }
   forecast=regression[regression$ds %in% testdata$ds,]
+  TrainingSetForecast=regression[regression$ds %in% train$ds,]
   acc=matrix(ncol=0,nrow=2)
   # if(EquiDist){
   #   #AccuracyTest=c(0,0)
@@ -342,5 +343,5 @@ else{
   #   acc=matrix(ncol=0,nrow=2)
   # }
   rownames(acc)=c('Train set', 'Test set')
-  return(list(Forecast=forecast,Accuracy=acc,TestData=testdata,Model=m,TrainingData=train,ggObject=ggObject))
+  return(list(Forecast=forecast,Accuracy=acc,TestData=testdata,Model=m,TrainingData=train,TrainingSetForecast=TrainingSetForecast,ggObject=ggObject))
 }
