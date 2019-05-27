@@ -1,4 +1,4 @@
-DecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,Cycles=list(),...){
+DecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,Cycles=list(),Growth="linear",...){
   #res=DecompositionModelByRegressio(DataFrame, TimeColumnName = "Time", FeatureName = "Absatz", SplitDataAt, Frequency = "day", ForecastPeriods = 10, Holidays = c(), PlotIt, xlab = "Time", ylab = "Feature", EquiDist=TRUE)
 #
 #     Additive a or mutliplikative Decomposition Model by Regression
@@ -197,17 +197,25 @@ DecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureN
   if (length(ColNum2) == 0) 
     stop("TimeColumnName not found.")
   
-if(EquiDist)
+if(EquiDist){
   # history <- data.frame(ds = seq(
   #   from=as.Date(min(DataFrame[,ColNum2])), to=as.Date(max(DataFrame[,ColNum2])), by =Frequency
   # ),
   # y = DataFrame[,ColNum])
   history <- data.frame(ds = as.Date(DataFrame[,ColNum2]),
                         y = DataFrame[,ColNum])
-else{
+  if(Growth=="logistic"){
+    history$cap=DataFrame$cap
+    history$floor=DataFrame$floor
+  }
+}else{
   history <- data.frame(ds = as.Date(DataFrame[,ColNum2]),
   y = DataFrame[,ColNum])
   warnings('Working progress. May not work properly yet.')
+  if(Growth=="logistic"){
+    history$cap=DataFrame$cap
+    history$floor=DataFrame$floor
+  }
   # su muesste man es machen
   # x=seq(from=as.Date(min(DailySales7441884and7571348$Time)),to=as.Date(max(DailySales7441884and7571348$Time)),by='day')
   # 
@@ -261,20 +269,40 @@ else{
     
   }
   #Create Prophet object with parametter settings
-  m <- prophet::prophet(holidays=Holidays,...)
+  m <- prophet::prophet(holidays=Holidays,growth = Growth,...)
+  
+  if(!is.null(Cycles[["Orders"]])){
+    Orders=Cycles[["Orders"]]
+    if(length(Orders)!=3){
+      warning('Length of vector of "Orders" should be 3 but is not. Using default.')
+      Orders=c(24,8,5)
+    }
+  }else{
+    Orders=c(24,8,5)
+  }
+  
+  if(!is.null(Cycles[["PriorScale"]])){
+    PriorScale=Cycles[["PriorScale"]]
+    if(length(PriorScale)!=3){
+      warning('Length of vector of "Orders" should be 3 but is not. Using default.')
+      PriorScale=c(0.8,0.8,0.8)
+    }
+  }else{
+    PriorScale=c(0.8,0.8,0.8)
+  }
   
   if(!is.null(Cycles[["monthly"]])){
     if(isTRUE(Cycles[["monthly"]]))
-      m <- prophet::add_seasonality(m, name='monthly', period=30.5, fourier.order=24,prior.scale = 80)
+      m <- prophet::add_seasonality(m, name='monthly', period=30.5, fourier.order=Orders[1],prior.scale = PriorScale[1])
     
   }
   if(!is.null(Cycles[["quaterly"]])){
     if(isTRUE(Cycles[["quaterly"]]))
-      m <- prophet::add_seasonality(m, name='quaterly', period=365.25/4, fourier.order=8,prior.scale = 80)
+      m <- prophet::add_seasonality(m, name='quaterly', period=365.25/4, fourier.order=Orders[2],prior.scale = PriorScale[2])
   }
   if(!is.null(Cycles[["biyearly"]])){
     if(isTRUE(Cycles[["biyearly"]]))
-      m <- prophet::add_seasonality(m, name='biyearly', period=2*365.25,fourier.order = 5,prior.scale = 80)
+      m <- prophet::add_seasonality(m, name='biyearly', period=2*365.25,fourier.order = Orders[3],prior.scale = PriorScale[3])
     
   }
   
@@ -284,7 +312,9 @@ else{
     #m <- prophet::prophet(m,train,holidays=Holidays,fit=T,...)  
   #} 
   #train model
+
   m <- prophet::fit.prophet(m, train)
+
   #m$logistic.floor=T
   #fitmodel
   PastAndfuture=prophet::make_future_dataframe(m, periods = ForecastPeriods, freq = Frequency,include_history=T)
@@ -295,7 +325,11 @@ else{
   if(!is.null(MaxUpperBound)){
     PastAndfuture$cap=MaxUpperBound
   }
-
+  
+  if(Growth=="logistic"){
+    PastAndfuture$cap=DataFrame$cap[1:length(PastAndfuture$cap)]
+    PastAndfuture$floor=DataFrame$floor[1:length(PastAndfuture$cap)]
+  }
   regression <- predict(m, PastAndfuture)
   
   if(!is.null(MinLowerBound)){
