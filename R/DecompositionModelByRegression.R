@@ -292,18 +292,33 @@ if(EquiDist){
   }
   
   if(!is.null(Cycles[["monthly"]])){
-    if(isTRUE(Cycles[["monthly"]]))
+    if(isTRUE(Cycles[["monthly"]])){
+      if(Orders[1]<1){
+          Orders[1]=1
+          warning('Monthly Orders below 1. Setting 1')
+      }
       m <- prophet::add_seasonality(m, name='monthly', period=30.5, fourier.order=Orders[1],prior.scale = PriorScale[1])
-    
+    print(Orders)
+    print(PriorScale)
+    }
   }
   if(!is.null(Cycles[["quaterly"]])){
-    if(isTRUE(Cycles[["quaterly"]]))
+    if(isTRUE(Cycles[["quaterly"]])){
+      if(Orders[2]<1){
+        Orders[2]=1
+        warning('Quaterly Orders below 1. Setting 1')
+      }
       m <- prophet::add_seasonality(m, name='quaterly', period=365.25/4, fourier.order=Orders[2],prior.scale = PriorScale[2])
+    }
   }
   if(!is.null(Cycles[["biyearly"]])){
-    if(isTRUE(Cycles[["biyearly"]]))
+    if(isTRUE(Cycles[["biyearly"]])){
+      if(Orders[3]<1){
+        Orders[3]=1
+        warning('Bi-Yearly Orders below 1. Setting 1')
+      }
       m <- prophet::add_seasonality(m, name='biyearly', period=2*365.25,fourier.order = Orders[3],prior.scale = PriorScale[3])
-    
+    }
   }
   
   #if(Frequency=='month'){
