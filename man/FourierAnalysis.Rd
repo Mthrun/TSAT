@@ -8,7 +8,9 @@ Fourier Analysis
 Fourier Analysis with a window function equal to 4 times the time series
 }
 \usage{
-FourierAnalysis(Y, SamplingRate, na.rm = FALSE, PlotIt = FALSE)
+FourierAnalysis(Y,
+
+SamplingRate,AdjustWindow=FALSE, na.rm = FALSE, PlotIt = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,6 +20,12 @@ numerical vector [1:N] of time series
   \item{SamplingRate}{
 Optional, used if specific frequencies should be given back instead of 1:Nqist frequency
 }
+  \item{AdjustWindow}{
+  FALSE: Window is time series, make sure that its periodic and detrended.
+  
+  TRUE: see details, time series does not have to be periodic
+  }
+
   \item{na.rm}{
 easy and maybe incorrect imputation of \code{\link{FastFourierTransformation}}
 }
@@ -26,8 +34,10 @@ TRUE: Plots frequency domain
 }
 }
 \details{
-For discrete finite signal defined by a time series.
-The DC part is not given back due to the choice of window. The first frequency is "artificial" because it results directly from the window function and thus is also nit given back.
+Fourier Analysis in case of a discrete finite signal defined by a time series.
+
+\code{AdjusteWindow=TRUE}:
+The DC part is not given back due to the choice of window. The first frequency is "artificial" because it results directly from the window function and thus is also not given back.
 }
 \value{
 A list with
