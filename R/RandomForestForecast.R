@@ -1,5 +1,5 @@
-RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomForest',
-                              AutoCorrelation,NoOfTree=200,PlotIt=TRUE,Holidays,SimilarPoints=TRUE,...){
+RandomForestForecast=function(Time, DF, formula=NULL,SplitDataAt,Horizon,Package='randomForest',
+                              AutoCorrelation=NULL,NoOfTree=200,PlotIt=TRUE,Holidays,SimilarPoints=TRUE,...){
   N=nrow(as.matrix(DF))
   requireNamespace('lubridate')
 
@@ -33,10 +33,18 @@ RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomFore
     DF$Holidays=Time %in% hols$Time
     DF$Workingdays=GetWorkingDays(Time,HolidaysTime = hols$Time,GermanBridgeDay = F)$WorkingDay
 
- 
-    TrainingTime = head(Time,N-Horizon)
-    TestTime=tail(Time,Horizon)
-    
+    if(!missing(SplitDataAt)){
+      if(SplitDataAt>N) stop('"SplitDataAt" is a higher number then length of cases of data')
+      if(!missing(Horizon)) warning('"Horizon" and "SplitDataAt" given, ignoring Horizin.')
+      TrainingTime=head(Time,SplitDataAt)
+      TestTime=tail(Time,N-SplitDataAt)
+    }
+    if(missing(SplitDataAt)){
+      if(missing(Horizon)) stop('Please set either "Horizon" or "SplitDataAt"')
+      
+      TrainingTime = head(Time,N-Horizon)
+      TestTime=tail(Time,Horizon)
+    }
     #Dauer zwischen zwei Messungen
     duration=rep(1,length(Time))
     for(i in 2:(length(Time))){
@@ -51,20 +59,25 @@ RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomFore
   }
 
   #Autokorellation reinrechnen ----
-  if(!missing(AutoCorrelation)&!is.null(formula)){
+  if(!is.null(AutoCorrelation)&!is.null(formula)){
     
     if(length(AutoCorrelation)>1){
       AutoCorrelation=AutoCorrelation[1]
       warning('Currently Autocorrelation for only one feature implemented')
     }
     x=DF[,AutoCorrelation]
-    DF$DaysPrior=TSAT::LagVector(x,Horizon)
+    if(missing(Horizon)) 
+      HH=N-SplitDataAt
+    else
+      HH=Horizon
+    
+    DF$DaysPrior=TSAT::LagVector(x,HH)
     lastvalue=TSAT::LagVector(x,1)
-    if((2*Horizon+1)<N){
-      DF$DaysPrior[1:Horizon]=mean(DF$DaysPrior[(Horizon+1):(2*Horizon)],na.rm = T)
+    if((2*HH+1)<N){
+      DF$DaysPrior[1:HH]=mean(DF$DaysPrior[(HH+1):(2*HH)],na.rm = T)
       
     }else{
-      DF$DaysPrior[1:Horizon]=0
+      DF$DaysPrior[1:HH]=0
     }
     lastvalue[1]=mean(lastvalue[(1+1):(2*1)],na.rm = T)
     #Renditen
@@ -97,17 +110,32 @@ RandomForestForecast=function(Time, DF, formula=NULL,Horizon,Package='randomFore
   }
     requireNamespace('randomForest')
 
+    if(!missing(SplitDataAt)){
+      if(SplitDataAt>N) stop('"SplitDataAt" is a higher number then length of cases of data')
+      if(!missing(Horizon)) warning('"Horizon" and "SplitDataAt" given, ignoring Horizin.')
+    
+    TrainData=head(DF,SplitDataAt)
+    TestData=tail(DF,N-SplitDataAt)
 
-    Splitted=list(
-    TrainingSet = head(DF,N-Horizon),
-    TestSet = tail(DF,Horizon))
+    Splitted=list(TrainingSet=TrainData,TestSet=TestData)
+    }
+    if(missing(SplitDataAt)){
+      if(missing(Horizon)) stop('Please set either "Horizon" or "SplitDataAt"')
+      Splitted=list(
+      TrainingSet = head(DF,N-Horizon),
+      TestSet = tail(DF,Horizon))
+      
 
-
+    }
 if(is.null(formula)){#does not work with seasonal components
   #zyklisch zuruecksetzen leads to autocorralation
-
+  if(missing(Horizon)) 
+    HH=N-SplitDataAt
+  else
+    HH=Horizon
+  
   Ntrain=nrow(as.matrix(Splitted$TrainingSet))
-  Praediktor=c(tail(Splitted$TrainingSet,Horizon),head(Splitted$TrainingSet,Ntrain-Horizon))
+  Praediktor=c(tail(Splitted$TrainingSet,HH),head(Splitted$TrainingSet,Ntrain-HH))
 
   switch (Package,
           randomForest = {
@@ -126,7 +154,7 @@ if(is.null(formula)){#does not work with seasonal components
 
 
   Ntest=nrow(as.matrix(Splitted$TestSet))
-  PraediktorTest=c(tail(Splitted$TestSet,Horizon),head(Splitted$TestSet,Ntest-Horizon))
+  PraediktorTest=c(tail(Splitted$TestSet,HH),head(Splitted$TestSet,Ntest-HH))
   TestData=Splitted$TestSet
   TestDataIndicators=NULL
 }else{
@@ -188,9 +216,14 @@ if(is.null(formula)){#does not work with seasonal components
     
   # acc=NULL
   if(PlotIt){
+    if(missing(Horizon)) 
+      HH=N-SplitDataAt
+    else
+      HH=Horizon
+    
     if(!is.null(TestTime)){
-      plot(1:Horizon,TestData[,1],type='l',col='black')
-      points(1:Horizon,y_pred,type='l',col='red')
+      plot(1:HH,TestData[,1],type='l',col='black')
+      points(1:HH,y_pred,type='l',col='red')
     }else{
       plot(TestTime,TestData[,1],type='l',col='black')
       points(TestTime,y_pred,type='l',col='red')
@@ -204,6 +237,7 @@ if(is.null(formula)){#does not work with seasonal components
 
   return(list(
     Forecast=Forecast,
+    ForecastTime=TestTime,
     TestDataPredictor =TestData,
     FeatureImportance=Importance,
     QualityMeasures=acc,

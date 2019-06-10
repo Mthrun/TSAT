@@ -1,5 +1,6 @@
 AdditiveDecompositionModel=function(Data,SeasonalLength,NoSteps,alpha,beta,gamma,Silent=FALSE){
   #author: MCT
+  #SAP empfielt bei produkten multiplicativen holt winters
   if(length(Data)<(2*SeasonalLength)-1) warning('Data is to small for Seasonal length. Either generarate more data or reduce the length of season.')
 
     if(alpha>1){

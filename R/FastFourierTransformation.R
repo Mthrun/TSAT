@@ -32,10 +32,10 @@ FastFourierTransformation=function(Timeseries,na.rm=FALSE,PlotIt=FALSE){
 
   #Trick 17: verfierfache ZR damit auf jedenfall periodisch
   # see windowing effect
-  Timeseries=c(Timeseries,Timeseries[length(Timeseries):1])
-  timeseries=c(Timeseries,Timeseries[length(Timeseries):1])
+  #Timeseries=c(Timeseries,Timeseries[length(Timeseries):1])
+  #timeseries=c(Timeseries,Timeseries[length(Timeseries):1])
   
-  fourierComponents=fft(timeseries)
+  fourierComponents=fft(Timeseries)
   KomplexeFourierKoeffizienten=as.complex(fourierComponents)
   N = length(KomplexeFourierKoeffizienten)
   #get the absolute value of the coefficients  
@@ -51,9 +51,9 @@ FastFourierTransformation=function(Timeseries,na.rm=FALSE,PlotIt=FALSE){
   if(PlotIt){
     #geht nur bis N/2, ohne 1.Frequenc (DC anteil)
     #1.Oberschwingungen werden ignoriert
-    plot(cbind((frequenz[2:N/2])/N,Amplitude[2:N/2]), t="h", lwd=2, 
+    plot(cbind((frequenz[2:floor(N/2)])/N,Amplitude[2:N/2]), t="h", lwd=2, 
          xlab="Frequency (Hz)", ylab="Amplitude", 
          ylim=c(0,max(Amplitude)),main=' Amplitude versus Frequenz')
   }
-  return(list(Frequenzspektrum=frequenz,Amplitude=Amplitude,KomplexeFourierKoeffizienten=KomplexeFourierKoeffizienten,Data=timeseries))
+  return(list(Frequencies=frequenz,Amplitude=Amplitude,KomplexeFourierKoeffizienten=KomplexeFourierKoeffizienten,Data=Timeseries))
 }
