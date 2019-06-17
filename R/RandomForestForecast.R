@@ -1,5 +1,5 @@
 RandomForestForecast=function(Time, DF, formula=NULL,SplitDataAt,Horizon,Package='randomForest',
-                              AutoCorrelation=NULL,NoOfTree=200,PlotIt=TRUE,Holidays,SimilarPoints=TRUE,...){
+                              AutoCorrelation=NULL,AutoCorrelationNo=1,NoOfTree=200,PlotIt=TRUE,Holidays,SimilarPoints=TRUE,...){
   N=nrow(as.matrix(DF))
   requireNamespace('lubridate')
 
@@ -71,6 +71,20 @@ RandomForestForecast=function(Time, DF, formula=NULL,SplitDataAt,Horizon,Package
     else
       HH=Horizon
     
+   if(AutoCorrelationNo>1){
+      DFcorrs=matrix(NaN,nrow =N ,ncol = AutoCorrelationNo)
+      for(cc in 1:AutoCorrelationNo){
+        DFcorrs[,cc]=TSAT::LagVector(x,cc)
+        if((2*cc+1)<N){
+          DFcorrs[1:cc,cc]=mean(DFcorrs[(cc+1):(2*cc),cc],na.rm = T)
+          
+        }else{
+          DFcorrs[1:cc,cc]=0
+        }
+      }
+      colnames(DFcorrs)=paste0('Autocorr',1:AutoCorrelationNo)
+      DF=cbind.data.frame(DF,DFcorrs)
+   }
     DF$DaysPrior=TSAT::LagVector(x,HH)
     lastvalue=TSAT::LagVector(x,1)
     if((2*HH+1)<N){
