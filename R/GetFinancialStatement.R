@@ -1,65 +1,79 @@
-GetFinancialStatement=function(Symbol='SAP',URL='morningstar',Silent=TRUE){
-  #GetFinancialStatement('SAP')
-  
-  library(tidyverse)
-  library(rvest)
+GetFinancialStatement=function(Symbol='SAP',URL='yahoo',Silent=TRUE,Port=4445L,...){
+#   #GetFinancialStatement('SAP')
+  #Symbol='SAP'
+  #URL='morningstar'
+  requireNamespace('xml2')
+  requireNamespace('dplyr')
+  requireNamespace('rvest')
   if (URL == 'yahoo') {
     tryCatch({
       library(RSelenium)
-      library(wdman)
-      library(dplyr)
-      #clicks via chrome rightklick on inspect, then you can copy the relevant strings for button clicks
-      cDrv <- chrome(verbose = !Silent)
-      eCaps <-
-        list(chromeOptions = list(
-          args = c('--headless', '--disable-gpu', '--window-size=1280,800')
-        ))
-      remDr <-
-        remoteDriver(
-          browserName = "chrome",
-          port = 4567L,
-          extraCapabilities = eCaps
-        )
+      #library(wdman)
+      
+     # library(dplyr)
+      
+      # Intializing the firefox driver at the given port
+      remDrServer <- RSelenium::rsDriver(browser = "firefox",port=Port,...)
+      # Intializing the server on the same port
+      remDrClient <- RSelenium::remoteDriver$new(port=Port)
+      #remDr
+      
       #suppressMessages(remDr$open())
-      msg = utils::capture.output(remDr$open())
+      
+      msg = utils::capture.output(remDrClient$open(silent = TRUE))
       if (!Silent) {
         print(msg)
       }
       #if you want to see whats happening
       #driver=rsDriver(port = 4567L,browser = "chrome")
-      #remDr=driver[["client"]]
-      
+      #remDrClient=driver[["client"]]
       url = paste0("https://finance.yahoo.com/quote/",
                    Symbol,
                    "/financials?p=",
                    Symbol)
-      remDr$navigate(url)
+      #url = paste0("https://finance.yahoo.com/quote/SAP/financials?p=SAP")
+      remDrClient$navigate(url)
       #copy selector then put it here
-      webElem <-
-        remDr$findElement(
-          using = 'css selector',
-          'body > div.consent-wizard.eu-single-page > div.consent-wizard-body.eu-single-page > div.consent-steps-container > div > div.single-page-forms.yahoo > form.consent-form.single-page-form.single-page-agree-form > div > input'
-        )
+      ######################### This paart here is not needed. It was the requirement in Chrome, not in FireFox.###############
+      try({
+      webElem = remDrClient$findElement(using = 'name','agree')
+      # webElem <-
+      #   remDrClient$findElement(
+      #     using = 'css selector',
+      #     'body > div.consent-wizard.eu-single-page > div.consent-wizard-body.eu-single-page
+      #     > div.consent-steps-container > div > div.single-page-forms.yahoo >
+      #     form.consent-form.single-page-form.single-page-agree-form > div > input')
       webElem$clickElement()
-      
+      })
       #author of this part: Hamza Tayyab
       # get annual data
-      annual <- xml2::read_html(remDr$getPageSource()[[1]])
-      annual <- annual %>% html_table(fill = T, header = F)
-      #%>% .[[1]]  %>% filter(X1!=X2)
-      #annual
+      
+      # annual <- xml2::read_html(remDrClient$getPageSource()[[1]])
+      # annual <- annual %>% rvest::html_table(fill = T, header = F)%>% .[[1]]  %>% filter(X1!=X2)
+      # annual
       
       # click on Quarterly button
       #copy xpath then put it here
       webElem <-
-        remDr$findElement(using = 'xpath',
+        remDrClient$findElement(using = 'xpath',
                           '//*[@id="Col1-1-Financials-Proxy"]/section/div[1]/div[2]/button')
       webElem$clickElement()
-      
+      #Extract all tables
+      quarterly <- xml2::read_html(remDrClient$getPageSource()[[1]])
+      remDrClient$close()
+      remDrServer$server$stop()
+
+      quarterly = rvest::html_table(quarterly,fill = T, header = F) 
+      #select correct table
+      quarterly=quarterly[[1]]
+      #quarterly <- quarterly %>% rvest::html_table(fill = T, header = F) %>% .[[1]]  %>% filter(X1 != X2)
+      #delete yahoo headers of variables without any input
+      quarterly=dplyr::filter(quarterly,X1 != X2)
       # get quarterly data
-      quarterly <- xml2::read_html(remDr$getPageSource()[[1]])
-      quarterly <- quarterly %>% html_table(fill = T, header = F) %>% .[[1]]  %>% filter(X1 != X2)
       
+      # quarterly <- quarterly %>% rvest::html_table(fill = T, header = F) %>% .[[1]]  %>% filter(X1 != X2)
+      # quarterly
+      #return(quarterly)
       #end of author of this part: Hamza Tayyab
       Features = sapply(quarterly, function(x)
         gsub(',', '', x))
@@ -72,10 +86,23 @@ GetFinancialStatement=function(Symbol='SAP',URL='morningstar',Silent=TRUE){
       mode(Data) = 'numeric'
       FeaturesT = data.frame(Time = as.Date(strptime(Time, format = '%m/%d/%Y')), Data)
       colnames(FeaturesT) = Header
-      return(FeaturesT)
-    }, error = function(e)
-      return(url))
-  }#URL=='yahoo'
+      Liste=list(FeaturesT)
+      try({
+            names(Liste)=Symbol
+          })
+      return(Liste)
+    }, error = function(e){
+      try({
+      remDrClient$close()
+      })
+      try({
+      remDrServer$server$stop()
+      })
+      print(e)
+      return(list(url))
+    })
+  }
+  #URL=='yahoo'
   
   if (URL == 'investing') {
     url = 'https://www.investing.com/equities/sap-ag-income-statement'
@@ -160,8 +187,8 @@ GetFinancialStatement=function(Symbol='SAP',URL='morningstar',Silent=TRUE){
         DF[is.nan(DF[, indOther3]), indOther3] = 0
       
       
-      return(DF)
+      print (DF)
     }, error = function(e)
-      return(url))
+      print (url))
   }
 }

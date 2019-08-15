@@ -10,7 +10,7 @@ Get data of quaterly Financial Cash Flows
 \usage{
 GetCashFlow(Symbol = "SAP",
 
- URL = "yahoo", Silent = TRUE)
+ URL = "yahoo", Silent = TRUE,Port=4445L,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,9 +19,19 @@ ticker string
 }
   \item{URL}{
 provider of data as a string
+
+yahoo: automatic web scrapping
+
+morningstar: uses api to data bases
 }
   \item{Silent}{
 if no warnings=TRUE
+}
+  \item{Port}{
+in the caseof yahoo: port accessable for direct internet connection
+}
+  \item{\dots}{
+in the case of yahoo: further arguments for \code{\link[RSelenium]{rsDriver}} 
 }
 }
 \details{
@@ -44,6 +54,19 @@ Michael Thrun, Hamza Tayyab
 }
 \examples{
 #DF=GetCashFlow(Symbol='SAP',URL='morningstar')
+\donttest{
+
+Symbols=GetYahooSymbols()
+n=length(Symbols)
+CashFlow=c()
+for(i in 1:n){
+  try({
+  temp=GetCashFlow(Symbols[i],'yahoo',check=F)
+  CashFlow=c(CashFlow,temp)
+  })
+  print(i)
+}
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

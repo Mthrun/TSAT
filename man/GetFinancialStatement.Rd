@@ -10,7 +10,7 @@ Get data of quaterly Financial Statements
 \usage{
 GetFinancialStatement(Symbol='SAP',
 
-URL='morningstar', Silent = TRUE)
+URL='yahoo', Silent = TRUE,Port=4445L,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,13 +19,31 @@ ticker string
 }
   \item{URL}{
 provider of data as a string
+
+yahoo: automatic web scrapping
+
+morningstar: uses api to data bases
 }
   \item{Silent}{
 if no warnings=TRUE
 }
+
+  \item{Silent}{
+if no warnings=TRUE
+}
+  \item{Port}{
+in the caseof yahoo: port accessable for direct internet connection
+}
+  \item{\dots}{
+in the case of yahoo: further arguments for \code{\link[RSelenium]{rsDriver}} 
+}
 }
 \details{
-yahoo and morningstar work currently
+yahoo and morningstar work currently.
+
+In the case of yahoo each stock puts up a mozilla rust profile in 
+.../Users/<admin>/AppData/Local/Temp
+of 100 mb which has to be deleted manually after the prozess of web scrapping
 }
 \value{
 dataframe of financial statements
@@ -45,5 +63,19 @@ morningstar api shuts requests randomly out
 }
 \examples{
 DF=GetFinancialStatement(Symbol='SAP',URL='morningstar')
+
+\donttest{
+
+Symbols=GetYahooSymbols()
+n=length(Symbols)
+FinancialStatement=c()
+for(i in 1:n){
+  try({
+  temp=GetFinancialStatement(Symbols[i],'yahoo',check=F)
+  FinancialStatement=c(FinancialStatement,temp)
+  })
+  print(i)
+}
+}
 }
 
