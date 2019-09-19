@@ -12,18 +12,34 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),  Comments=N
     warning("TSdata is not tibble. Please make sure that one column is a 'Date' column. Calling as.tibble...")
     TSdata=tibble::as.tibble(TSdata)
   }
-  TSdata[] <- lapply(TSdata, gsub, pattern="\t", replacement=" ")
-  TSdata[] <- lapply(TSdata, gsub, pattern="\n", replacement=" ")
-  TSdata[] <- lapply(TSdata, gsub, pattern="\r", replacement=" ")
-  TSdata[] <- lapply(TSdata, gsub, pattern="     ", replacement=" ")
-  TSdata[] <- lapply(TSdata, gsub, pattern="    ", replacement=" ")
-  TSdata[] <- lapply(TSdata, gsub, pattern="   ", replacement=" ")
-  TSdata[] <- lapply(TSdata, gsub, pattern="  ", replacement=" ")
-
-  
   types=dplyr::summarise_all(TSdata,class)
+ 
   dind=which(types=="Date")
   
+  charind=which(types=="character")
+  if(length(charind)>0){
+    gsuball=function(x){
+      x=gsub(pattern="\t", replacement=" ",x)
+      x=gsub(pattern="\n", replacement=" ",x)
+      x=gsub(pattern="\r", replacement=" ",x)
+      x=gsub(pattern="     ", replacement=" ",x)
+      x=gsub(pattern="    ", replacement=" ",x)
+      x=gsub(pattern="   ", replacement=" ",x)
+      x=gsub(pattern="  ", replacement=" ",x)
+      return(x)
+    }
+    TSdata=dplyr::mutate_if(TSdata,is.character,gsuball)
+  }
+  # TSdata[] <- lapply(TSdata, gsub, pattern="\t", replacement=" ")
+  # TSdata[] <- lapply(TSdata, gsub, pattern="\n", replacement=" ")
+  # TSdata[] <- lapply(TSdata, gsub, pattern="\r", replacement=" ")
+  # TSdata[] <- lapply(TSdata, gsub, pattern="     ", replacement=" ")
+  # TSdata[] <- lapply(TSdata, gsub, pattern="    ", replacement=" ")
+  # TSdata[] <- lapply(TSdata, gsub, pattern="   ", replacement=" ")
+  # TSdata[] <- lapply(TSdata, gsub, pattern="  ", replacement=" ")
+
+  
+
   if(length(dind)==0){
     warning('No Date type column found.')
     dind=0
