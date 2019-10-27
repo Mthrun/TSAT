@@ -38,10 +38,6 @@ dataframe[1:m,1:(d+1)] with m<n and first column beeing the time in \code{as.Dat
 \author{
 Michael Thrun
 }
-\note{
-for d>1 not tested
-}
-
 
 \examples{
 #to be filled

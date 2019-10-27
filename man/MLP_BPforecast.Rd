@@ -5,7 +5,7 @@
 Multilayer Perceptron Feedforward Network with Backpropagation
 }
 \description{
-Foracasting by multilayer perceptron feedforward network with backpropagation.
+Foracasting by multilayer perceptron feedforward network with resilient backpropagation with weight backtracking.
 }
 \usage{
 MLP_BPforecast(Response, ForecastHorizont = 365, Predictor1,
