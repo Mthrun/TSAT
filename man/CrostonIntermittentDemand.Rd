@@ -5,16 +5,18 @@
 Croston Intermittent Demand
 }
 \description{
-Returns forecasts and other information for Croston's forecasts
+The Croston model answers the question How much demand will we have on average per period?´
+This \code{CrostonIntermittentDemand} returns forecasts and other information for Croston's forecasts.
 }
 \usage{
 CrostonIntermittentDemand(NumericVector, Time,
 
-Frequency = "days", Horizon = 3 * 30, ModelType = "sbj", 
+ForecastHorizon,SplitAt,
+
+Frequency = "days", ModelType = "sbj", 
 
 PlotIt = FALSE, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{NumericVector}{
 [1:n] data vector
@@ -24,8 +26,12 @@ PlotIt = FALSE, ...)
   \item{Frequency}{
 either \code{days}, \code{weeks}, \code{months} or \code{quarters} or \code{years}
 }
-  \item{Horizon}{
-Forecast horizon, has to be set. Data is divided by \code{Horizont} into training and test set
+  \item{ForecastHorizon}{
+Forecast horizon, has to be set. 
+}
+  \item{SplitAt}{
+Data is divided by \code{SplitAt} into training and test set
+
 }
   \item{ModelType}{
 Croston's method variant: 1. "croston" Croston's method; 2. "sba" Syntetos-Boylan approximation; 3. "sbj" Shale-Boylan-Johnston, see \code{\link[tsintermittent]{crost}}.
@@ -78,10 +84,10 @@ Michael Thrun
 \code{\link[tsintermittent]{crost}},\code{\link[TSAT]{ConvertNumerical2TSobject}}
 }
 \examples{
-x=Rathena::Sales
+data(Sales)
 #set arbitrary dates
 y=seq(from=as.Date('1970-01-01'),by='days',to=as.Date('1970-04-01'))[1:length(x)]
-out=CrostonIntermittentDemand(x,y,Frequency = 'days',Horizon = 12,PlotIt = TRUE)
+out=CrostonIntermittentDemand(Sales,y,Frequency = 'days',ForecastHorizon = 12,SplitAt=49,PlotIt = TRUE)
 plot(out$TestSet,main='Plotting Testset Evaluation',xlab='Time',ylab='Sales')
 points(time(out$TestSet),out$Forecast)
 }

@@ -1,5 +1,5 @@
-autoARIMA=function(Data,Time,ForecastHorizon,PlotIt=T,PlotBackwardInd,main='',xlab='Time',ylab='Data',...){
-  # author: MT 2014/ edited 2018
+autoARIMA=function(Data,Time,ForecastHorizon,SplitAt,PlotIt=TRUE,Seasonal=TRUE,PlotBackwardInd,main='',xlab='Time',ylab='Data',...){
+  # author: MT 2014/ edited 2018, edited Dec, 2019
   DataFrame=data.frame(Time=Time,Data=Data)
   requireNamespace('forecast')
   requireNamespace('zoo')
@@ -7,13 +7,11 @@ autoARIMA=function(Data,Time,ForecastHorizon,PlotIt=T,PlotBackwardInd,main='',xl
   if(missing(PlotBackwardInd))#
     PlotBackwardInd=nrow(DataFrame)
   
-  if(missing(ForecastHorizon))
-    ForecastHorizon=round(0.2*length(Data))
-  
-  df=DataFrame[1:(nrow(DataFrame)-ForecastHorizon),]
-  df= with(df, zoo::zoo(Data, order.by = Time))
-  
-  fit=forecast::auto.arima(df)
+  n=nrow(DataFrame)
+  test=tail(DataFrame,n = n-SplitAt)
+  train= with(head(DataFrame,SplitAt), zoo::zoo(head(Data,SplitAt), order.by = head(Time,SplitAt)))
+
+  fit=forecast::auto.arima(train,seasonal=Seasonal)
   future=forecast::forecast(fit,h=ForecastHorizon)
   if(PlotIt){
     plot(tail(DataFrame$Time,PlotBackwardInd),tail(DataFrame$Data,PlotBackwardInd),type='l',main=paste(main,future$method,' - black calls, red predicton, blue 85% confindence interval'),xlab=xlab,ylab=ylab,...)
@@ -37,5 +35,10 @@ autoARIMA=function(Data,Time,ForecastHorizon,PlotIt=T,PlotBackwardInd,main='',xl
   #   plot(TStrans,xlim=TimeXlim,main=main)
   # fanplot::fan(fore,type='intervall',start=StartForcastVec,anchor=2.28)
   # }
-  return(invisible(list(Forecast=future,Model=fit)))
+  # if(is.null(TestTime)) TestTime=rep(NaN,ForecastHorizon)
+  # if(is.null(TestData)) TestData=rep(NaN,ForecastHorizon)
+  # DF=data.frame(Time=TestTime,)
+  FF=zoo::coredata(future$mean)
+  Forecast=data.frame(Time=test$Time[1:ForecastHorizon],FF=FF[1:ForecastHorizon],Y=test$Data[1:ForecastHorizon])
+  return(invisible(list(Forecast=Forecast,ArimaObject=future,Model=fit)))
 }

@@ -8,10 +8,10 @@ Automatic ARIMA
 automatic autoregressive and moving average modelling with difference filter
 }
 \usage{
-autoARIMA(Data, Time, ForecastHorizon, PlotIt = T,
+autoARIMA(Data, Time, ForecastHorizon, SplitAt, PlotIt = TRUE,
 
 
-                 PlotBackwardInd, main = "", xlab = "Time", ylab =
+                 Seasonal=TRUE,PlotBackwardInd, main = "", xlab = "Time", ylab =
                  
                  
                  "Data", \dots)
@@ -27,9 +27,14 @@ autoARIMA(Data, Time, ForecastHorizon, PlotIt = T,
   \item{ForecastHorizon}{
 Number of Forecast units of time
 }
-
+  \item{SplitAt}{
+integer, splits data in test and train at this index
+}
   \item{PlotIt}{
 Optional, if TRUE: Plots result
+}
+  \item{Seasonal}{
+Optional, if FALSE: no seasonality in data an one step forecast only
 }
   \item{PlotBackwardInd}{
 Optional, How many units to plot back in time?
@@ -58,7 +63,8 @@ further arguments passed on to see \code{\link{plot}}
 }
 \value{
 List of 
-\item{Forecast}{[1:ForecastHorizon] of Data}
+\item{Forecast}{[1:ForecastHorizon] of test data Y, test time and forecast FF}
+\item{ArimaObject}{Forecast object, the output of \code{\link[forecast]{forecast}}}
 \item{Model}{Model, the output of \code{\link[forecast]{auto.arima}}}
 in mode \code{\link{invisible}}
 }

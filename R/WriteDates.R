@@ -1,4 +1,4 @@
-WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),  Comments=NULL){
+WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),CleanNames=FALSE,  Comments=NULL){
   #based on ReadLRN
   #author: MT 2018
   checkFilename(FileName,Directory=OutDirectory,Extension='csv',ReadOrWrite=FALSE,NameOfFunctionCalled='WriteDates()')
@@ -18,17 +18,19 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),  Comments=N
   
   charind=which(types=="character")
   if(length(charind)>0){
-    gsuball=function(x){
-      x=gsub(pattern="\t", replacement=" ",x)
-      x=gsub(pattern="\n", replacement=" ",x)
-      x=gsub(pattern="\r", replacement=" ",x)
-      x=gsub(pattern="     ", replacement=" ",x)
-      x=gsub(pattern="    ", replacement=" ",x)
-      x=gsub(pattern="   ", replacement=" ",x)
-      x=gsub(pattern="  ", replacement=" ",x)
-      return(x)
+    if(isTRUE(CleanNames)){
+      gsuball=function(x){
+        x=gsub(pattern="\t", replacement=" ",x)
+        x=gsub(pattern="\n", replacement=" ",x)
+        x=gsub(pattern="\r", replacement=" ",x)
+        x=gsub(pattern="     ", replacement=" ",x)
+        x=gsub(pattern="    ", replacement=" ",x)
+        x=gsub(pattern="   ", replacement=" ",x)
+        x=gsub(pattern="  ", replacement=" ",x)
+        return(x)
+      }
+      TSdata=dplyr::mutate_if(TSdata,is.character,gsuball)
     }
-    TSdata=dplyr::mutate_if(TSdata,is.character,gsuball)
   }
   # TSdata[] <- lapply(TSdata, gsub, pattern="\t", replacement=" ")
   # TSdata[] <- lapply(TSdata, gsub, pattern="\n", replacement=" ")

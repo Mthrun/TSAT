@@ -47,11 +47,11 @@ aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
   #                seq(from=max(Time),by='7 days',length.out=2)[2])#1woche danach
          
   requireNamespace('tibble')
-  if(tibble::is.tibble(Data)){
+  if(tibble::is_tibble(Data)){
     requireNamespace('dplyr')
     Time=as.Date(as.matrix(Time))
     #cut requires regular TS!
-    Data$WeekTime=cut(Time,breaks='weeks')
+    Data$WeekTime=cut.Date(Time,breaks='weeks', start.on.monday = TRUE)
 
 
     df = dplyr::group_by(Data,WeekTime)
@@ -70,7 +70,10 @@ aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
     }
     DF=data.frame(Time=as.Date(Time),Data,stringsAsFactors = F)
     #cut requires regular TS!
-    DF$Time=cut(DF$Time,breaks='weeks')
+    #requireNamespace('chron')
+    DF$Time=cut.Date(DF$Time,breaks='weeks', start.on.monday = TRUE)
+    #print(lubridate::wday(lubridate::floor_date(DF$Time, "weeks", week_start = 1)))
+    #print(lubridate::wday(DF$Time))
   if(is.vector(Data)){#vector
     dsummary = aggregate(DF$Data ~ DF$Time, data=DF,FUN=FUN,...)
   # DF$Week=lubridate::isoweek(DF$Time)
