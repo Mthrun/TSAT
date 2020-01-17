@@ -1,14 +1,14 @@
 Package: TSAT
 Type: Package
 Title: Time Series Analysis Tools (TSAT)
-Version: 1.1.4
-Date: 2019-07-29
+Version: 1.1.5
+Date: 2019-12-21
 Authors@R: c(person("Michael", "Thrun", email= "m.thrun@gmx.net",role=c("aut","cre","cph")),person("Quirin", "Stier",role=c("ctr","ctb")),person("Hamza", "Tayyab",role=c("ctr","ctb")))
 Maintainer: Michael Thrun <m.thrun@gmx.net>
 Description: TSAT can be used to describe event-pattern detection as a part of Complex event processing (CEP) for categorial time series and gives several approaches for numerical times series, like Filtering through FFT or Karman Filter.
 License: CC BY-NC 4.0
 Imports: DataVisualizations, ggplot2, Rcpp, rugarch
-Suggests: xts, lubridate, imputeTS, AdaptGauss, signal, chron, WaveletComp, dlm, TSdist, zoo, fanplot, forecast, prophet, lmtest, vars, fUnitRoots, tseries, dtw,randomForest, ranger, RHmm, plotly, dplyr, tibble, htmlwidgets,latticeExtra,Metrics,DatabionicSwarm,rvest,TTR,tidyr,tidyvers,wdman,MASS,e1071,colorRamps, Rhmm,MAPA, Classifiers, dbt.ClassAnalysis, dbt.Transforms
+Suggests: xts, lubridate, imputeTS, AdaptGauss, signal, chron, WaveletComp, dlm, TSdist, zoo, fanplot, forecast, prophet, lmtest, vars, fUnitRoots, tseries, dtw,randomForest, ranger, RHmm, plotly, dplyr, tibble, htmlwidgets,latticeExtra,Metrics,DatabionicSwarm,rvest,TTR,tidyr,tidyverse,wdman,MASS,e1071,colorRamps, Rhmm,MAPA, Classifiers, dbt.ClassAnalysis, dbt.Transforms
 Depends: R (>= 3.0)
 NeedsCompilation: no
 SystemRequirements:
