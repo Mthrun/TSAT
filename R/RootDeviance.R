@@ -1,12 +1,14 @@
-RootDeviance = function(x,y) {
-  if(!is.vector(x) || !is.vector(y))
-    warning("Input should be of type vector.")
-  if(length(x) != length(y))
-    stop("Length of the time series must be equal!")
-  if(sum(is.na(x)) > 0 || sum(is.na(y)) > 0)
-    stop("Input should not contain NA.")
-  if(sum(is.character(x)) > 0 || sum(is.character(y)) > 0)
-    stop("No character input allowed.")
+RootDeviance = function(x,y,Silent=FALSE) {
+  if(isFALSE(Silent)){
+    if(!is.vector(x) || !is.vector(y))
+      warning("Input should be of type vector.")
+    if(length(x) != length(y))
+      stop("Length of the time series must be equal!")
+    if(sum(is.na(x)) > 0 || sum(is.na(y)) > 0)
+      stop("Input should not contain NA.")
+    if(sum(is.character(x)) > 0 || sum(is.character(y)) > 0)
+      stop("No character input allowed.")
+  }
   n = length(x)
   a = 0
   b = 0

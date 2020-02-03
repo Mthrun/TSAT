@@ -1,5 +1,7 @@
 aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
   regular=GenerateRegularDailyTS(TimeChar = Time,Datavec = Data,na.rm = 'zero')
+  #gibt by tibble: Error: node stack overflow
+  # ToDo ist bugfix
   if(length(Time)!=length(regular$Time)){
     warning("'aggregateDays2Weeks' functions expects a regular time series.
             Generating a Regular timeseries out of 'Time' and 'Data' were missing times are set to zero

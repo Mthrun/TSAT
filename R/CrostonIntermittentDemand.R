@@ -18,11 +18,18 @@ CrostonIntermittentDemand=function(NumericVector,Time,ForecastHorizon,SplitAt,Fr
   train=TSAT::ConvertNumerical2TSobject(head(NumericVector,SplitAt),head(Time,SplitAt),Frequency =Frequency)
   test=tail(NumericVector,n-SplitAt)[1:ForecastHorizon]   
   ttime=tail(Time,n-SplitAt)[1:ForecastHorizon]
-  
-  m=tsintermittent::crost(train,h=ForecastHorizon,type=ModelType,outplot = PlotIt,...)
-  fc=m$frc.out
+  fc=rep(0,ForecastHorizon)
+  model='Setting forecast to zero'
+  tryCatch({
+    model=tsintermittent::crost(train,h=ForecastHorizon,type=ModelType,outplot = PlotIt,...)
+  fc=model$frc.out
+  },error=function(e) {
+    print(e)
+    print('Setting forecast to zero')
+  }
+  )
   #acc=forecast::accuracy(f = fc,test)
   #testfull=TSAT::ConvertNumerical2TSobject(test, tail(Time,SplitAt),Frequency =Frequency)
   DF=data.frame(Time=ttime,FF=fc,TestData=test)
-  return(list(Forecast=DF,Model=m,TrainingSet=train))
+  return(list(Forecast=DF,Model=model,TrainingSet=train))
 }

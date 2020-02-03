@@ -27,7 +27,7 @@ Therefore minimizing the norm of \eqn{a+ib}, i.e. the SRD, we optimize the forec
 In this application we also like to call the sum root deviance (SRD) the sum root error (SRE) of the forecast. Same goes for the mean.
 }
 \usage{
-RootDeviance(x,y)
+RootDeviance(x,y,Silent=FALSE)
 }
 \arguments{
   \item{x}{
@@ -35,6 +35,9 @@ Time series data given by a numerical vector
   }
   \item{y}{
 Another time series given by a numerical vector. It should be the same length as \code{x}. This may be a forecast (order matters for the bias to have the right sign).
+  }
+  \item{Silent}{
+  TRUE: No Warnings or errors are given back
   }
 }
 \details{

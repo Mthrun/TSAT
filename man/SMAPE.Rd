@@ -8,7 +8,7 @@ Symmetric mean absolute percentage error
 Calculates the realtive difference between X (forecast) and y (historical data) [Armstrong,1985]. 
 }
 \usage{
-SMAPE(X, Y, epsilon = 10^-10,na.rm=FALSE)
+SMAPE(X, Y, epsilon = 10^-10,na.rm=FALSE,Silent=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,6 +23,9 @@ Optional, If both x and y are approximatly zero the output is also zero
 }
   \item{na.rm}{
 Optional, function does not work with non finite values. If these cases should be automatically removed, set parameter TRUE
+}
+  \item{Silent}{
+TRUE: No Warnings or errors are given back
 }
 }
 \details{

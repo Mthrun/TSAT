@@ -1,4 +1,4 @@
-aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
+aggregateWeeks2FiskalMonths=function(Time,Data,FUN,Header,...){
   requireNamespace('lubridate')
   if (!lubridate::is.Date(Time)) {
     warning("'Time' is not a date. Calling as.Date()")
@@ -18,13 +18,14 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
   }
   if (isTRUE(Boolean)) {
     requireNamespace('zoo')
-    Weekly = aggregateDays2Weeks(
-      Time = Time,
-      Data = Data,
-      FUN = FUN,
-      Header = c('Time', 'Data'),
-      ...
-    )
+    Weekly=data.frame(Time=Time,Data=Data)
+    # Weekly = aggregateDays2Weeks(
+    #   Time = Time,
+    #   Data = Data,
+    #   FUN = FUN,
+    #   Header = c('Time', 'Data'),
+    #   ...
+    # )
     outage.zoo <-
       zoo::as.zoo(x = Weekly$Data, order.by = as.Date(Weekly$Time),frequency=7)
     
@@ -138,21 +139,21 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
     for (i in 1:ncol(DateTemp)) {
       if (i == 1)
         MonthlyL = list(as.data.frame(
-          aggregateDays2FiskalMonths(
+          aggregateWeeks2FiskalMonths(
             Time = Time,
             Data = DateTemp[, i],
             FUN = FUN,
-            Header = Header,
+            Header = Header[c(1,i+1)],
             ...
           )
         ))
       else
         MonthlyL = c(MonthlyL, list(as.data.frame(
-          aggregateDays2FiskalMonths(
+          aggregateWeeks2FiskalMonths(
             Time = Time,
             Data = DateTemp[, i],
             FUN = FUN,
-            Header = Header,
+            Header = Header[c(1,i+1)],
             ...
           )
         )))
@@ -172,7 +173,7 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
     # print(str(MonthlyL))
     # nn=unlist(lapply(MonthlyL,length))
     # print(nn)
-    # TimeOut=as.data.frame(aggregateDays2FiskalMonths(Time=Time,Data = DateTemp[,which.max(nn)],FUN=FUN,Header=Header,...)$Time)
+    # TimeOut=as.data.frame(aggregateWeeks2FiskalMonths(Time=Time,Data = DateTemp[,which.max(nn)],FUN=FUN,Header=Header,...)$Time)
     # print(TimeOut)
     #
     # addcol=function(...){
