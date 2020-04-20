@@ -5,7 +5,7 @@
 WriteDates
 }
 \description{
-WriteDates
+  saves univariate or multivariate time series in daily resolution to a *.csv file similar to a *.lrn
 }
 \usage{
 WriteDates(FileName, TSdata, Key = c(), OutDirectory = getwd(), Comments = NULL)
@@ -13,34 +13,31 @@ WriteDates(FileName, TSdata, Key = c(), OutDirectory = getwd(), Comments = NULL)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{FileName}{
-under development
+ string, name of the  file to be written
 }
   \item{TSdata}{
-under development
+ [1:n,1:(d+1)]dataframe of tibble of data , n cases in rows , d variables in columns, may contain NaN, first column is the time in as.Date() format
 }
   \item{Key}{
-under development
+ a numeric vector of length(n)  
 }
   \item{OutDirectory}{
-under development
+Optional: string, name of directory the data will be saved in, default \code{getwd()} 
 }
   \item{Comments}{
-under development
+a string which is inserted as a comment in the first line in the file
 }
 }
 \details{
-under development
-}
-\value{
-under development
+  Comfortably writes nivariate or multivariate time series in daily resolution to a file similar to the LRN Format. The header is always the named columns of the data.frame or tibble.
+  The length of \code{Key} has to be \code{ncol(Data)} or \code{ncol(Data[[1]])} respectively.
+  If \code{Key} is empty it is replaced by a vector \code{1:ncol(Data)}
+  
 }
 
 \author{
 Michael Thrun
 }
-
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{ReadDates}}
@@ -50,4 +47,4 @@ Michael Thrun
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ReadDates}% use one of  RShowDoc("KEYWORDS")
+\keyword{WriteDates}% use one of  RShowDoc("KEYWORDS")

@@ -5,7 +5,8 @@
 Symmetric mean absolute percentage error
 }
 \description{
-Calculates the realtive difference between X (forecast) and y (historical data) [Armstrong,1985]. 
+Calculates the realtive difference between X (forecast) and y (historical data) [Armstrong,1985].
+Beware:Averaging has to be done by the user!
 }
 \usage{
 SMAPE(X, Y, epsilon = 10^-10,na.rm=FALSE,Silent=FALSE)
@@ -59,7 +60,7 @@ DatabionicSwarm::RelativeDifferences
 #usage with vectors, x forecast, y test data
 x=c(100,110)
 y=c(90,100)
-SMAPE(x,y)
+mean(SMAPE(x,y))#smape
 
 #example why it is not symmetric
 SMAPE(x[1],y[1])

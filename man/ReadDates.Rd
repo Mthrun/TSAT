@@ -5,7 +5,7 @@
 ReadDates
 }
 \description{
-under development
+  read univariate or multivariate time series similar to the LRN format
 }
 \usage{
 ReadDates(FileName = NULL, InDirectory = getwd(), SilentComments = TRUE)
@@ -13,29 +13,31 @@ ReadDates(FileName = NULL, InDirectory = getwd(), SilentComments = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{FileName}{
-under development
+ string, name of the  file to be written
 }
   \item{InDirectory}{
-under development
+Optional: string, name of directory the data will be saved in, default \code{getwd()} 
+
 }
   \item{SilentComments}{
-under development
+If FALSE: Comments are not printed out
 }
 }
 \details{
-under development
+Internally the tibble format is used. If it can be transformed a list is given back as output as defined below. If not, the tibble frame is directly given back as output.
 }
 \value{
-data frame
+ a list with following elements:
+ \item{Time}{ time in as.Date() form of n rows and 1 column}
+  \item{Data}{ a numeric matrix containing n rows and d columns}
+  \item{Key}{  a numeric vector of length(n)  }
+  \item{Header}{ d column names for Data}
+
 }
-\references{
-under development
-}
+
 \author{
 Michael Thrun
 }
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 \code{\link{WriteDates}}
@@ -45,4 +47,4 @@ Michael Thrun
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{WriteDates}% use one of  RShowDoc("KEYWORDS")
+\keyword{ReadDates}% use one of  RShowDoc("KEYWORDS")

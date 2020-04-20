@@ -1,4 +1,28 @@
 ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
+#V=ReadDates(FileName = NULL, InDirectory = getwd(), SilentComments = TRUE)
+# read univariate or multivariate time series similar to the LRN format
+  # INPUT
+  #   \item{FileName}{
+  #     string, name of the  file to be written
+  #   }
+  #   \item{InDirectory}{
+  #     Optional: string, name of directory the data will be saved in, default \code{getwd()} 
+  #     
+  #   }
+  #   \item{SilentComments}{
+  #     If FALSE: Comments are not printed out
+  #   }
+  #
+  #
+  #   Internally the tibble format is used. If it can be transformed a list is given back as output as defined below. If not, the tibble frame is directly given back as output.
+  # 
+  # OUTPUT
+  #   a list with following elements:
+  #   \item{Time}{ time in as.Date() form of n rows and 1 column}
+  #   \item{Data}{ a numeric matrix containing n rows and d columns}
+  #   \item{Key}{  a numeric vector of length(n)  }
+  #   \item{Header}{ d column names for Data}
+  #   
   #based on ReadLRN
   #author: MT 2018
   Comments=NULL
@@ -152,5 +176,11 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   }
   
   setwd(currentWD)
+  try({
+  Time=as.Date((as.matrix(TibbleDF[,1])))
+  Data=as.matrix(TibbleDF[,2:ncol(TibbleDF)])
+  #mode(Data)="numeric"
+  return(list(Time=Time,Data=Data,Key=as.numeric(Key),Header=Header[-1]))
+  })
   return(TibbleDF)
 }
