@@ -145,7 +145,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
     warning("Column with name 'Time' not found. Assuming that the time is stored in the second column.")
     tind=1
   } 
-  DF=tibble::as.tibble(Data[,-tind])
+  DF=tibble::as_tibble(Data[,-tind])
   DF=lapply(DF,type.convert, as.is=TRUE)
   DF=tibble::as_tibble(DF) 
   Time=as.Date(Data[,tind])
@@ -160,7 +160,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   if(length(Time)!=length(unique(Time))) warning('Time is not unique meaning that there are multiple days with same date.')
   
   
-  Time=tibble::as.tibble(Time)
+  Time=tibble::as_tibble(Time)
   TibbleDF=dplyr::bind_cols(Time,DF)
   colnames(TibbleDF)=Header
   

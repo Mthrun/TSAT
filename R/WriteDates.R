@@ -36,9 +36,9 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),CleanNames=F
   setwd(OutDirectory)
   FileName = addext(FileName,'csv')
   
-  if(!tibble::is.tibble(TSdata)){
+  if(!tibble::is_tibble(TSdata)){
     message("TSdata is not tibble. Please make sure that one column is a 'Date' column. Calling as.tibble...")
-    TSdata=tibble::as.tibble(TSdata)
+    TSdata=tibble::as_tibble(TSdata)
   }
   types=dplyr::summarise_all(TSdata,class)
  

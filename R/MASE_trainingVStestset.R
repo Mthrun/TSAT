@@ -1,4 +1,4 @@
-MASE <- function(Forecast,TrainingSet,TestSet,SeasonalLength){
+MASE_trainingVStestset <- function(Forecast,TrainingSet,TestSet,SeasonalLength){
   
   # Forecast - Forecasted values
   # TrainingSet - data used for Forecasting .. used to find scaling factor

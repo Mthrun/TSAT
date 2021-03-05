@@ -1,31 +1,24 @@
-\name{MASE}
-\alias{MASE}
+\name{MASE_nonseasonal}
+\alias{MASE_nonseasonal}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Mean absolute scaled error (MASE)
+MASE_nonseasonal
 }
 \description{
-Seasonal Mean absolute scaled error (MASE)
+Mean absolute scaled error (MASE)
 }
 \usage{
-MASE(Forecast, TrainingSet, TestSet, SeasonalLength)
+MASE_nonseasonal(Y,For)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Forecast}{
-[1:Horizont] numeric vector,
+  \item{Y}{
+numerical vector of [1:n],n>1
 }
-  \item{TrainingSet}{
-[1:Horizon] Trainingset
+  \item{For}{
+numerical vector of [1:n],n>1
 }
-  \item{TestSet}{
-[Horizon+1:n] TestSet
-}
-  \item{SeasonalLength}{
-1: Non-Seasonal, where the denominator is the mean absolut error of the one-step naive forecast method of the trainings set
 
-Other number: A season is an interval which is repetitive. such an regular interval is called a season and has a length. Seasonal Length L (length of expected season) has to be defined by user, e.g. often 12 for monthly sales data
-}
 }
 \details{
 The mean absolute scaled error has the following desirable properties:
@@ -53,12 +46,17 @@ MASE error value
 Hyndman, R. J. (2006). "Another look at measures of forecast accuracy", FORESIGHT Issue 4 June 2006, p. 46
 }
 \author{
-Shubham Saini
-}
-\note{
-code extracted from \url{https://stackoverflow.com/questions/11092536/forecast-accuracy-no-mase-with-two-vectors-as-arguments} by Michael Thrun
+Michael Thrun
 }
 
+
+\examples{
+#usage with vectors, x forecast, y test data
+x=c(100,110,95)
+y=c(90,100,93)
+MASE_nonseasonal(x,y)
+
+}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{MASE}% use one of  RShowDoc("KEYWORDS")
