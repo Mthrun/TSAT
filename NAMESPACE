@@ -87,6 +87,7 @@ export(which.closest)
 export(WhichStock)
 export(WhiteNoiseTest)
 export(WaveletFilter)
+export(WaveletOutlierDetection)
 
 export(WriteDates)
 

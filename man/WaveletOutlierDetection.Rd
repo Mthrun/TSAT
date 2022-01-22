@@ -1,24 +1,43 @@
-\name{WaveletFilter}
-\alias{WaveletFilter}
+\name{WaveletOutlierDetection}
+\alias{WaveletOutlierDetection}
+%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-WaveletFilter
+WaveletOutlierDetection
 }
 \description{
-The wavelet filter decomposes a signal in its redundant wavelet decomposition
-with a wavelet of choice \code{\link{wavelets}}.
-The wavelet levels can be filtered all together or individually.
-The filter can be computed with hard and soft thresholding or with zeroing.
-The wavelet decomposition is then reconstructed.
-Frequency bands are controlled by the number of decomposition levels.
-There more levels are computed, the more fine granular the choices can be.
+Outlier detection based on a wavelet filter for signals.
+First, the signal is filtered.
+Second, the difference between signal and filtered signal is measured.
+If the original signal lies above the filtered signal by a factor of 1.5
+(Default), it is recognized as outlier.
+Technical details: detection of outliers is pointwise.
+Each point of the signal is checked against the filtered signal.
+This can be done in two ways:
+1. compare data point against moving average (Default)
+2. compare data point against data point of filtered signal.
 }
 \usage{
-WaveletFilter(Data, Filter="haar", NumLevels=2, Boundary="periodic",
-Fast=T, PlotIt=F, Threshold="zero", Lambda=0.05, FilterLevels="all")
+WaveletOutlierDetection(Data, Factor = 1.5, Strategy="mean",
+Order = 7, Filter="haar", NumLevels=2, Boundary="periodic", Fast=T, PlotIt=F,
+Threshold="zero", Lambda=0.05, FilterLevels="all")
 }
 \arguments{
 \item{Data}{
 Signal filtered with wavelets
+}
+\item{Factor}{
+Numeric defining the factor by which a data point needs to exceed the data in
+order to be recognized as outlier.
+}
+\item{Strategy}{
+Character defining the strategy by which single data points compared to data.
+Either, a data point is compared to the mean of the filtered data over a certain
+time range (moving average which time interval is defined by argument Order)
+around the data point or data points are compared to the filtered data points at
+their respective time.
+}
+\item{Order}{
+Integer defining the window size computed for the moving average.
 }
 \item{Filter}{
 Character containing name of wavelet
@@ -67,9 +86,11 @@ Q. Stier
 }
 \examples{
 load("TempMelbourneAustralia")
-Data = TempMelbourneAustralia$Temp
-WaveletFilter(Data, Filter="haar", NumLevels=2, Boundary="periodic", Fast=T,
-PlotIt=F, Threshold="zero", Lambda=0.05, FilterLevels="all")
+VarO1 = TempMelbourneAustralia$Temp
+VarI1 = forecast::na.interp(VarO1)
+Outliers = WaveletOutlierDetection(VarI1, Order = 7)
+#plot(Outliers, col = "red", ylim = c(0,10))
+#lines(VarI1, col = "green")
 
 }
 \keyword{wavelet}% use one of  RShowDoc("KEYWORDS")

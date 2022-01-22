@@ -1,73 +1,113 @@
-#WaveletFilter = function(timeSeries, wavelet = "haar", level, plot)
-#
-#INPUT
-#timeSeries DATA
-#wavelet    STRING choose wavelet from library
-#		        Haar-Wavelet 'haar'
-#	        	Daubechy family 'db4', 'la8', 'la16', 'la20'
-#	        	'w4'
-#	        	'd6', 'd8', 'd16'
-#	        	'fk4', 'fk6', 'fk8', 'fk14', 'fk22' 
-#	        	'mb4', 'mb8', 'mb16', 'mb24'
-#	        	'bl14', 'bl20'
-#	        	'bs3.1'
-#
-#level      level of decomposition for reconstruction of specific frequency bands of timeseries
-#	    choose the depth of level depending on the depth of frequencies
-#	    the higher the level, the lower the frequency bands reconstructed
-#
-#
-#plot       BOOLEAN create plot if TRUE, DEFAULT=FALSE
-#
-#OUTPUT
-#Plot Wavelet Decomposition Vector
-#Plot Bookkeeping Vector with lengths of Wavelet Decomposition Vectors
-#
-#REQUIRED NAMESPACE  "waveslim" https://cran.r-project.org/web/packages/waveslim/index.html
-#REQUIRED NAMESPACE  "WaveletComp" https://cran.r-project.org/web/packages/WaveletComp/
-Reconstruct = function(WDV, tsbasis, timeseries, plotbool){
-  for(i in 1:length(WDV))
-    WDV[[i]] <- tsbasis[i] * WDV[[i]]
-  FilteredTS <- waveslim::idwpt(WDV, tsbasis)
-  if(plotbool == TRUE){
-    dev.new(width=5, height=4)
-    par(mfrow=c(2,1), mar=c(5-1,4,4-1,2))
-    plot.ts(timeseries, xlab="", ylab="", main="Original Series")
-    plot.ts(FilteredTS, xlab="", ylab="", main="Reconstructed Series")
+WaveletFilter = function(Data, Filter="haar", NumLevels=2, Boundary="periodic",
+                         Fast=T, PlotIt=F, Threshold="zero", Lambda=0.05,
+                         FilterLevels="all"){
+  # DESCRIPTION
+  # 
+  # INPUT
+  # Data[1:n]    Signal filtered with wavelets
+  # Filter       Character containing name of wavelet
+  # NumLevels    Integer determining the number of wavelet levels to create.
+  # Boundary     A character string indicating which boundary method to use.
+  #              boundary = "periodic" and boundary = "reflection" are the only
+  #              supported methods at this time.
+  # Fast         A logical flag which, if true, indicates that the pyramid
+  #              algorithm is computed with an internal C function. Otherwise,
+  #              only R code is used in all computations.
+  # PlotIt       Boolean flag. If TRUE then plots will be generated. Default=F.
+  # Threshold    Character with filtering strategy. Default: Threshold="zero"
+  #                  Threshold="zero": sets complete level to zero
+  #                  Threshold="hard": performs hard thresholding
+  #                  Threshold="soft": performs soft thresholding
+  # Lambda       Numeric value. If filtering uses hard or soft thresholding,
+  #              Lambda indicates the p-th percentile which is used as
+  #              threshold. Every value in level below this is zero
+  #              (both for hard and soft thresholding). Values greater or equal
+  #              are treated accordingly to soft/hard thresholding.
+  # FilterLevels Generic: FilterLevels="all" character: chooses all wavelet
+  #                       levels for filtering
+  #                       FilterLevels[1:n] numeric vector: chooses all wavelet
+  #                       levels which are given in vector.
+  # 
+  # OUTPUT
+  # FilteredData[1:n]    Signal filtered with wavelets
+  # 
+  # Author: QMS 06.10.2021
+  
+  # Plot original data
+  if(PlotIt == T){
+    plot(Data, type="l")
   }
-  return(FilteredTS=FilteredTS)
+  
+  # Apply wavelet decomposition (Redundant Wavelet Transform == ModWT)
+  RWT = wavelets::modwt(X = as.numeric(Data), filter=Filter, n.levels=NumLevels,
+                        boundary=Boundary, fast=Fast)
+  
+  # Plot wavelet decomposition
+  if(PlotIt == T){
+    par(mfrow=c(NumLevels+1,1))
+    for(i in 1:NumLevels){
+      plot(1:length(RWT@W[[i]]),RWT@W[[i]], type="l", xlab = paste0("Waveletlevel", i), ylab = "")
+    }
+    plot(1:length(RWT@V[[NumLevels]]),RWT@W[[NumLevels]], type="l", xlab = paste0("Smooth approximation level", i), ylab = "")
+  }
+  
+  # Decide the filtering
+  if(is.character(FilterLevels)){
+    if(FilterLevels == "all"){
+      for(i in 1:NumLevels){
+        if(Threshold=="hard"){
+          RWT@W[[i]] = hard_thresholding(RWT@W[[i]], Lambda)
+        }else if (Threshold == "soft"){
+          RWT@W[[i]] = soft_thresholding(RWT@W[[i]], Lambda)
+        }else{
+          RWT@W[[i]] = filter_zero(RWT@W[[i]])
+        }
+      }
+    }
+  }else{
+    if(is.vector(FilterLevels)){
+      for(i in 1:length(FilterLevels)){
+        if((i > 0) & (i <= NumLevels) & (i%%1==0)){
+          if(Threshold=="hard"){
+            RWT@W[[i]] = hard_thresholding(RWT@W[[i]], Lambda)
+          }else if (Threshold == "soft"){
+            RWT@W[[i]] = soft_thresholding(RWT@W[[i]], Lambda)
+          }else{
+            RWT@W[[i]] = filter_zero(RWT@W[[i]])
+          }
+        }
+      }
+    }
+  }
+  
+  # Reconstruct signal from wavelet decomposition
+  IRWT = wavelets::imodwt(RWT)
+  
+  # Plot filtered signal
+  if(PlotIt == T){
+    plot(IRWT, type="l")
+  }
+  return(IRWT)
 }
 
-WaveletFilter = function(timeSeries, wavelet = 'd6', level = 1, plot = FALSE){
-requireNamespace('WaveletComp')
-  my_wt = WaveletComp::analyze.wavelet(my.data = data.frame(timeSeries))
-  dev.new(width=5, height=4)
-  WaveletComp::wt.image(my_wt)
-  
-  #Double the timeSeries twice (enlarge timeSeries length by factor 4)
-  timeSeries_rev <- rev(timeSeries)
-  timeSeries_processed <- rbind(timeSeries, timeSeries_rev)
-  timeSeries_processed_rev <- rev(timeSeries_processed)
-  timeSeries_processed <- rbind(timeSeries_processed, timeSeries_processed_rev)
-
-  #force length of power two because of dyadic algorithm
-  timeSeries_processed_length = length(timeSeries_processed)
-  floor_of_exponent = floor(log2(timeSeries_processed_length))
-  length_of_power_two = 2**floor_of_exponent
-  timeSeries_processed = timeSeries_processed[1:length_of_power_two]
-  
-  #choose coefficients
-  level_basis = paste('w', level, '.0', sep = '')
-  timeSeries_processed = timeSeries
-  
-  #compute Wavelet Decomposition
-  WaveletDecompositionVector <- waveslim::dwpt(timeSeries_processed, wavelet,
-                                               n.levels = level, boundary = 'reflection')
-  timeSeries_processed.basis <- waveslim::basis(WaveletDecompositionVector,level_basis)
-  Reconstruct(WaveletDecompositionVector, timeSeries_processed.basis,
-              timeSeries_processed, plot)
-  
-  BookKeepingVector = lengths(WaveletDecompositionVector)
-  return(list(WaveletDecompositionVector, BookKeepingVector))
+filter_zero = function(Data){
+  Data = matrix(0,length(Data), 1)
+  return(Data)
 }
 
+hard_thresholding = function(Data, Lambda){
+  HardThreshold = quantile(abs(Data), probs = Lambda)
+  Data[abs(Data) < HardThreshold] = 0
+  return(Data)
+}
+
+soft_thresholding = function(Data, Lambda){
+  HardThreshold = quantile(abs(Data), probs = Lambda)
+  Data[abs(Data) < HardThreshold] = 0
+  for(j in 1:length(Data)){
+    if(abs(Data[j])>=HardThreshold){
+      Data[j] = sign(Data[j])*(abs(Data[j]-HardThreshold))
+    }
+  }
+  return(Data)
+}
