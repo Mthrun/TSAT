@@ -26,7 +26,8 @@ WaveletFilter = function(Data, Filter="haar", NumLevels=2, Boundary="periodic",
   # FilterLevels Generic: FilterLevels="all" character: chooses all wavelet
   #                       levels for filtering
   #                       FilterLevels[1:n] numeric vector: chooses all wavelet
-  #                       levels which are given in vector.
+  #                       levels which are given in vector by setting it to a
+  #                       positive number.
   # 
   # OUTPUT
   # FilteredData[1:n]    Signal filtered with wavelets
@@ -66,15 +67,13 @@ WaveletFilter = function(Data, Filter="haar", NumLevels=2, Boundary="periodic",
     }
   }else{
     if(is.vector(FilterLevels)){
-      for(i in 1:length(FilterLevels)){
-        if((i > 0) & (i <= NumLevels) & (i%%1==0)){
-          if(Threshold=="hard"){
-            RWT@W[[i]] = hard_thresholding(RWT@W[[i]], Lambda)
-          }else if (Threshold == "soft"){
-            RWT@W[[i]] = soft_thresholding(RWT@W[[i]], Lambda)
-          }else{
-            RWT@W[[i]] = filter_zero(RWT@W[[i]])
-          }
+      for(i in FilterLevels){
+        if(Threshold=="hard"){
+          RWT@W[[i]] = hard_thresholding(RWT@W[[i]], Lambda)
+        }else if (Threshold == "soft"){
+          RWT@W[[i]] = soft_thresholding(RWT@W[[i]], Lambda)
+        }else{
+          RWT@W[[i]] = filter_zero(RWT@W[[i]])
         }
       }
     }
@@ -97,6 +96,7 @@ filter_zero = function(Data){
 
 hard_thresholding = function(Data, Lambda){
   HardThreshold = quantile(abs(Data), probs = Lambda)
+  HardThreshold = quantile(abs(Data), probs = 1)
   Data[abs(Data) < HardThreshold] = 0
   return(Data)
 }

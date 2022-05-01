@@ -15,13 +15,13 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
   #m <- graphics::layout(matrix(c(1, 2, 3, 1, 2, 4, 1, 2, 5), 3, 3))
    m <- graphics::layout(matrix(c(1, 2, 3, 1, 2, 3, 4, 5, 6), 3, 3))
     
-  title(main)
+  #title(main)
   # par(oma = c(0, 0, 1, 0))#c(u,li,o,re) in
-  plot(Time,DataBefore,type='l')
+  plot(Time,DataBefore,type='l',main = main)
   if(!is.null(MarkedPoints))
     points(Time[MarkedPoints],DataBefore[MarkedPoints],pch=2,col='red')
   plot(Time,DataAfter,type='l')
-  requireNamespace('AdaptGauss')
+  requireNamespace('DataVisualizations')
   #[Tukey, 1977]  Tukey, J. W.: Exploratory data analysis, United States Addison-Wesley Publishing Company, ISBN: 0-201-07616-0, 1977.
   
   #page 113
@@ -36,7 +36,7 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
   }
   Residuals=Residuals[Residuals!=0]
   plot(Time,Residuals, type = 'l', ylab = 'DataBefore-DataAfter')
-  pdeVal        = AdaptGauss::ParetoDensityEstimation(Residuals)
+  pdeVal        = DataVisualizations::ParetoDensityEstimation(Residuals)
   plot(
     pdeVal$kernels,
     pdeVal$paretoDensity,

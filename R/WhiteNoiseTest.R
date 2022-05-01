@@ -1,6 +1,6 @@
 WhiteNoiseTest=function(TimeSeries,lags=1,type="c",PlotIt=TRUE){
   requireNamespace('fUnitRoots')
-  requireNamespace('AdaptGauss')
+  requireNamespace('DataVisualizations')
   out=fUnitRoots::unitrootTest(x=TimeSeries,lags = lags,type = type)
   if(PlotIt){
     m <- mean(TimeSeries,na.rm=TRUE) ; # Schaetzung der Parameter der Normalverteilung
@@ -13,7 +13,7 @@ WhiteNoiseTest=function(TimeSeries,lags=1,type="c",PlotIt=TRUE){
     }else{
       string=paste('TimeSeries is Gaussian white noise, p-value < 0.001')
     }
-    pdeVal        = AdaptGauss::ParetoDensityEstimation(TimeSeries)
+    pdeVal        = DataVisualizations::ParetoDensityEstimation(TimeSeries)
     Normaldist <- dnorm(pdeVal$kernels,m,s)
     plot(
       pdeVal$kernels,

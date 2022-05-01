@@ -27,26 +27,31 @@ WaveletOutlierDetection = function(Data, Factor = 1.5, Strategy="mean",
   # FilterLevels \code{\link{WaveletFilter}}
   # 
   # OUTPUT
-  # Outlier[1:n]    Signal filtered with wavelets
+  # Outlier[1:n]    Numeric vector with same length as the original signal
+  #                 carrying only the outliers.
   # 
   # Author: QMS 06.10.2021
-  Filtered = TSAT::WaveletFilter(Data = Data, Filter = Filter,
-                                 NumLevels = NumLevels,
-                                 Boundary = Boundary, Fast = Fast,
-                                 PlotIt = PlotIt,
-                                 Threshold = Threshold, Lambda = Lambda,
+  
+  # 1. Filter signal using wavelets
+  Filtered = TSAT::WaveletFilter(Data         = Data,
+                                 Filter       = Filter,
+                                 NumLevels    = NumLevels,
+                                 Boundary     = Boundary,
+                                 Fast         = Fast,
+                                 PlotIt       = PlotIt,
+                                 Threshold    = Threshold,
+                                 Lambda       = Lambda,
                                  FilterLevels = FilterLevels)
+  # 2. Decide the definition of an outlier
+  # Strategy=="mean": An outlier is x times bigger than the mean around it
   if(Strategy=="mean"){
     Filtered = forecast::ma(Filtered, order = Order)
     Filtered = forecast::na.interp(Filtered)
   }
-  IdxOutliers = c()
-  for(i in 1:length(Data)){
-    if(Data[i] > (Factor*Filtered[i])){
-      IdxOutliers = c(IdxOutliers, i)
-    }
-  }
-  Outliers = rep(NA, length(Data))
+  # Strategy=="None": An outlier is x times bigger than the actual value
+  
+  IdxOutliers = which(Data > (Factor*Filtered))
+  Outliers = rep(0, length(Data))
   Outliers[IdxOutliers] = Data[IdxOutliers]
   return(Outliers)
 }

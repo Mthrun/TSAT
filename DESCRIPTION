@@ -1,15 +1,15 @@
 Package: TSAT
 Type: Package
 Title: Time Series Analysis Tools (TSAT)
-Version: 1.1.7
-Date: 2021-02-10
+Version: 1.1.8
+Date: 2022-05-01
 Authors@R: c(person("Michael", "Thrun", email= "m.thrun@gmx.net",role=c("aut","cre","cph")),person("Quirin", "Stier",role=c("ctr","ctb")),person("Hamza", "Tayyab",role=c("ctr","ctb")))
 Maintainer: Michael Thrun <m.thrun@gmx.net>
-Description: TSAT can be used to describe event-pattern detection as a part of Complex event processing (CEP) for categorial time series and gives several approaches for numerical times series, like Filtering through FFT or Karman Filter.
+Description: TSAT gives several approaches for the analysis and forecasting of numerical times series, e.g., Filtering through FFT, Karman Filter, LSTM forecasting, etc. Additionally, TSAT can be used to describe event-pattern detection as a part of complex event processing (CEP) for categorial time series.
 License: CC BY-NC 4.0
 Imports: DataVisualizations, ggplot2, Rcpp, rugarch
-Suggests: xts, lubridate, imputeTS, AdaptGauss, signal, chron, WaveletComp, dlm, zoo, fanplot, forecast, prophet, lmtest, vars, fUnitRoots, tseries, dtw,randomForest, ranger, RHmm, plotly, dplyr, tibble, htmlwidgets,latticeExtra,Metrics,DatabionicSwarm,rvest,TTR,tidyr,tidyverse,wdman,MASS,e1071,colorRamps, Rhmm,MAPA,bsts,RJSONIO,jsonlite, Classifiers, dbt.ClassAnalysis, dbt.Transforms, wavelets
-Depends: R (>= 3.0)
+Suggests: xts, lubridate, imputeTS, AdaptGauss, signal, chron, WaveletComp, dlm, zoo, fanplot, forecast, prophet, lmtest, vars, fUnitRoots, tseries, dtw,randomForest, mrf, ranger, RHmm, plotly, dplyr, tibble, htmlwidgets,latticeExtra,Metrics,tensorflow, keras, DatabionicSwarm,rvest,TTR,tidyr,tidyverse,wdman,MASS,e1071,colorRamps, Rhmm,MAPA,bsts,RJSONIO,jsonlite, Classifiers, dbt.ClassAnalysis, dbt.Transforms, wavelets
+Depends: R (>= 3.5)
 NeedsCompilation: no
 SystemRequirements:
 LazyLoad: yes
