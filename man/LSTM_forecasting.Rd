@@ -101,6 +101,8 @@ Kingma, D. P., Ba, J.: Adam: A method for stochastic optimization, arXiv preprin
 Hochreiter, Sepp, Jürgen Schmidhuber: "Long short-term memory.", Neural computation, Vol 9.8, pp. 1735-1780, 1997.
 
 Mörchen, Fabian; Time series knowledge mining. Görich & Weiershäuser, 2006.
+
+Hinton, G. E., Srivastava, N., Krizhevsky, A., Sutskever, I., & Salakhutdinov, R. R.: Improving neural networks by preventing co-adaptation of feature detectors. arXiv preprint arXiv:1207.0580, 2012.
 }
 \author{
 Michael Thrun
@@ -120,6 +122,7 @@ tensorflow::install_tensorflow()
 
 tensorflow::tf_config()
 
+#Todo: Integrate Dropout (removeing units from NNs during training) to improve generalisation (Hinton et al., 2012).
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -143,10 +146,10 @@ data = (data - min) / denom
 data=as.numeric(data)
 # We are ready to apply the LSTM procedure with a batch_size, 
 \dontrun{
-V = LSTM_forecasting( data, Forecasthorizon = 1, Batch_size = 40,Seasonality=48, Epochs=300)
+results = LSTM_forecasting( data, Forecasthorizon = 1, Batch_size = 40,Seasonality=48, Epochs=300,ErrorLoss="MRD")
 
 # Get the forecast data from the returned
-fc = v$Forecast
+fc = results$Forecast
 
 # Rescale the forecast data to be comparable to the original dataset
 fc_rescaled = (denom * fc + min)^2
@@ -158,3 +161,4 @@ points(fc_rescaled, col="red")
 }
 \keyword{LSTM}% use one of  RShowDoc("KEYWORDS")
 \keyword{keras}% __ONLY ONE__ keyword per line
+\keyword{ANN}

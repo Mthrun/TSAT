@@ -1,6 +1,7 @@
 plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPoints=NULL,main=''){
   #a dashboard for TS filters and forecasting
   #plotEvaluationFilteredTS(Time,DataBefore,DataAfter,FALSE)
+  tryCatch({
   def.par <-
     par(no.readonly = TRUE) # save default, for resetting...
   if(Short){
@@ -27,7 +28,11 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
   #page 113
   Residuals = DataBefore-DataAfter
   out=WhiteNoiseTest(Residuals,PlotIt=FALSE)
-  pval=out@test$p.value[1]
+  if(!is.null(out))
+    pval=out@test$p.value[1]
+  else
+    pval=1
+  
   if(pval>0.001){
     pval=round(pval,4)
     string=paste("Residuals are white noise: p.val",pval[1])
@@ -79,4 +84,5 @@ plotEvaluationFilteredTS=function(Time,DataBefore,DataAfter,Short=FALSE,MarkedPo
 
   }
   par(def.par)
+  },error=function(e) warning(e))
 }

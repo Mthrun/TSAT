@@ -8,7 +8,12 @@ LSTM_forecasting=function(Datavector,
   #Todo muessen vermutlich fuer Forecasthorizon>1 angepasst werden
   batch_size_ts_gen=1
   time_steps=1
-
+  
+  #damit es in python keinen fehler gibt, wird explizit ein numerischer vektor erwartet. keine matrize und kein int vector
+  
+  if(!is.vector(Datavector)) Datavector=as.vector(Datavector)
+  
+  if(mode(Datavector)!="numeric") Datavector=as.numeric(Datavector)
   ###############################################################
   # Function for keras backend calculating the sum root error.  #
   # Can't use the upper one due to a bug in tensorflow backend. #

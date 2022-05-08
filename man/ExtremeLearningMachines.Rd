@@ -91,6 +91,7 @@ For an introduction to neural networks see: Ord K., Fildes R., Kourentzes N. (20
 \examples{
 \donttest{
 requireNamespace('ggfortify')
+x=fortify(datasets::sunspot.month)
 x=ggfortify::fortify(datasets::sunspot.month)
 #Example for a bad forecast
 results=ExtremeLearningMachines(DataVector = x$Data,Time = x$Index, SplitDataAt=2800)
@@ -101,3 +102,4 @@ results=ExtremeLearningMachines(DataVector = x$Data,Time = x$Index, SplitDataAt=
 \keyword{ELM}% use one of  RShowDoc("KEYWORDS")
 \keyword{time series}% __ONLY ONE__ keyword per line
 \keyword{ExtremeLearningMachines}% __ONLY ONE__ keyword per line
+\keyword{ANN}

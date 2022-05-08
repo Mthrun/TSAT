@@ -82,3 +82,4 @@ This version requires currently two predictors.
 % R documentation directory.
 \keyword{ MLP }% use one of  RShowDoc("KEYWORDS")
 \keyword{ BP}% __ONLY ONE__ keyword per line
+\keyword{ANN}
