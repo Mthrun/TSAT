@@ -1,4 +1,7 @@
-GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End,AggregateFun=sum,PlotIt = FALSE){
+GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE,
+                                format = '%Y-%m-%d', tz = 'UTC',
+                                option = 'stine',Header = c('Time','Data'),
+                                Start, End, AggregateFun = sum, PlotIt = FALSE){
 #GenerateRegularDailyTS(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End,AggregateFun=sum,PlotIt = FALSE)
   requireNamespace('tibble')
   requireNamespace('imputeTS')
@@ -39,7 +42,8 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m
   if(missing(End))
     End=max(Time)
   
-  FullTime=seq(from=Start,to=End,by='days')
+  #FullTime=seq(from=Start,to=End,by='days') # QMS: outdated
+  FullTime=seq.Date(from=as.Date(Start),to=as.Date(End),by='days')
   
   DF=data.frame(Time=FullTime,Data=NA)
 

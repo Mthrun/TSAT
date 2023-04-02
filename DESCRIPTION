@@ -7,8 +7,8 @@ Authors@R: c(person("Michael", "Thrun", email= "m.thrun@gmx.net",role=c("aut","c
 Maintainer: Michael Thrun <m.thrun@gmx.net>
 Description: TSAT gives several approaches for the analysis and forecasting of numerical times series, e.g., Filtering through FFT, Karman Filter, LSTM forecasting, etc. Additionally, TSAT can be used to describe event-pattern detection as a part of complex event processing (CEP) for categorial time series.
 License: CC BY-NC 4.0
-Imports: DataVisualizations, ggplot2, Rcpp, rugarch
-Suggests: xts, lubridate, imputeTS, AdaptGauss, signal, chron, WaveletComp, dlm, zoo, fanplot, forecast, prophet, lmtest, vars, fUnitRoots, tseries, tsibble,dtw,randomForest, mrf, ranger, RHmm, plotly, dplyr, tibble, htmlwidgets,latticeExtra,Metrics,tensorflow, keras, DatabionicSwarm,rvest,TTR,tidyr,tidyverse,wdman,MASS,e1071,colorRamps, Rhmm,MAPA,bsts,RJSONIO,jsonlite,ggfortify, datasets, echos, Classifiers, dbt.ClassAnalysis, dbt.Transforms, wavelets
+Imports: DataVisualizations, ggplot2, Rcpp, rugarch, xts, lubridate, imputeTS, AdaptGauss, signal, chron, WaveletComp, dlm, zoo, fanplot, forecast, prophet, lmtest, vars, fUnitRoots, tseries, tsibble,dtw,randomForest, mrf, ranger, RHmm, plotly, dplyr, tibble, htmlwidgets,latticeExtra,Metrics,tensorflow, keras, DatabionicSwarm,rvest,TTR,tidyr,tidyverse,wdman,MASS,e1071,colorRamps, Rhmm,MAPA,bsts,RJSONIO,jsonlite,ggfortify, datasets, echos, Classifiers, dbt.ClassAnalysis, dbt.Transforms, wavelets, tsintermittent 
+Suggests:
 Depends: R (>= 3.5)
 NeedsCompilation: no
 SystemRequirements:
