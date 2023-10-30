@@ -1,10 +1,11 @@
-RelativeDifference4TS=function(Datavec,Lag=1,PlotIt=FALSE,Time){
+RelativeDifference4TS=function(Datavec,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time){
 #V=RelativeDifference4TS(ElectricityBRD$Mrd_KWh,PlotIt=TRUE,Time=(ElectricityBRD$Time))
 #Calculates the relative difference between positive Datavec and and lagged Datavec
 #INPUT
 #Datavec  numerical vector of [1:n]
 #Lag      The number of lags (in units of observations): back shifting: positiv value,forward shifting: negative value
 #         Default is the difference to yesterday
+#na.rm    FALSE; do nothing, TRUE: all nan to zero
 # PlotIt  TRUE: plots data
 #OUPUT
 # Relativedifference numerical vector of [1:n], Negative value indicate that today is lower than yesterday and positive values that todays value is higher than yesterdays.
@@ -19,7 +20,8 @@ RelativeDifference4TS=function(Datavec,Lag=1,PlotIt=FALSE,Time){
   nan_ind=which(!is.finite(Datavec))
   
   if(length(nan_ind)>0){
-    #Datavec[nan_ind]=0
+    if(isTRUE(na.rm))
+      Datavec[nan_ind]=0
     warning("RelativeDifference4TS works only for positive values correctly but missing values were found. These cases are automatically removed.")
   }
   
@@ -35,7 +37,11 @@ RelativeDifference4TS=function(Datavec,Lag=1,PlotIt=FALSE,Time){
     Yesterday[indNan]=Yesterday[min(indNan)-1]
   }
   
-    Rel=DatabionicSwarm::RelativeDifference(Y = Today,X=Yesterday,na.rm = T)
+    Rel=DatabionicSwarm::RelativeDifference(Y = Today,X=Yesterday,na.rm = F)
+  
+    if(isTRUE(na.rm))
+      Rel[!is.finite(Rel)]=0
+    
   if(isTRUE(PlotIt)){
     if(missing(Time)){
       Time=1:length(Datavec)
