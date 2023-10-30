@@ -20,7 +20,7 @@ MAPA_daily2FiskalWeek(DailyTime, DailyData, SplitAt, ForecastHorizon = 12, Forec
 %%     ~~Describe \code{DailyData} here~~
 }
   \item{SplitAt}{
-integer for splitting time of a monthly frequency
+Integer for splitting time of a monthly frequency
 }
   \item{ForecastHorizon}{
 Forecast horizon in weeks used after mapa modelling to generate output,

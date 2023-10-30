@@ -1,22 +1,29 @@
+# V=ReadTS(FileName,InDirectory)
+# Series    = V$Series
+# Rest     = V$FurtherTexts
+# Comment  = V$Comments
+#
+# Description:
+# Loads a TS file
+#   
+# INPUT
+# FileName                        Filename of *.TS file
+# OPTIONAL
+# InDirectory                     InDirectory where *.TS file is, default: Current dir
+# ForceNumeric                    TRUE: saves numeric format of series, FALSE: Accepts text
+#
+# OUTPUT
+# Series                          [1:d,1:2] matrix of Time and SeriesVal, 1st column is Unix time or time in seconds, 
+#                                 unique index from first column, Series contained in Column 2, without blanks
+# Header                          [1:2+c] vector of column names for Time and SeriesVal plus c column names of further text 
+#                                 rows that can be in the *.TS file. If no further texts are present c is 0.
+# FurtherTexts                    [1:d,1:c] vector or matrix, containing the further text rows
+#                                 Only returned if FurtherTexts are in the *.TS file
+# Comments                        [1:k] vector, strings of all lines of Comments,  without the leading "#"
+
+#author: MCT 08/2023
+
 ReadTS = function(FileName,InDirectory=getwd(),ForceNumeric=FALSE){
-  # Load *.ts file
-  # V<- ReadTS(FileName,InDirectory)
-  # Series    = V$Series
-  # Rest     = V$FurtherTexts
-  # Comment  = V$Comments
-  #   
-  #
-  # INPUT
-  # FileName                        filename of *.names file
-  # OPTIONAL
-  # InDirectory                       InDirectory where *.names file is, default: current dir
-  # ForceNumeric              TRUE: saves numeric format of series, false: accepts text
-  # OUTPUT
-  # Series[1:d,1:2]                 matrix of Time and Seriesval, 1st column is Unix time or time in seconds, unique index from first column, Series contained in Column 2, without blanks
-  # FurtherTexts [1:d,1:x]          vector or matrix, All in colums 3 and beyond 
-  # Comments [1:ccc,]               vector or matrix,  string of all lines of Comments,  without the leading "#"
-  
-  #author: MCT 08/2023
 
   if(grepl('.lrn',FileName)){
     stop('Please use ReadLRN()')

@@ -1,3 +1,25 @@
+# df = aggregateDays2FiskalMonths(Time,Data,FUN,Header, ...)
+#
+# Description:
+# Aggregation of many Days over several years to fiscal months is possible.
+# A fiscal month is defined by the following. Every first month in a quarter has five weeks the following two months have
+# exactly four weeks. The first month in the year starts with a monday (and every following month).
+# A month has only full weeks included in it.
+#
+# INPUT
+# Time               [1:n] vector of POSIXlt or POSIXct or as.Date objects        
+# Data               [1:n,1:d] matrix or dataframe, d can be also 1, then vector 
+# FUN                aggregate by a function like sum or mean
+# Header             colnames for data
+# ...                Further arguments passed on to FUN.
+#
+# OUTPUT 
+# dataframe[1:m,1:(d+1)] with m<n and first column being the time in as.Date format
+#
+# Details: A week is defined here by the ISO 8601 system, which uses a reoccurring leap week.
+#
+# Author: MCT
+
 aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
   requireNamespace('lubridate')
   if (!lubridate::is.Date(Time)) {

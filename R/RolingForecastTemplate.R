@@ -1,4 +1,4 @@
-RolingForecastTemplate=function(Dataframe,ForecastingFunction=RandomForestForecast,Horizon=7,Steps=371:7,TimeColumnInd=1,PlotMAE=FALSE,...){
+RolingForecastTemplate=function(Dataframe,ForecastingFunction=FcRandomForest,Horizon=7,Steps=371:7,TimeColumnInd=1,PlotMAE=FALSE,...){
 
 DF=Dataframe[,-TimeColumnInd]
 Time=Dataframe[,TimeColumnInd]

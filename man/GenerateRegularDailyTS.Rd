@@ -10,9 +10,9 @@ Generates a regular time series with daily resolution out of an daily but irregu
 \usage{
 GenerateRegularDailyTS(TimeChar, Datavec, na.rm = TRUE, format = '\%Y-\%m-\%d',
 
-tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End,
+tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End, PlotIt = FALSE,
 
-AggregateFun=sum, PlotIt = FALSE)
+AggregateFun=sum,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,16 +45,19 @@ in case of \code{na.rm=TRUE} the option of interpolation: "linear",  "spline" or
   \item{End}{
   Optional, \code{as.Date} object defining the ending of the timeseries, default is the minimum point of time in \code{TimeChar}
   }
+    \item{PlotIt}{
+TRUE: plotting, FALSE: no plots
+}
     \item{AggregateFun}{
   Optional, in the special case that there are several values in \code{Datavec} per date in \code{TimeChar} a warning is given back but the  Datavec values can be aggregated by a function defined with this argument. This function has to have an \code{na.rm} argument, such like \code{\link{mean}} or \code{\link{sum}} because missing values are ignored in the aggregation process. 
   }
-  
-  \item{PlotIt}{
-TRUE: plotting, FALSE: no plots
-}
+      \item{\dots}{
+  in the case that \code{AggregateFun} is needed, further argument for aggregate, see example
+  }
+
 }
 \details{
-Regular spaced time series with missing values filled depending on \code{na.rm} choice.
+Regular spaced time series with missing values filled depending on \code{na.rm} choice. The choices are
 
 \code{ff} - ForwardFill: The first value before a \code{NaN} defines all \code{NaN} until the next value is available 
 
@@ -79,9 +82,14 @@ Michael Thrun
 }
 \examples{
 ##tobefilled
+
+\dontrun{
+#take the last value of a day
+V=GenerateRegularDailyTS(Time,Price,Header = c("UTC_Time","Price"),na.rm = "ff",AggregateFun = tail,n=1)
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{irregular ts}% use one of  RShowDoc("KEYWORDS")
-\keyword{regular ts}% __ONLY ONE__ keyword per line
+\concept{irregular ts}% use one of  RShowDoc("KEYWORDS")
+\concept{regular ts}% __ONLY ONE__ keyword per line
 

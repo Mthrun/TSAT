@@ -28,7 +28,12 @@ FilteredData[1:n,1]   the filtered data
 Michael Thrun
 }
 \note{
-Because of the way endpoints are handled, the result of signall:filter differs from the result returned by the smooth function.
+Because of the way endpoints are handled, the result of signal::filter differs from the result returned by the smooth function.
+}
+
+\examples{
+data("ElectricityBRD")
+averagedVals = MovingAverage(ElectricityBRD$Mrd_KWh, 12, PlotIt=TRUE)
 }
 
 \keyword{MA}% use one of  RShowDoc("KEYWORDS")

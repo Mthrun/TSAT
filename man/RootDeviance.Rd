@@ -31,10 +31,10 @@ RootDeviance(x,y,Silent=FALSE)
 }
 \arguments{
   \item{x}{
-Time series data given by a numerical vector
+[1:n] numerical vector of time series data
   }
   \item{y}{
-Another time series given by a numerical vector. It should be the same length as \code{x}. This may be a forecast (order matters for the bias to have the right sign).
+[1:n] numerical vector of time series data. This may be a forecast (order matters for the bias to have the right sign).
   }
   \item{Silent}{
   TRUE: No Warnings or errors are given back

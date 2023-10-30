@@ -1,3 +1,23 @@
+# res = CommonForecastingErrors(TestdataY,ForecastingF)
+#
+# DESCRIPTION
+# Calculate common forecasting errors
+#
+# INPUT
+# TestdataY           [1:n] numerical vector of test data
+#
+# ForecastingF        [1:n] numerical vector of forecast
+# OPTIONAL
+# epsilon             Epsilon defining when zero values should be approximated. Default is 10^-4
+
+# na.rm               Removing missing values. Default is TRUE
+# stepsize            For mase, see Metrics::mase
+# digits              Number of digits for the output values to which the results will be scientifically rounded to (and not by R logic)
+#
+# OUTPUT
+# Named vector with forecasting error values for:
+# 'MAE','MAPE','SMAPE','MASE','RMSE','BIAS','MRD'
+
 CommonForecastingErrors=function(TestdataY,ForecastingF,epsilon=10^-4,na.rm=TRUE,stepsize=1,digits){
   if(isTRUE(na.rm)){ #achtung irgendwas stimmt hier nicht
     noNaNInd <- which(is.finite(TestdataY)&is.finite(ForecastingF))
@@ -25,7 +45,8 @@ CommonForecastingErrors=function(TestdataY,ForecastingF,epsilon=10^-4,na.rm=TRUE
   MAE=mean(AD,na.rm=na.rm)
 
   MAPE=mean(AD/abs(TestdataYTMP),na.rm=na.rm)
-  smape=SMAPE(ForecastingF,TestdataY,na.rm = T,epsilon = epsilon)
+  #smape=SMAPE(ForecastingF,TestdataY,na.rm = T,epsilon = epsilon)
+  smape=mean(SMAPE(ForecastingF,TestdataY,na.rm = T,epsilon = epsilon))
   
   requireNamespace('Metrics')
   RMSE=Metrics::rmse(TestdataY,ForecastingF)

@@ -1,3 +1,22 @@
+# dist = DTWdistance(Data)
+#
+# DESCRIPTION
+# Dynamic Time Warping distance based an Non-Euclidean pairwise distance
+#
+# INPUT
+# Data                [1:n,1:d] matrix with d Timeseries of the length n
+# DistanceFunction    A function which calculates the pairwise distances 
+#                     in the same way as proxy::dist
+# ...                 Further Arguments for DistanceFunction
+#
+# OUTPUT
+# [1:d,1:d] symmetric matrix of distances
+#
+# DETAILS
+# Currently only implemented for time series of same length. Distances in DistanceFunction 
+# should be calculated the same ways as in a two-dimensional data matrix with the output
+# of the function being object of class dist.
+
 DTWdistance=function(Data,DistanceFunction=proxy::dist,...){
   requireNamespace('dtw')
   d=ncol(Data)

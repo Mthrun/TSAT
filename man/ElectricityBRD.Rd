@@ -11,8 +11,8 @@ Electricity production in BRD
 \format{
   A data frame with 0 observations on the following 2 variables.
   \describe{
+    \item{\code{Mrd_KWh }}{Value in units}
     \item{\code{Time}}{as.Date object}
-    \item{\code{y}}{value in units}
   }
 }
 \details{

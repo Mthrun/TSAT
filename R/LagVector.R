@@ -1,3 +1,18 @@
+# V=WriteTS(FileName, Time, SeriesVal)
+#
+# Description:
+# Compute a lagged version of a numeric vector, shifting the time base back or forward by a given number of observations.
+#
+# INPUT
+# x                         [1:n] vector
+# k                         The number of lags (in units of observations): back shifting: positiv value, forward shifting: negative value
+#
+# OUTPUT
+# Shifted vector [1:n] with k NaN values at the beginning (k positive) or the end (k negative)
+#
+# 
+#author: MCT
+
 LagVector <- function(x, k) {
   if(length(k)!=1) stop('k has to be a scalar number')
   if(!is.numeric(k)) stop('k has to be a numeric value')

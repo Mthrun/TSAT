@@ -16,7 +16,7 @@ GenerateRegularNonDailyTS=function(Datavec,TimeChar,TimeResolutionBegin='secs',T
   ind=!duplicated(TimeChar)
   outage.zoo <- zoo::as.zoo(x = Datavec[ind], order.by=TimeChar[ind])
   
-  full=merge(outage.zoo, zoo::zoo(, seq(as.POSIXct(start(outage.zoo),format=formating,tz=tz), as.POSIXct(end(outage.zoo),format=formating,tz=tz), 
+  full=merge(outage.zoo, zoo::zoo(, seq(from=as.POSIXct(start(outage.zoo),format=formating,tz=tz), to=as.POSIXct(end(outage.zoo),format=formating,tz=tz), 
                                    by = TimeResolutionBegin)), all = T)
   
   TS1=zoo::na.approx(full)

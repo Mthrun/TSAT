@@ -1,39 +1,42 @@
-CrossCorr=function(FirstTimeSeries , SecondTimeSeries , nLags=2 ,type = "correlation",PlotIt=FALSE,main,...){
-#MT auch ccf in R, naeher vergleichen
-#CROSSCORR Compute or plot sample cross-correlation function.
-#   Compute or plot the sample cross-correlation function (XCF) between
-#   univariate, stochastic time series
+# res = CrossCorr(FirstTimeSeries, SecondTimeSeries)
 #
-# Inputs:
-#   Series1 - Vector of observations of the first univariate time series for
-#     which the sample XCF is computed or plotted. The last row of Series1
-#     contains the most recent observation.
+# DESCRIPTION
+# CrossCorr computes or plots the sample cross-correlation function.
+# Compute or plot the sample cross-correlation function (XCF) between
+# univariate, stochastic time series.
+# Beware, CrossCorr assumes implicitly that both time series have the same 
+# frequency and thus accepts simple numerical vectors.
 #
-#   Series2 - Vector of observations of the second univariate time series for
-#     which the sample XCF is computed or plotted. The last row of Series2
-#     contains the most recent observation.
+# INPUT
+# FirstTimeSeries     [1:n] vector of observations of the first univariate time series for
+#                     which the sample XCF is computed or plotted. The last row of Series1
+#                     contains the most recent observation.
+# SecondTimeSeries    [1:n] vector of observations of the second univariate time series for
+#                     which the sample XCF is computed or plotted. The last row of Series2
+#                     contains the most recent observation.
+# OPTIONAL
+# nLags               Positive, scalar integer indicating the number of lags of the XCF
+#                     to compute. If empty or missing, the default is to compute the XCF at
+#                     lags 0, +/-1, +/-2,...,+/-T, where T is the smaller of 20 or one less
+#                     than the length of the shortest series. Default is 2
+# type                either "correlation" or "covariance". Default is "correlation"
+# PlotIt              If TRUE, output is plotted as a dashboard with values as bars against various lags, 
+#                     for the lag with highest cross correlation or covariance additionally 
+#                     the spearman rank correlation with a scatter plot is shown. Default is FALSE
+# main                Title of plot.
+# ...                 Further arguments passed on to output of ccf function
 #
-# Optional Inputs:
-#   nLags - Positive, scalar integer indicating the number of lags of the XCF
-#     to compute. If empty or missing, the default is to compute the XCF at
-#     lags 0, +/-1, +/-2,...,+/-T, where T is the smaller of 20 or one less
-#     than the length of the shortest series.
+# OUTPUT
+# XCF                 Sample cross correlation function between Series1 and Series2. XCF
+#                     is a vector of length 2*nLags + 1 corresponding to lags 0, +/-1, +/-2,
+#                     ... +/-nLags. The center element of XCF contains the zeroth lag cross
+#                     correlation. XCF will be a row (column) vector if Series1 is a row
+#                     (column) vector.
+# Lags                Vector of lags corresponding to XCF (-nLags to +nLags).
+# Bounds              Two element vector indicating the approximate upper and lower
+#                     confidence bounds assuming the input series are completely uncorrelated.
 #
-#   type: either "correlation" or "covariance"
-#
-# Outputs:
-#   XCF - Sample cross correlation function between Series1 and Series2. XCF
-#     is a vector of length 2*nLags + 1 corresponding to lags 0, +/-1, +/-2,
-#     ... +/-nLags. The center element of XCF contains the zeroth lag cross
-#     correlation. XCF will be a row (column) vector if Series1 is a row
-#     (column) vector.
-#
-#   Lags - Vector of lags corresponding to XCF (-nLags to +nLags).
-#
-#   Bounds - Two element vector indicating the approximate upper and lower
-#     confidence bounds assuming the input series are completely uncorrelated.
-#
-# Example:
+# EXAMPLE:
 #   Create a random sequence of 100 Gaussian deviates, and a delayed version
 #   lagged by 4 samples. Then see the XCF peak at the 4th lag:
 #
@@ -44,6 +47,11 @@ CrossCorr=function(FirstTimeSeries , SecondTimeSeries , nLags=2 ,type = "correla
 #     crosscorr(x,y)                   # It should peak at the 4th lag.
 #
 # See also AUTOCORR, PARCORR, FILTER.
+# 
+# NOTE: MT auch ccf in R, naeher vergleichen
+
+CrossCorr=function(FirstTimeSeries , SecondTimeSeries , nLags=2 ,type = "correlation",PlotIt=FALSE,main,...){
+
 if(length(FirstTimeSeries)!=length(SecondTimeSeries)) warning('Timeseries do not have to same length.')
 if(!is.vector(FirstTimeSeries)| !is.vector(SecondTimeSeries)) warning('One ore both Timeseries are not vectors, Plotting may not work, ccf function may not work.')
 

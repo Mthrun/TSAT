@@ -14,9 +14,9 @@ Eight centuries of global real interest rates published in [Schmelzing, 2019].
   \describe{
     \item{\code{Year}}{The year}
     \item{\code{Nominal_Italy}}{Nominal interest rate per year in in Italym}
-      \item{\code{Nominal_UK}}{Nominal interest rate per year in in United Kingdom}
-        \item{\code{Inflation_Italy}}{inflation in Italy per year}
-          \item{\code{Inflation_UK}}{Inflation in United Kingdom per year}
+    \item{\code{Nominal_UK}}{Nominal interest rate per year in in United Kingdom}
+    \item{\code{Inflation_Italy}}{inflation in Italy per year}
+    \item{\code{Inflation_UK}}{Inflation in United Kingdom per year}
   }
 }
 \details{

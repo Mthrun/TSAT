@@ -13,18 +13,18 @@ ConvertTS2DF(TSobject, Resolution = "Monthly", TimeZone = "UCT")
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{TSobject}{
-object of \code{\link{ts}}
+Object of \code{\link{ts}}
 }
   \item{Resolution}{
 Monthly or Quaterly
 }
   \item{TimeZone}{
-see strptime
+See \link[base]{strptime}. A empty string "" represents the current time zone
 }
 }
 
 \value{
-dataframe with Time and Data columns
+Dataframe with Time and Data columns
 }
 \references{
 %% ~put references to the literature/web site here ~

@@ -13,7 +13,7 @@ LagVector(x, k)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-A vector [1:n]
+[1:n] vector
 }
   \item{k}{
 The number of lags (in units of observations): back shifting: positiv value, forward shifting: negative value
@@ -23,7 +23,7 @@ The number of lags (in units of observations): back shifting: positiv value, for
 for time series please use \code{lag}
 }
 \value{
-Shited vector [1:n] with k NaN values at the beginning (k positive) or the end (k negative)
+Shifted vector [1:n] with k NaN values at the beginning (k positive) or the end (k negative)
 }
 
 \author{

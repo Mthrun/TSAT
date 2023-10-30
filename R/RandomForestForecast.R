@@ -1,4 +1,4 @@
-RandomForestForecast=function(Time, DF, formula=NULL,SplitDataAt,Horizon,Package='randomForest',
+FcRandomForest=function(Time, DF, formula=NULL,SplitDataAt,Horizon,Package='randomForest',
                               AutoCorrelation=NULL,AutoCorrelationNo=1,NoOfTree=200,PlotIt=TRUE,Holidays,SimilarPoints=TRUE,...){
   N=nrow(as.matrix(DF))
   requireNamespace('lubridate')

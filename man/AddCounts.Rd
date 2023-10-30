@@ -5,7 +5,7 @@
 Adds 2 counts
 }
 \description{
-adds two counts by searching for same numrical key or character vector
+Adds two counts by searching for same numerical key or character vector
 }
 \usage{
 AddCounts(Count1,Names1,Count2,Names2)
@@ -13,16 +13,16 @@ AddCounts(Count1,Names1,Count2,Names2)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Count1}{
-  numerical vector[1:n]
+  [1:n] numerical vector
 }
   \item{Names1}{
-  key or charactical vector [1:n]
+  [1:n] key or charactical vector
 }
   \item{Count2}{
-    numerical vector[1:m]
+  [1:m] numerical vector
 }
   \item{Names2}{
-    key or charactical vector [1:m]
+  [1:m] key or charactical vector 
 }
 }
 

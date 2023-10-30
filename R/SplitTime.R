@@ -1,14 +1,22 @@
+# vec = SplitYears(Time,format=c('y-m-d','h:m:s'),split=" ")
+#
+# Description:
+# Split times into years
+#
+# INPUT
+# Time[1:n]   Character of time from years to seconds will be translated to a chron object
+# format      Format of Time as vector of years to days and hours to seconds
+# split       Character vector (or object which can be coerced to such) containing regular expression(s) (unless fixed = TRUE) to use for splitting.
+#
+# OUTPUT
+# list[1:k] splitted time
+#
+#
+# Author: MCT 2017  
+
+
 SplitTime=function(Time,Resolution='years',format=c('y-m-d','h:m:s'),split=" "){
-  # SplitYears(Time,format=c('y-m-d','h:m:s'),split=" ")
-  #Split times into years
-  #Input
-  #Time[1:n] character of time from years to seconds will be translated to chon object or chron object or chron object
-  #format     format of Time as vector of years to days and hours to seconds
-  #split      character vector (or object which can be coerced to such) containing regular expression(s) (unless fixed = TRUE) to use for splitting.
-  #OUTPUT
-  # list[1:k] splittet time
-  #author: MT 2017  
-  
+
   requireNamespace('chron')
   
   if(missing(Time)){

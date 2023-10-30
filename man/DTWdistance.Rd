@@ -16,14 +16,14 @@ DTWdistance(Data, DistanceFunction = proxy::dist, ...)
 [1:n,1:d] matrix with d Timeseries of the length n
 }
   \item{DistanceFunction}{
-a function which calculates the pairwise distances in the same was as \code{\link[proxy]{dist}}
+A function which calculates the pairwise distances in the same way as \code{\link[proxy]{dist}}
 }
   \item{\dots}{
 Further Arguments for DistanceFunction
 }
 }
 \details{
-Currently only implemented for time series of same length. Distances in \code{DistanceFunction} should be calculated the same ways as in a two-dimensional data matrix with the output of the function beeing object of class \code{\link{dist}}.
+Currently only implemented for time series of same length. Distances in \code{DistanceFunction} should be calculated the same ways as in a two-dimensional data matrix with the output of the function being object of class \code{\link{dist}}.
 }
 \value{
 [1:d,1:d] symmetric matrix of distances

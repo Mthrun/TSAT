@@ -5,7 +5,7 @@
 aggregate Time to Days
 }
 \description{
-aggregates a Time vector of POSIX format to Days
+Aggregates a Time vector of POSIX format to Days
 }
 \usage{
 aggregateTime2Days(Time, Data, FUN, Header,\dots)
@@ -19,7 +19,7 @@ aggregateTime2Days(Time, Data, FUN, Header,\dots)
 [1:n,1:d] matrix or dataframe, d can be also 1 , then vector
 }
   \item{FUN}{
-aggegation function, e.g. \code{mean} or \code{sum}
+aggregation function, e.g. \code{mean} or \code{sum}
 }
   \item{Header}{
 Names of Outputfeatures minus Time column
@@ -32,7 +32,7 @@ further arguments passed on to \code{FUN}
 all possible timeframes with higher frequency then days are accepted, aggregation shortcut wrapper
 }
 \value{
-dataframe[1:m,1:(d+1)] with m<n and first column beeing the time in \code{as.Date} format
+dataframe[1:m,1:(d+1)] with m<n and first column being the time in \code{as.Date} format
 }
 
 \author{

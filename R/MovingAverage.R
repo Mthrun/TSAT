@@ -1,24 +1,25 @@
-MovingAverage=function(Data, lag,PlotIt=FALSE){
-# Moving Average: FilteredData(i) = mean(Data((i-lag-1):(i-1)
+# Moving Average: FilteredData(i) = mean(Data((i-lag-1):(i-1)))
 #
 # INPUT
-# Data[1:n,1]              time series, in colunns
-# lag                      nr or previous data points to average
+# Data[1:n,1]              Time series, in colums
+# lag                      Nr or previous data points to average
 #
 # OUTPUT
-#  FilteredData[1:n,1]   the filtered data
+# FilteredData[1:n,1]   the filtered data
 # author: MT 2017, 
+
+MovingAverage=function(Data, lag,PlotIt=FALSE){
 
 requireNamespace('signal')
 
-FilterVector = c( matrix(1, nrow = 1, ncol = lag),0,matrix(0, nrow = 1, ncol = lag))
-FilterVector = FilterVector /sum(FilterVector) 
+FilterVector = c(matrix(1, nrow = 1, ncol = lag),0,matrix(0, nrow = 1, ncol = lag))
+FilterVector = FilterVector / sum(FilterVector) 
 FilteredData = signal::filter(FilterVector,1,Data) 
 # jetzt noch anfang korrigieren
-FilteredData[1] =mean(Data,na.rm=T)#Data[1]
+FilteredData[1] = mean(Data,na.rm=T)#Data[1]
 for(i in 2:lag){
-    FilterVector = c( matrix(1, nrow = 1, ncol = i),0,matrix(0, nrow = 1, ncol = i))
-    FilterVector = FilterVector /sum(FilterVector) 
+    FilterVector = c(matrix(1, nrow = 1, ncol = i),0,matrix(0, nrow = 1, ncol = i))
+    FilterVector = FilterVector / sum(FilterVector) 
     FD           = signal::filter(FilterVector,1,Data) 
     FilteredData[i] = FD[i] 
 } 

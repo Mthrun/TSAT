@@ -25,7 +25,7 @@ linear factor, do not search for right alpha with PLS statistics.
 a character string describing the type of \code{\link[fUnitRoots]{UnitrootTests}} (the unit root regression). Valid choices are "nc" for a regression with no intercept (constant) nor time trend, and "c" for a regression with an intercept (constant) but no time trend, "ct" for a regression with an intercept (constant) and a time trend. The default is "c".
 }
   \item{PlotIt}{
-TRUE: plot distribution analysis of \code{CointegrationOrder1} ( which seems to be the residuals?)
+TRUE: plot distribution analysis of \code{CointegrationOrder1} (which seems to be the residuals?)
 }
 }
 \details{

@@ -3,19 +3,20 @@ checkFilename=function(FileName,Directory=getwd(),Extension,ReadOrWrite,NameOfFu
 # Searching for Filename & Directory existence
 #
 # INPUT
-# Filename  		  	string, name for file without extension
+# Filename  		  string, name for file without extension
 # Extension 			string, extension of filename (everything after the ".")
 # ReadOrWrite			=TRUE: ReadX
 #									=FALSE: WriteX
-# NameOfFunctionCalled: Fuer Fehlermeldung: Welche Funktion hat checkFilename aufgerufen
+# NameOfFunctionCalled: For error message: Which function called checkFilename
 #
 # Optional
-# Directory    			string, complete path of file, default is current path
+# Directory    		string, complete path of file, default is current path
 #
 # OUTPUT
-# Bricht mit Fehlermeldung die Ein/AusleseProzedure ab, wenn mit Dateiname/Directory etwas nicht stimmt
-
-# author: MT 06/2015
+# Aborts read/write procedure with error message, if there is a problem with the file name/directory
+#
+#
+# author: MCT 06/2015
   FileName;
   if(is.null(FileName))
     stop('Filename is null/does not exist, please use a string as a filename')

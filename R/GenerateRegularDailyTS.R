@@ -1,7 +1,7 @@
 GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE,
                                 format = '%Y-%m-%d', tz = 'UTC',
                                 option = 'stine',Header = c('Time','Data'),
-                                Start, End, AggregateFun = sum, PlotIt = FALSE){
+                                Start, End, PlotIt = FALSE,AggregateFun = sum,...){
 #GenerateRegularDailyTS(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End,AggregateFun=sum,PlotIt = FALSE)
   requireNamespace('tibble')
   requireNamespace('imputeTS')
@@ -28,7 +28,7 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE,
   
   if(length(Time)!=length(unique(Time))){
     warning('"TimeChar" is not unique meaning that several days have the same date. Trying to use aggregate to solve this problem.')
-    DF=aggregate(Datavec~Time,FUN = AggregateFun,na.rm=TRUE)
+    DF=aggregate(Datavec~Time,FUN = AggregateFun,na.rm=TRUE,...)
     colnames(DF)=c('Time','Datavec')
     Time=DF$Time
     Datavec=DF$Datavec
@@ -164,11 +164,11 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE,
       if(i==1){
       tibbledf=as.matrix(GenerateRegularDailyTS(TimeChar, Datavec=Data[,i], na.rm,
                                       format,tz,option,Header=c('Time',names[1]),
-                                      Start,End,AggregateFun,PlotIt = FALSE))
+                                      Start,End,AggregateFun,PlotIt = FALSE,...))
       }else{
         tibbledftmp=as.matrix(GenerateRegularDailyTS(TimeChar, Datavec=Data[,i], na.rm,
                                         format,tz,option,Header,
-                                        Start,End,AggregateFun,PlotIt = FALSE))
+                                        Start,End,AggregateFun,PlotIt = FALSE,...))
         tibbledf=cbind(tibbledf,tibbledftmp[,2])
         
         # y=as.vector(as.matrix(tibbledftmp)[,2])

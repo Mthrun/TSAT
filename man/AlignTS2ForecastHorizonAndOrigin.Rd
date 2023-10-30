@@ -5,7 +5,7 @@
 Align Time Series to Forecast Horizon And Origin
 }
 \description{
-Extends or shortens time series w.t.r to Forecasting
+Extends or shortens time series w.r.t to Forecasting
 }
 \usage{
 AlignTS2ForecastHorizonAndOrigin(Time, Resolution = "weeks", Origin, Horizon, DataVector)
@@ -20,17 +20,17 @@ AlignTS2ForecastHorizonAndOrigin(Time, Resolution = "weeks", Origin, Horizon, Da
  or "FiskalWeekStartOfMonth"
 }
   \item{Origin}{
-Forecastorigin as Indext w.t.r to Time; Origin=0 means that from the given Time a "future" is generated
+Forecastorigin as indexed w.r.t to Time; Origin=0 means that from the given Time a "future" is generated
 }
   \item{Horizon}{
-positive number, Forecasthorizon as number of steps to be forecasted
+Positive number, Forecasthorizon as number of steps to be forecasted
 }
   \item{DataVector}{
 Optional, [1:n] vector of data ordered the same way as time
 }
 }
 \details{
-assumes regular time series with ordered time steps.
+Assumes regular time series with ordered time steps.
 
 Origin=0 means that a new timestamps in the "future" are generated starting from max(Time)+1
 

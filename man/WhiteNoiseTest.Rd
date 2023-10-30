@@ -17,24 +17,24 @@ WhiteNoiseTest(TimeSeries, lags = 1, type = "c", PlotIt = TRUE)
 [1:n] vector of data, e.g. residuals of time series
 }
   \item{lags}{
-number of lags to investigate in the statistical test
+Number of lags to investigate in the statistical test
 }
   \item{type}{
-a character string describing the type of \code{\link[fUnitRoots]{UnitrootTests}} (the unit root regression). Valid choices are "nc" for a regression with no intercept (constant) nor time trend, and "c" for a regression with an intercept (constant) but no time trend, "ct" for a regression with an intercept (constant) and a time trend. The default is "c".
+A character string describing the type of \code{\link[fUnitRoots]{UnitrootTests}} (the unit root regression). Valid choices are "nc" for a regression with no intercept (constant) nor time trend, and "c" for a regression with an intercept (constant) but no time trend, "ct" for a regression with an intercept (constant) and a time trend. The default is "c".
 
 }
   \item{PlotIt}{
- if each sample has a normal distribution with zero mean, the signal is said to be Gaussian white noise [Diebold, 2007].
+ If TRUE plots the gaussian in relation to the TimeSeries data. If each sample has a normal distribution with zero mean, the signal is said to be Gaussian white noise [Diebold, 2007].
 }
 }
 \details{
-white noise can be described as a random process, e.g. Brownian Movement, Random Walk.
+White noise can be described as a random process, e.g. Brownian Movement, Random Walk.
 The simplest unit-root nonstationary time series is the univariate random walk [Tsay, 2013].
 Therefore, using distribution analysis and a unit root test, this function can serve as a indication for white noise, because unit root is a feature of white noise.
-If the mean is around zero (red line visible in plot) and the distribution gaussian (magenta line overlaps blue line) and the pvalue is small than white noise can be assumed. It is a difficult task to try to generally to proof white noise. Thus, if one of the two approaches (statistical versus visual) do not agree, than the result is unclear and the residuals should be testet with other approaches.
+If the mean is around zero (red line visible in plot) and the distribution gaussian (magenta line overlaps blue line) and the pvalue is small than white noise can be assumed. It is a difficult task to try to generally to proof white noise. Thus, if one of the two approaches (statistical versus visual) do not agree, than the result is unclear and the residuals should be tested with other approaches.
 }
 \value{
-output of \code{\link[fUnitRoots]{UnitrootTests}} in mode \code{\link{invisible}}
+Output of \code{\link[fUnitRoots]{UnitrootTests}} in mode \code{\link{invisible}}
 }
 \references{
 [Tsay, 2013]  Tsay, Ruey S: Multivariate time series analysis: with R and financial applications, John Wiley & Sons, 201.

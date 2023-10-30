@@ -1,11 +1,23 @@
+# Feature=EventFiltering(EventNameorValue,EventArrayOrEvent,Silent=FALSE)
+#
+# DESCRIPTION
+# Filters Events in Data
+#
+# INPUT
+# EventNameorValue      Character or value to search fore
+# EventArray            [1:n,1:d] Array (character or numerical matrix) or vector of string or 
+#                       values where the event has to be searched in, list cannot be interpreted, 
+#                       dataframes are converted to matrices
+# Silent                If TRUE, error warnings regarding events disabled. Default FALSE
+#
+# OUTPUT
+# Feature               [1:n] Numerical Vector with ones and zeros, ones indicate found events
+#
+#
+# author MT 2017
+
 EventFiltering=function(EventNameorValue,EventArrayOrEvent,Silent=FALSE){
-  #  Feature=EventFiltering(EventNameorValue,EventArrayOrEvent)
-  #Input
-  # EventNameorValue[1]   character or value to search fore
-  # EventArray[1:n,1:d]   Array or vector of string or Values where the event has to be searched in
-  #Output
-  # Feature[1:n]          Numerical Vector with ones and zeros, ones indivate found events
-  # author MT 2017
+
   if(missing(EventArrayOrEvent)) {
     stop('EventArrayOrEvent is missing!')
   }
@@ -22,7 +34,7 @@ EventFiltering=function(EventNameorValue,EventArrayOrEvent,Silent=FALSE){
   n=dim(EventArrayOrEvent)[1]
   if (is.null(d) &
       !is.vector(EventArrayOrEvent)) {
-    stop('somethin went wrong, length of EventNameorValue not given')
+    stop('something went wrong, length of EventNameorValue not given')
   } else{
     if (is.null(d) & is.vector(EventArrayOrEvent)) {
       d = 1
@@ -30,7 +42,7 @@ EventFiltering=function(EventNameorValue,EventArrayOrEvent,Silent=FALSE){
     }
   }
   if (is.null(n))
-    stop('somethin went wrong, length of EventNameorValue not given')
+    stop('something went wrong, length of EventNameorValue not given')
   if (n < 2)
     stop('length is only 1!')
   

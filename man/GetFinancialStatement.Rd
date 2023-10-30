@@ -28,9 +28,6 @@ morningstar: uses api to data bases
 if no warnings=TRUE
 }
 
-  \item{Silent}{
-if no warnings=TRUE
-}
   \item{Port}{
 in the caseof yahoo: port accessable for direct internet connection
 }
@@ -43,7 +40,7 @@ yahoo and morningstar work currently.
 
 In the case of yahoo each stock puts up a mozilla rust profile in 
 .../Users/<admin>/AppData/Local/Temp
-of 100 mb which has to be deleted manually after the prozess of web scrapping
+of 100 mb which has to be deleted manually after the process of web scrapping
 }
 \value{
 dataframe of financial statements

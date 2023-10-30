@@ -16,7 +16,7 @@ aggregateToUniqueTime(Time, DataVectorOrMatrix, Fun = sum, ...)
 [1:n] vector
 }
   \item{DataVectorOrMatrix}{
-[1:n,1:d] vector (d==1) or matrix (d>1)
+[1:n,1:d] matrix or dataframe, d can be also 1, then vector
 }
   \item{Fun}{
 aggregation function like \code{\link{sum}}
@@ -29,7 +29,7 @@ further arguments passed on to \code{Fun}
 Generalized Aggregation to Unique Time by any function defined by \code{sum}
 }
 \value{
-Lixt with
+List with
   \item{Aggregation}{
 [1:m,1:d], m<=n of \code{DataVectorOrMatrix} mapped to \code{UniqueTime}
 }

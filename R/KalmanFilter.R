@@ -14,32 +14,10 @@ KalmanFilter=function(Datavector,DLMobject,PlotIt=TRUE,Short=FALSE){
   
   requireNamespace('dlm')
   
-  stdrobust=function (x, lowInnerPercentile = 25/100) 
-  {
-    if (is.vector(x) || (is.matrix(x) && dim(x)[1] == 1)) 
-      dim(x) <- c(length(x), 1)
-    lowInnerPercentile <- max(1, min(lowInnerPercentile, 49))
-    hiInnerPercentile <- 100 - lowInnerPercentile
-    faktor <- sum(abs(qnorm(t(c(lowInnerPercentile, hiInnerPercentile)/100), 
-                            0, 1)))
-    std <- sd(x, na.rm = TRUE)
-    p <- c(lowInnerPercentile, hiInnerPercentile)/100
-    quartile <- quantile(x, p, type = 5, na.rm = TRUE)
-    if (ncol(x) > 1) 
-      iqr <- quartile[2, ] - quartile[1, ]
-    else iqr <- quartile[2] - quartile[1]
-    shat <- c()
-    for (i in 1:ncol(x)) {
-      shat[i] <- min(std[i], iqr[i]/faktor, na.rm = TRUE)
-    }
-    dim(shat) <- c(1, ncol(x))
-    colnames(shat) <- colnames(x)
-    return(shat)
-  }
   
   if(missing(DLMobject)){
     m0=mean(Datavector, trim = 0.1, na.rm = TRUE) #roboust mean
-    s0=stdrobust(Datavector) #robust std
+    s0=DataVisualizations::Stdrobust(Datavector) #robust std
     DLMobject=dlm::dlm(FF = 1, V = 1, GG = 1, W = 1, m0 = m0, C0 = s0)
     # return(DLMobject)
   }

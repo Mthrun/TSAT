@@ -1,23 +1,27 @@
-WriteTS=function(FileName,Time,SeriesVal,  FurtherTexts,Header, OutDirectory=getwd(),ForceNumeric=FALSE,
+# WriteTS(FileName, Time, SeriesVal)
+#
+# Description:
+# Save series consisting of Time and SeriesVal and eventual further texts to a *.TS file.
+#
+# INPUT
+# FileName                   String, name of the  file to be written
+# Time                       [1:n] vector of row type, typically UnixTime or other time in seconds: unique key for each line, by default: [1:n]
+# SeriesVal                  [1:n] vector with text without blanks or numerical data to be put in each line
+# OPTIONAL
+# FurtherTexts              [1:n,1:c] string matrix with row FurtherTexts to be put in third column
+# Header                    1:(c+1) vector for the headers including for the names and FurtherTexts: 
+#                           Array of chars, this line will be inserted at top of file with leading #
+# OutDirectory              The OutDirectory where to write into; if not given: current dir
+# ForceNumeric              TRUE: saves numeric format of SeriesVal, FALSE: accepts text
+# Comments                  vector, Char Array or matrix, these lines will be inserted at top of file with leading #
+#                           Note: Also allowed: Comments='first line \n# second line'
+# 
+#author: MCT 08/2023
+
+
+WriteTS=function(FileName,Time,SeriesVal, FurtherTexts,Header, OutDirectory=getwd(), ForceNumeric=FALSE,
                          Comments){
-  # WriteNAMES(FileName, Time, SeriesVal)
-  # Save series consisting of Time and SeriesVal and eventual FurtherTexts to a *.names file.
-  #
-  # INPUT
-  # FileName                  name of the  file to be written
-  # SeriesVal[1:n]                vector with text without blanks or numerical data to be put in each line
-  # Time[1:n]                  vector of row type, typically UnixTime or other time in seconds: unique key for each line, by default: [1:n]' 
-  
-  # OPTIONAL
-  # OutDirectory              the OutDirectory where to write into; if not given: current dir.
-  # ForceNumeric              TRUE: saves numeric format of SeriesVal, false: accepts text
-  # FurtherTexts[1:n,1:c]     string matrix with row FurtherTexts to be put in third column
-  # Header[1:(c+1),]   optional   header for the Nmes and FurtherTexts: Array of chars, this line wil be insterted at top of file with leading #
-  # Comments                  vector, Char Array or matrix, these lines will be insteted at top of file with leading #
-  #                           Note: Also allowed: Comments='first line \n# second line'
-  # 
-  #author: MCT 08/2023
-  
+
   if(is.null(FileName)){
     stop('WriteTS: FileName ist missing')
   }

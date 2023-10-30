@@ -20,7 +20,7 @@ cols=c('black','red'),SaveIt=FALSE)
 \arguments{
   \item{X}{[1:n] vector, both lines require the same xvalues, e.g. the time of the time series, \code{POSIXlt} or \code{POSIXct} or code{as.Date} are accepted}
   \item{Y}{
-[1:n] vector of histroical time series, usually test data
+[1:n] vector of historical time series, usually test data
 }
   \item{F_y}{
 Forecast F

@@ -13,7 +13,7 @@ TSDistancesMatrix(TSMatrix,method='euclidean')
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{TSMatrix}{
-[1:n,1:m] m different Time Series with equal length n
+[1:n,1:m] matrix of m different Time Series with equal length n
 }
   \item{method}{
 Distance measure to be used. It must be one of: "euclidean", "manhattan", "minkowski", "infnorm", "ccor", "sts", "dtw", "keogh.lb", "edr", "erp", "lcss", "fourier", "tquest", "dissim", "acf", "pacf", "ar.lpc.ceps", "ar.mah", "ar.mah.statistic", "ar.mah.pvalue", "ar.pic", "cdm", "cid", "cor", "cort", "wav", "int.per", "per", "mindist.sax", "ncd", "pred", "spec.glk", "spec.isd", "spec.llr", "pdc", "frechet"

@@ -1,3 +1,27 @@
+# V = AlignTS2ForecastHorizonAndOrigin(Time, Resolution = "weeks", Origin, Horizon, DataVector)
+#
+# Description:
+# Extends or shortens time series w.r.t to Forecasting
+#
+# INPUT
+# Time               [1:n] vector of time relevant for seq, usually an as.Date object
+# Resolution         "weeks", "months", "days" or others accepted strings by seq or "FiskalWeekStartOfMonth"
+# Origin             Forecastorigin as indexed w.r.t to Time; Origin=0 means that from the given Time a "future" is generated
+# Horizon            positive number, Forecasthorizon as number of steps to be forecasted
+# DataVector         Optional, [1:n] vector of data ordered the same way as time
+#
+# OUTPUT 
+# Time	             [1:(Origin+Horizon)] vector
+# DataVector	       [1:(Origin+Horizon)] vector
+#
+# Details: 
+# Assumes regular time series with ordered time steps.
+# Origin=0 means that a new timestamps in the "future" are generated starting from max(Time)+1
+# FiskalWeekStartOfMonth: Means that in a weekly 5,4,4 pattern timestamps of months are generating mapping each start of month to the first fiskal week in that month. It assumes that this pattern is already given in Time and that each week starts on monday with the first week of the year starting on the first monday of that year. Hence, Forecasthorizon is chosen in months.
+#
+#
+# Author: MCT
+
 AlignTS2ForecastHorizonAndOrigin=function(Time,Resolution="weeks",Origin,Horizon,DataVector){
   #months
   n=length(Time)

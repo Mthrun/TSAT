@@ -15,16 +15,16 @@ PlotIt=FALSE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Time}{
-[1:N] vector of time, code{as.Date} objectets or \code{POSIXct} are accepted
+[1:n] vector of time, \code{as.Date} or \code{POSIXct} objects are accepted
 }
   \item{Datavector}{
- Optional, default \code{NULL}, [1:N] vector of values or a Key in case of a data frame
+ Optional, [1:n] vector of values or a Key in case of a data frame. Default is \code{NULL}
 }
   \item{HolidaysTime}{
-Optional, default: German Holidays, [1:N] vector of time, code{as.Date} objectets or \code{POSIXct} are accepted
+[1:m] vector of time of holidays, as.Date or POSIXct objects are accepted. Default are german holidays, see \link[GermanHolidays]{GermanHolidays}
 }
   \item{PlotIt}{
-Default: FALSE, TRUE: Evaluates output of function versus input by plots, works only if Datavector given
+Optional, TRUE: Evaluates output of function versus input by plots, works only if Datavector given. Default is FALSE
 }
 }
 \details{
@@ -32,10 +32,11 @@ deletes holidays out of input
 }
 \value{
 List with
-\item{FilteredTime}{[1:m], m<=n, n=m+k, Time object}
-\item{FilteredData}{[1:m], m<=n, n=m+k Filtered Datavector}
-\item{HolidaysTimes}{[1:k], k<=n, n=m+k Time object of filtered Holidays}
-\item{HolidaysData}{[1:k], k<=n, n=m+k Datavector of filtered Holidays}
+\item{FilteredTime}{[1:m] vector with time objects of the m=n-k dates, which are not holidays}
+\item{FilteredData}{[1:m] vector with data corresponding to the m=n-k dates, which are not holidays}
+\item{HolidaysTimes}{[1:k] vector with time objects of the k holidays}
+\item{HolidaysData}{[1:k] vector with data corresponding to the k holidays}
+where k,m<=n and n=m+k
 }
 
 \author{

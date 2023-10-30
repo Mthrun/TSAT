@@ -1,3 +1,21 @@
+# df = aggregateDays2Weeks(Time,Data,FUN,Header, ...)
+#
+# Description:
+# Aggregate Days to Weeks
+#
+# INPUT
+# Time               [1:n] vector of POSIXlt or POSIXct or as.Date objects        
+# Data               [1:n,1:d] matrix or dataframe, d can be also 1, then vector 
+# FUN                aggregate by a function like sum or mean
+# Header             colnames for data
+# ...                Further arguments passed on to FUN.
+#
+# OUTPUT 
+# dataframe[1:m,1:(d+1)] with m<n and first column being the time in \code{as.Date} format
+#
+#
+# Author: MCT
+
 aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
   regular=GenerateRegularDailyTS(TimeChar = Time,Datavec = Data,na.rm = 'zero')
   #gibt by tibble: Error: node stack overflow

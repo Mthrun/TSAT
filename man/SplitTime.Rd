@@ -13,18 +13,18 @@ SplitTime(Time,Resolution='years',format=c('y-m-d','h:m:s'),split=" ")
 
 \arguments{
   \item{Time}{
-  [1:n] character of time from years to seconds will be translated to chon object or chron object or chron object
+  [1:n] Character of time from years to seconds will be translated to a chron object
 }
-  \item{Resolution}{string Option: seconds, minutes, days,hours,weekdays,months,quarters or years
+  \item{Resolution}{String Option: seconds, minutes, days,hours,weekdays,months,quarters or years
 }
-  \item{format}{format of Time as vector of years to days and hours to seconds
+  \item{format}{Format of Time as vector of years to days and hours to seconds
 }
-  \item{split}{ character vector (or object which can be coerced to such) containing regular expression(s) (unless fixed = TRUE) to use for splitting.
+  \item{split}{Character vector (or object which can be coerced to such) containing regular expression(s) (unless fixed = TRUE) to use for splitting.
 }
 
 }
 \value{
-list[1:k] splittet time
+list[1:k] splitted time
 }
 
 \author{

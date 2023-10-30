@@ -19,7 +19,7 @@ aggregateDays2Months(Time,Data,FUN,Header,Period="month", \dots)
 [1:n,1:d] matrix or dataframe, d can be also 1, then vector
 }
   \item{FUN}{
-aggegate by a function like \code{sum} or \code{mean}
+aggregate by a function like \code{sum} or \code{mean}
 }
   \item{Header}{
 colnames for data
@@ -35,7 +35,7 @@ further arguments passed on to \code{FUN}
 A shortcut for aggregation using \pkg{dplyr}
 }
 \value{
-dataframe[1:m,1:(d+1)] with m<n and first column beeing the time in \code{as.Date} format
+dataframe[1:m,1:(d+1)] with m<n and first column being the time in \code{as.Date} format
 }
 \author{
 Michael Thrun

@@ -16,7 +16,7 @@ aggregateWeeks2FiskalMonths(Time,Data,FUN,Header, \dots)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Time}{
-[1:n] vector of \code{as.Date} obect. Beware, weekly data beginning with always monday is expected!
+[1:n] vector of \code{as.Date} object. Beware, weekly data beginning with always monday is expected!
 }
  \item{Data}{
 [1:n,1:d] matrix or dataframe, d can be also 1, then vector
@@ -32,7 +32,7 @@ further arguments passed on to \code{FUN}
 }
 }
 \details{
-The rownames of the data frame depict either the first week (usually) of the month the data is aggregated by  or, in the case of the first time interval until a full month of data exists, the last week where data was existed (see example).
+The rownames of the data frame depict either the first week (usually) of the month the data is aggregated by or, in the case of the first time interval until a full month of data exists, the last week where data was existed (see example).
 The fiskal month is often used to compare weekly and monthly forecasts consistently.
 }
 \value{

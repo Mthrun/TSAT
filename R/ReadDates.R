@@ -1,5 +1,5 @@
-ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
-#V=ReadDates(FileName = NULL, InDirectory = getwd(), SilentComments = TRUE)
+ReadDates=function(FileName=NULL,InDirectory=getwd(),Silent=TRUE){
+#V=ReadDates(FileName = NULL, InDirectory = getwd(), Silent = TRUE)
 # read univariate or multivariate time series similar to the LRN format
   # INPUT
   #   \item{FileName}{
@@ -9,7 +9,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   #     Optional: string, name of directory the data will be saved in, default \code{getwd()} 
   #     
   #   }
-  #   \item{SilentComments}{
+  #   \item{Silent}{
   #     If FALSE: Comments are not printed out
   #   }
   #
@@ -100,7 +100,7 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
     
   },stop=function(f){
     warning(f)
-    stop("Header or Comments are not reasonably defined, see DataIO::ReadLRN for further instructions")
+    stop("ReadDates: Header or Comments are not reasonably defined, see DataIO::ReadLRN for further instructions")
   }
   )
   # print(rows)
@@ -109,15 +109,17 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   zwei=length(Header)
   
   if(zwei!=cols){
-    warning(paste('Length of Header',zwei,'does not equal number of columns',cols))
+    warning(paste('ReadDates: Length of Header',zwei,'does not equal number of columns',cols))
     ColNameFlag=F
   }
   
   keyind=which(Header=='Key')
   if(length(keyind)==0){
-    warning("Column with name 'Key' not found. Assuming that the key is stored in the first column.")
+    warning("ReadDates: Column with name 'Key' not found. Assuming that the key is stored in the first column.")
     keyind=1
   }
+  TimeColumnName=Header[2]
+  #deltes key name
   Header=Header[-1]
   tryCatch({
     Z= scan(FileName,skip = beginHeader+2,sep='\t',what=character(0), quiet=T)
@@ -126,24 +128,28 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
     Data=DataKey[,-keyind]
   },warning=function(e){
     warning(e)
-    warning('Please check row and column numbers, Trying to bypass error...')
+    warning('ReadDates: Please check row and column numbers, Trying to bypass error...')
     Z = read.table(FileName, comment.char = "%", header=FALSE,  fill=TRUE, stringsAsFactors = FALSE, na.strings=c('NA','NaN'),skip=beginHeader+2,sep = '\t')
     Key=as.vector(Z[,keyind])
     Data=Z[,-keyind]
   },stop=function(f){
     warning(f)
-    stop("Header or Comments or Data are not reasonably defined, see Subversion/PUB/ZFileFormatDocuments for further instructions")
+    stop("ReadDates: Header or Comments or Data are not reasonably defined, see Subversion/PUB/ZFileFormatDocuments for further instructions")
   }
   )
   if(!is.null(Key))
     rownames(Data)=Key
   else
-    warning('Key is missing, Check data.')
+    warning('ReadDates: Key is missing, Check data.')
   
   tind=which(Header=='Time')
+  CheckTimename=F
   if(length(tind)==0){
-    warning("Column with name 'Time' not found. Assuming that the time is stored in the second column.")
+    if(isFALSE(Silent))
+      message("ReadDates: Column with name 'Time' not found. Assuming that the time is stored in the second column.")
+    
     tind=1
+    CheckTimename=T
   } 
   DF=tibble::as_tibble(Data[,-tind])
   DF=lapply(DF,type.convert, as.is=TRUE)
@@ -155,23 +161,29 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   if(sum(!is.finite(Time))==length(Time)) 
     stop('Time has a format which as.Date does not recognize.')
   else
-    if(sum(!is.finite(Time))) warning(paste(sum(!is.finite(Time)),"lines of the Time feature are missing values.")) 
+    if(sum(!is.finite(Time))) warning(paste("ReadDates:",sum(!is.finite(Time)),"lines of the Time feature are missing values.")) 
   
-  if(length(Time)!=length(unique(Time))) warning('Time is not unique meaning that there are multiple days with same date.')
+  if(length(Time)!=length(unique(Time))) warning('ReadDates: Time is not unique meaning that there are multiple days with same date.')
   
   
   Time=tibble::as_tibble(Time)
   TibbleDF=dplyr::bind_cols(Time,DF)
   colnames(TibbleDF)=Header
-  
+if(isFALSE(CheckTimename)){
   orderedtime=order(TibbleDF$Time,decreasing = FALSE,na.last = NA)
-  if(length(TibbleDF$Time)!=length(orderedtime)) warning('"Time" has NA dates, they are not removed.')
-  if(!identical(TibbleDF$Time,TibbleDF$Time[orderedtime])) warning('"Time" was not ordered from past to future. "Time" and Data is not reordered accordingly.')
-  
-  if(SilentComments){
+  if(length(TibbleDF$Time)!=length(orderedtime)) warning('ReadDates: "Time" has NA dates, they are not removed.')
+  if(!identical(TibbleDF$Time,TibbleDF$Time[orderedtime])) warning('ReadDates: "Time" was not ordered from past to future. "Time" and Data is not reordered accordingly.')
+}else{
+  TibbleDF_temp=as.data.frame(TibbleDF)
+ orderedtime=order(TibbleDF_temp[,1],decreasing = FALSE,na.last = NA)
+ if(length(TibbleDF_temp[,1])!=length(orderedtime)) warning('ReadDates: "Time" has NA dates, they are not removed.')
+if(!identical(TibbleDF_temp[,1],TibbleDF_temp[orderedtime,1])) warning('ReadDates: "Time" was not ordered from past to future. "Time" and Data is not reordered accordingly.')
+
+}  
+  if(isFALSE(Silent)){
     if(!is.null(Comments)){
-      print('The follwing comments were in the file:')
-      print(Comments)
+      message('ReadDates: The follwing comments were in the file:')
+      message(Comments)
     }
   }
   
@@ -180,7 +192,14 @@ ReadDates=function(FileName=NULL,InDirectory=getwd(),SilentComments=TRUE){
   Time=as.Date((as.matrix(TibbleDF[,1])))
   Data=as.matrix(TibbleDF[,2:ncol(TibbleDF)])
   #mode(Data)="numeric"
-  return(list(Time=Time,Data=Data,Key=as.numeric(Key),Header=Header[-1]))
+  #delete time name from header
+  Header=Header[-1]
+  V=list(Time=Time,Data=Data,Key=as.numeric(Key),Header=Header,Comments=Comments)
+  if(isTRUE(CheckTimename))
+  names(V)[1]=TimeColumnName
+  
+  return(V)
+  
   })
   return(TibbleDF)
 }

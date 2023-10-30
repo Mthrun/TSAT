@@ -5,7 +5,7 @@
 setdiff between two time series (TS)
 }
 \description{
-symmetric setdiff between two time series (TS)
+Symmetric setdiff between two time series (TS)
 }
 \usage{
 setDiffTS(Time1, Time2, Vector1 = NULL, Vector2 = NULL)
@@ -26,7 +26,7 @@ Default: NULL, else [1:m] vector
 }
 }
 \details{
-normal setdiff return only numerical values, this function accepts all type of vectors,
+Normal setdiff return only numerical values, this function accepts all type of vectors.
 }
 \value{
 List with
@@ -35,7 +35,7 @@ List with
 
 }
 \note{
-for an \code{intersect} operation transform arguments to data.frames and use \code{merge}
+For an \code{intersect} operation transform arguments to data.frames and use \code{merge}
 }
 \author{
 Michael Thrun

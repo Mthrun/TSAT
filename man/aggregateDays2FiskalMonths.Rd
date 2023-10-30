@@ -16,13 +16,13 @@ aggregateDays2FiskalMonths(Time,Data,FUN,Header, \dots)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Time}{
-[1:n] vector of \code{POSIXlt} or \code{POSIXct} or \code{as.Date} obects
+[1:n] vector of \code{POSIXlt} or \code{POSIXct} or \code{as.Date} objects
 }
  \item{Data}{
 [1:n,1:d] matrix or dataframe, d can be also 1, then vector
 }
   \item{FUN}{
-aggegate by a function like \code{sum} or \code{mean}
+aggregate by a function like \code{sum} or \code{mean}
 }
   \item{Header}{
 colnames for data
@@ -36,7 +36,7 @@ The rownames of the data frame depict either the first week (usually) of the mon
 The fiskal month is often used to compare weekly and monthly forecasts consistently.
 }
 \value{
-dataframe[1:m,1:(d+1)] with m<n and first column beeing the time in \code{as.Date} format
+dataframe[1:m,1:(d+1)] with m<n and first column being the time in \code{as.Date} format
 }
 \author{
 Michael Thrun

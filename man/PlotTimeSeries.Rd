@@ -5,7 +5,7 @@
 PlotTimeSeries
 }
 \description{
-Plots time series as a ploty object for intactive purposes like zooming or investigating specific points of time with mouse
+Plots time series as a ploty object for interactive purposes like zooming or investigating specific points of time with mouse
 }
 \usage{
 PlotTimeSeries(X, Y, xlab = "X", ylab = "Y",
@@ -19,24 +19,24 @@ main = "Timeseries by Plotly", col = "black", SaveIt = FALSE)
 [1:n] vector of first line
 }
   \item{xlab}{
-Optional, string for xlabel
+Optional, string for xlabel. Default is "X"
 }
   \item{ylab}{
-Optional, string for first ylabel
+Optional, string for ylabel. Default is "Y"
 }
   \item{main}{
-Optional, title of plot
+Optional, title of plot. Default is "Timeseries by Plotly"
 }
   \item{col}{
-Optional, color of two lines
+Optional, color of two lines. Default is "black"
 }
   \item{SaveIt}{
-Optional, default FALSE; TRUE if you want to save plot as html in \code{getwd()} directory
+Optional, TRUE if you want to save plot as html in \code{getwd()} directory. Default is FALSE
 }
 
 }
 \details{
-enables to visualize  timeseries with intractive mouseusing ploty
+Enables to visualize the time series interactively, using plotly
 
 }
 \value{
@@ -47,7 +47,12 @@ enables to visualize  timeseries with intractive mouseusing ploty
 Michael Thrun
 }
 \note{
-Wrapper in order to  unify Input and Output
+Wrapper in order to unify Input and Output
+}
+
+\examples{
+data(ElectricityBRD)
+PlotTimeSeries(ElectricityBRD$Mrd_KWh, ElectricityBRD$Time, "Mrd KWh", "Time", "Electricity production in BRD")
 }
 
 
@@ -55,3 +60,4 @@ Wrapper in order to  unify Input and Output
 % R documentation directory.
 \keyword{PlotTimeSeries}% use one of  RShowDoc("KEYWORDS")
 \keyword{plot.ts}% __ONLY ONE__ keyword per line
+\keyword{Visualization}

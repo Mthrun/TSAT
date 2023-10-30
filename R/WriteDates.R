@@ -1,34 +1,29 @@
+# WriteDates(FileName, TSdata, Key = c(), OutDirectory = getwd(), Comments = NULL)
+#
+# Description:
+# Saves univariate or multivariate time series in daily resolution to a *.csv file similar to a *.lrn
+#
+# INPUT
+# FileName      String, name of the  file to be written
+# TSdata        [1:n,1:(d+1)] dataframe of tibble of data, n cases in rows, d variables in columns, may contain NaN, 
+#               first column is the time in as.Date() format
+# Key           A numeric vector of length(n)  
+# OutDirectory  Optional: string, name of directory the data will be saved in, default \code{getwd()} 
+# Comments      A string which is inserted as a comment in the first line in the file
+# 
+# Details:
+# Comfortably writes univariate or multivariate time series in daily resolution to a file similar to the LRN Format. 
+# The header is always the named columns of the data.frame or tibble.
+# The length of Key has to be ncol(Data) or ncol(Data[[1]]) respectively.
+# If Key is empty it is replaced by a vector 1:ncol(Data).
+#
+# NOTE: based on ReadLRN
+#
+#
+# Author: MCT 2018
+
 WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),CleanNames=FALSE,  Comments=NULL){
-#V=WriteDates(FileName, TSdata, Key = c(), OutDirectory = getwd(), Comments = NULL)
 
-  #   saves univariate or multivariate time series in daily resolution to a *.csv file similar to a *.lrn
-
-  # %- maybe also 'usage' for other objects documented here.
-  # INPUT
-  #   \item{FileName}{
-  #     string, name of the  file to be written
-  #   }
-  #   \item{TSdata}{
-  #     [1:n,1:(d+1)]dataframe of tibble of data , n cases in rows , d variables in columns, may contain NaN, first column is the time in as.Date() format
-  #   }
-  #   \item{Key}{
-  #     a numeric vector of length(n)  
-  #   }
-  #   \item{OutDirectory}{
-  #     Optional: string, name of directory the data will be saved in, default \code{getwd()} 
-  #   }
-  #   \item{Comments}{
-  #     a string which is inserted as a comment in the first line in the file
-  #   }
-  # 
-  #   Comfortably writes nivariate or multivariate time series in daily resolution to a file similar to the LRN Format. The header is always the named columns of the data.frame or tibble.
-  #   The length of \code{Key} has to be \code{ncol(Data)} or \code{ncol(Data[[1]])} respectively.
-  #   If \code{Key} is empty it is replaced by a vector \code{1:ncol(Data)}
-  #   
-  #
-  #based on ReadLRN
-  
-  #author: MT 2018
   checkFilename(FileName,Directory=OutDirectory,Extension='csv',ReadOrWrite=FALSE,NameOfFunctionCalled='WriteDates()')
   requireNamespace('dplyr')
   requireNamespace('tibble')
@@ -37,12 +32,16 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),CleanNames=F
   FileName = addext(FileName,'csv')
   
   if(!tibble::is_tibble(TSdata)){
-    message("TSdata is not tibble. Please make sure that one column is a 'Date' column. Calling as.tibble...")
+    message("WriteDates: TSdata is not tibble. Please make sure that one column is a 'Date' column. Calling as.tibble...")
     TSdata=tibble::as_tibble(TSdata)
   }
   types=dplyr::summarise_all(TSdata,class)
  
-  dind=which(types=="Date")
+  # if(missing(DateColumnInd))
+    dind=which(types=="Date")
+  # else
+  #   dind=DateColumnInd
+    
   
   charind=which(types=="character")
   if(length(charind)>0){
@@ -71,11 +70,11 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),CleanNames=F
   
 
   if(length(dind)==0){
-    warning('No Date type column found.')
+    warning('WriteDates: No Date type column found.')
     dind=0
   }
   if(length(dind)>1){
-    warning('More than one Date type column found. Using the first one')
+    warning('WriteDates: More than one Date type column found. Using the first one')
     dind=dind[1]
   }
   RowsCols=dim(TSdata)
@@ -86,25 +85,33 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),CleanNames=F
   }
   if(length(Key) != Rows){
     
-    warning('Key length is inconsistent with data length, new key is generated')
+    warning('WriteDates: Key length is inconsistent with data length, new key is generated')
   }
   if(length(unique(Key))!=length(Key)) stop('Key is not unique')
-  
+
   if(dind==0){
     TibbleDF = cbind(Key=Key, TSdata)
   }else{
     TibbleDF = cbind(Key=Key, Time=TSdata[,dind],TSdata[,-dind])
-    if(sum(!is.finite(TibbleDF$Time))==length(TibbleDF$Time)) 
-      stop('Time has a format which as.Date does not recognize.')
-    else
-      if(sum(!is.finite(TibbleDF$Time))) warning(paste(sum(!is.finite(TibbleDF$Time)),"lines of the Time feature are missing values.")) 
+    if(any(colnames(TibbleDF)=="Time")){
+      if(sum(!is.finite(TibbleDF$Time))==length(TibbleDF$Time)) 
+        stop('WriteDates: Time has a format which as.Date does not recognize.')
+      else
+        if(sum(!is.finite(TibbleDF$Time))) warning(paste("WriteDates:",sum(!is.finite(TibbleDF$Time)),"lines of the Time feature are missing values.")) 
+    }else{
+      if(sum(!is.finite(TibbleDF[,2]))==length(TibbleDF[,2])) 
+        stop('WriteDates: Time has a format which as.Date does not recognize.')
+      else
+        if(sum(!is.finite(TibbleDF$Time))) warning(paste("WriteDates:",sum(!is.finite(TibbleDF$Time)),"lines of the Time feature are missing values.")) 
+    }
+
   }
   
-  if(length(TibbleDF$Time)!=length(unique(TibbleDF$Time))) warning('Time is not unique meaning that there are multiple days with same date.')
+  if(length(TibbleDF$Time)!=length(unique(TibbleDF$Time))) warning('WriteDates: Time is not unique meaning that there are multiple days with same date.')
   
   orderedtime=order(TibbleDF$Time,decreasing = FALSE,na.last = NA)
-  if(length(TibbleDF$Time)!=length(orderedtime)) warning('"Time" has NA dates, they are not removed.')
-  if(!identical(TibbleDF$Time,TibbleDF$Time[orderedtime])) warning('"Time" was not ordered from past to future. "Time" and Data is not reordered accordingly.')
+  if(length(TibbleDF$Time)!=length(orderedtime)) warning('WriteDates: "Time" has NA dates, they are not removed.')
+  if(!identical(TibbleDF$Time,TibbleDF$Time[orderedtime])) warning('WriteDates: "Time" was not ordered from past to future. "Time" and Data is not reordered accordingly.')
   
   HeaderRaw=colnames(TibbleDF)
   Header=HeaderRaw
@@ -115,7 +122,7 @@ WriteDates=function(FileName, TSdata, Key=c(), OutDirectory=getwd(),CleanNames=F
   Header=gsub(pattern = '[ü]', replacement = "ue",Header)
   Header=gsub(pattern = '[ö]', replacement = "oe",Header)
  
-  if(!identical(Header,HeaderRaw)) warning('Header (ColumnNames) had either spaces, points, or german umlaute which were replaced.')
+  if(!identical(Header,HeaderRaw)) warning('WriteDates: Header (ColumnNames) had either spaces, points, or german umlaute which were replaced.')
   
   header = c(paste('%\t',Rows),paste('%\t',Cols))
   if(is.character(Comments)){

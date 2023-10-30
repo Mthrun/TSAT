@@ -16,7 +16,7 @@ EventCounts(Events,PlotIt=FALSE,main="Histogram of Events",xlab='Event Names')
 [1:n] vector of events to be counted, character or numerical
 }
   \item{PlotIt}{
-defaukt: FALSE, if TRUE: Plots histogram
+default: FALSE, if TRUE: Plots histogram
 }
   \item{main}{
 title of plot

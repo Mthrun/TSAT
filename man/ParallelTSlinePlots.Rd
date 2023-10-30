@@ -19,16 +19,16 @@ ParallelTSlinePlots(Data, Time, DailyRegular = TRUE, scales = list(y = "same"), 
 Optional, only if time series are regular, if not please do not set
 }
   \item{DailyRegular}{
-Optional, If TRUE: time series is regular with \code{as.date} objects, in other case its regular as defined by Time
+Optional, If TRUE: Time series is regular with \code{as.date} objects, in other case its regular as defined by Time. Default is TRUE
 }
   \item{scales}{
-Optional, same is best variant. It is prefered to normalize data before using this function. please see \code{\link[latticeExtra]{horizonplot}} for other options
+Optional, same is best variant. It is preferred to normalize data before using this function. Please see \code{\link[latticeExtra]{horizonplot}} for other options
 }
   \item{cols}{
-Optional, color scale as character vector
+Optional, color scale as character vector. Default is \code{\link[DataVisualizations]{HeatmapColors}} sequence
 }
   \item{\dots}{
-arguments passed on to \code{\link[latticeExtra]{horizonplot}} 
+Optional arguments passed on to \code{\link[latticeExtra]{horizonplot}} 
 }
 }
 \details{
@@ -36,12 +36,12 @@ If \code{DailyRegular=FALSE}, then the x axis will be in UNIX seconds since 1970
 }
 
 \references{
-idea taken from \url{https://machinelearningmastery.com/how-to-load-visualize-and-explore-a-complex-multivariate-multistep-time-series-forecasting-dataset/}
+Idea taken from \url{https://machinelearningmastery.com/how-to-load-visualize-and-explore-a-complex-multivariate-multistep-time-series-forecasting-dataset/}
 
 [Moerchen, 2006]  Moerchen, Fabian. Time series knowledge mining. Goerich & Weiershaeuser, 2006.
 }
 \note{
-Beware in reference the authors talks about temporal structures using this visualization in python. That is incorrect.
+Beware in reference the authors talks about temporal structures using this visualization in Python. That is incorrect.
 For temporal structures please see [Moerchen, 2006].
 }
 \author{
@@ -58,3 +58,4 @@ Michael Thrun
 \keyword{ParallelTSlinePlots}% use one of  RShowDoc("KEYWORDS")
 \keyword{Parallel Time Series Line Plots}% __ONLY ONE__ keyword per line
 \keyword{horizonplot}% __ONLY ONE__ keyword per line
+\keyword{Visualization}% __ONLY ONE__ keyword per line

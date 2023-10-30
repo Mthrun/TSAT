@@ -1,3 +1,20 @@
+# tsobject = ConvertTS2DF(TSobject, Resolution = "Monthly", TimeZone = "UCT")
+#
+# Description:
+# Converts a R time series to an R data.frame
+#
+# INPUT
+# TSobject                time series (ts) object
+# Resolution              Monthly or Quarterly
+# TimeZone                See strptime. A empty string "" represents the current time zone
+#
+# OUTPUT 
+# DF                      Dataframe with Time and Data columns
+#
+#
+# Author: MCT
+
+
 ConvertTS2DF=function(TSobject,Resolution='Monthly',TimeZone='UCT'){
   requireNamespace('zoo')
   switch(Resolution,Monthly={
