@@ -19,6 +19,12 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time){
 #
 #  Author: MCT, 2023
 #
+  if (!requireNamespace("DatabionicSwarm", quietly = TRUE)) {
+    # If the package is not installed, install it
+    install.packages("DatabionicSwarm")
+  }
+  
+  
   if (is.matrix(Data)) {
     PlotIt = FALSE #no plotting
     Rel = apply(
@@ -40,11 +46,18 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time){
     nan_ind = which(!is.finite(Data))
     
     if (length(nan_ind) > 0) {
-      if (isTRUE(na.rm))
+      if (isTRUE(na.rm)){
         Data[nan_ind] = 0
-      warning(
-        "RelativeDifference4TS works only for positive values correctly but missing values were found. These cases are automatically removed."
-      )
+        message(
+          "RelativeDifference4TS works only for positive values correctly but missing values were found. These cases are set to zero."
+        )
+      }else{
+        warning(
+          "RelativeDifference4TS works only for positive values correctly but missing values were found. These cases are automatically removed."
+        )
+      }
+  
+
     }
     
     Today = Data
@@ -58,9 +71,13 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time){
       indNan = tail(1:length(Yesterday), Lag)
       Yesterday[indNan] = Yesterday[min(indNan) - 1]
     }
-    
-    Rel = DatabionicSwarm::RelativeDifference(Y = Today, X = Yesterday, na.rm = F)
-    
+    if (packageVersion("DatabionicSwarm") != "1.3.0") {
+      #no silent parameter
+      Rel = DatabionicSwarm::RelativeDifference(Y = Today, X = Yesterday, na.rm = F)
+    }else{
+      #silent parameter
+      Rel = DatabionicSwarm::RelativeDifference(Y = Today, X = Yesterday, na.rm = F,Silent=TRUE)
+    }
     if (isTRUE(na.rm))
       Rel[!is.finite(Rel)] = 0
     
