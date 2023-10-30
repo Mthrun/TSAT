@@ -1,4 +1,4 @@
-RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time){
+RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Silent=FALSE){
 #V=RelativeDifference4TS(ElectricityBRD$Mrd_KWh,PlotIt=TRUE,Time=(ElectricityBRD$Time))
 #V=RelativeDifference4TS(cbind(ElectricityBRD$Mrd_KWh,ElectricityBRD$Mrd_KWh))
 #Calculates the relative difference between positive Data and and lagged Data
@@ -8,7 +8,7 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time){
 #                     Default is the difference to yesterday
 # na.rm               FALSE; do nothing, TRUE: all nan to zero
 # PlotIt              TRUE: plots data
-#
+# Silent              TRUE: not warnings or messages
 #OUTPUT
 # Reldiff             numerical matrix of [1:n,1:d], Negative value indicate that today is lower than yesterday 
 #                     and positive values that todays value is higher than yesterdays.
@@ -39,22 +39,25 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time){
     neg = which(Data < 0)
     if (length(neg) > 0) {
       Data[neg] = 0
-      warning(
-        "RelativeDifference4TS works only for positive values, negatives are set to zero per default which my be incorrect."
-      )
+      if(isFALSE(Silent))
+        warning(
+          "RelativeDifference4TS works only for positive values, negatives are set to zero per default which my be incorrect."
+        )
     }
     nan_ind = which(!is.finite(Data))
     
     if (length(nan_ind) > 0) {
       if (isTRUE(na.rm)){
         Data[nan_ind] = 0
-        message(
-          "RelativeDifference4TS works only for positive values correctly but missing values were found. These cases are set to zero."
-        )
+        if(isFALSE(Silent))
+          message(
+            "RelativeDifference4TS works only for positive values correctly but missing values were found. These cases are set to zero."
+          )
       }else{
-        warning(
-          "RelativeDifference4TS works only for positive values correctly but missing values were found. These cases are automatically removed."
-        )
+        if(isFALSE(Silent))
+          warning(
+            "RelativeDifference4TS works only for positive values correctly but missing values were found. These cases are automatically removed."
+          )
       }
   
 
@@ -76,7 +79,7 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time){
       Rel = DatabionicSwarm::RelativeDifference(Y = Today, X = Yesterday, na.rm = F)
     }else{
       #silent parameter
-      Rel = DatabionicSwarm::RelativeDifference(Y = Today, X = Yesterday, na.rm = F,Silent=TRUE)
+      Rel = DatabionicSwarm::RelativeDifference(Y = Today, X = Yesterday, na.rm = F,Silent=Silent)
     }
     if (isTRUE(na.rm))
       Rel[!is.finite(Rel)] = 0
