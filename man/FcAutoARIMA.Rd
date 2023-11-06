@@ -8,7 +8,7 @@ Forcasting with Automatic ARIMA
 Automatic autoregressive and moving average modelling with difference filter
 }
 \usage{
-FcAutoARIMA(Data, Time, ForecastHorizon, SplitAt, PlotIt = TRUE,
+FcAutoARIMA(DataVec, SplitAt, ForecastHorizon, Time, PlotIt = TRUE,
 
 
                  Seasonal=TRUE,PlotBackwardInd, main = "", xlab = "Time", ylab =
@@ -18,17 +18,17 @@ FcAutoARIMA(Data, Time, ForecastHorizon, SplitAt, PlotIt = TRUE,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Data}{
-[1:n] Datavector
+  \item{DataVec}{
+[1:n] numerical vector of regular (equidistant) time series data.
 }
-  \item{Time}{
-[1:n] \code{POSIXlt} vector
+  \item{SplitAt}{
+Integer, splits data in test and train at this index. If not given n is used
 }
   \item{ForecastHorizon}{
 Number of Forecast units of time
 }
-  \item{SplitAt}{
-integer, splits data in test and train at this index
+  \item{Time}{
+[1:n] character vector of Time in the length of data
 }
   \item{PlotIt}{
 Optional, if TRUE: Plots result
@@ -37,7 +37,7 @@ Optional, if TRUE: Plots result
 Optional, if FALSE: no seasonality in data an one step forecast only
 }
   \item{PlotBackwardInd}{
-Optional, How many units to plot back in time?
+Optional, how many units to plot back in time?
 }
   \item{main}{
 see \code{\link{plot}}
@@ -59,7 +59,13 @@ further arguments passed on to see \code{\link{plot}}
 
 - Moving Average (MA) with Lag 4 w.r.t noise term
 
-- requires homoscedastic time series - variance does not depent on time
+- requires homoscedastic time series - variance does not depend on time
+
+If \code{n-SplitAt=ForecastHorizon} then forecast is completely on test data.
+
+If \code{ForecastHorizon>n-SplitAt} then a real forecast is made of \code{ForecastHorizon-(n-SplitAt)} steps.
+
+If \code{SplitAt=n} then the complete data set is used in estimating the forecast.
 }
 \value{
 List of 
@@ -82,6 +88,11 @@ wrapper for \code{\link[forecast]{auto.arima}}
 
 \seealso{
 \code{\link[forecast]{auto.arima}}
+}
+
+\examples{
+data("TempMelbourneAustralia")
+res = FcAutoARIMA(TempMelbourneAustralia$Temp, SplitAt = length(TempMelbourneAustralia$Temp)-250,ForecastHorizon = 250, Time=TempMelbourneAustralia$Time)
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~

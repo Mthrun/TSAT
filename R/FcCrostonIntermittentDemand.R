@@ -95,7 +95,7 @@ FcCrostonIntermittentDemand=function(DataVec,Time,ForecastHorizon,SplitAt,Freque
   }
 
   
-  train=TSAT::ConvertNumerical2TSobject(head(DataVec,SplitAt),head(Time,SplitAt),Frequency =Frequency)
+  train=TSAT::ConvertNumerical2TSobject(head(DataVec,SplitAt),head(Time,SplitAt),Frequency=Frequency)
   test=tail(DataVec,n-SplitAt)[1:ForecastHorizon]   
   ttime=tail(Time,n-SplitAt)[1:ForecastHorizon]
   fc=rep(0,ForecastHorizon)

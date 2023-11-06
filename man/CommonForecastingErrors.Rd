@@ -54,7 +54,7 @@ RMSE: Root Mean Square Error given as
 BIAS: Value between -1 and 1 given as 
 \eqn{1 - \frac{4}{\pi}\text{arctan}(\frac{b}{a})}, 
 where \eqn{b} is the sum of all errors \eqn{Y_t - F_t < 0} 
-and \eqn{a} is the sum of all errors \eqn{Y_t - F_t \geq 0}
+and \eqn{a} is the sum of all errors \eqn{Y_t - F_t \geq 0}.
 See also \code{\link{RootDeviance}}
 
 MRD: Mean Root Deviance given as 

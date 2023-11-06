@@ -64,7 +64,7 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Silent=F
     }
     
     Today = Data
-    Yesterday = LagVector(Data, k = 1)
+    Yesterday = LagVector(Data, k = Lag)
     
     #no nan
     if (Lag > 0) {
@@ -79,7 +79,8 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Silent=F
       Rel = DatabionicSwarm::RelativeDifference(Y = Today, X = Yesterday, na.rm = F)
     }else{
       #silent parameter
-      Rel = DatabionicSwarm::RelativeDifference(Y = Today, X = Yesterday, na.rm = F,Silent=Silent)
+      Rel = DatabionicSwarm::RelativeDifference(Y = Today, X = Yesterday, 
+                                                na.rm = F,Silent=Silent)
     }
     if (isTRUE(na.rm))
       Rel[!is.finite(Rel)] = 0

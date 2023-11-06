@@ -1,14 +1,14 @@
-\name{RelativeDifferenceTS}
-\alias{RelativeDifferenceTS}
+\name{RelativeDifferenceBetweenTS}
+\alias{RelativeDifferenceBetweenTS}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-RelativeDifferenceTS
+RelativeDifferenceBetweenTS
 }
 \description{
 RelativeDifference  for Time series
 }
 \usage{
-RelativeDifferenceTS(TS1, TS2, na.rm = TRUE)
+RelativeDifferenceBetweenTS(TS1, TS2, na.rm = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,7 +22,9 @@ RelativeDifferenceTS(TS1, TS2, na.rm = TRUE)
 TRUE: interpolate NaN
 }
 }
-
+\seealso{
+\code{\link{TemporalRelativeDifference}}
+}
 \value{
 Relative difference [1:n] between two TS
 }
@@ -31,4 +33,6 @@ Relative difference [1:n] between two TS
 Michael Thrun
 }
 
-\keyword{RelativeDifferenceTS}% use one of  RShowDoc("KEYWORDS"
+\keyword{RelativeDifferenceBetweenTS}% use one of  RShowDoc("KEYWORDS"
+\keyword{RelativeDifference}
+\concept{relative difference }

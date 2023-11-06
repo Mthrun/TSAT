@@ -35,8 +35,6 @@
 FcEchoStateANN=function(DataVec,
                           SplitAt,ForecastHorizon=1,Seasonality=28,Scaled=TRUE,
                           Time,PlotIt=FALSE,NoRolling=TRUE,...){
-  #requireNamespace("echos")
-  #requireNamespace("tsibble")
   
   if(missing(SplitAt)) {
     warning('Input for SplitAt was not given. Setting SplitAt to length(DataVec)')
