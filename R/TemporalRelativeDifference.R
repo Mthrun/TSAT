@@ -1,6 +1,6 @@
-RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Silent=FALSE){
-#V=RelativeDifference4TS(ElectricityBRD$Mrd_KWh,PlotIt=TRUE,Time=(ElectricityBRD$Time))
-#V=RelativeDifference4TS(cbind(ElectricityBRD$Mrd_KWh,ElectricityBRD$Mrd_KWh))
+TemporalRelativeDifference=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Silent=FALSE){
+#V=TemporalRelativeDifference(ElectricityBRD$Mrd_KWh,PlotIt=TRUE,Time=(ElectricityBRD$Time))
+#V=TemporalRelativeDifference(cbind(ElectricityBRD$Mrd_KWh,ElectricityBRD$Mrd_KWh))
 #Calculates the relative difference between positive Data and and lagged Data
 #INPUT
 # Data                numerical matrix of [1:n,1:d], d>=1
@@ -30,7 +30,7 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Silent=F
     Rel = apply(
       X = Data,
       2,
-      FUN =  RelativeDifference4TS,
+      FUN =  TemporalRelativeDifference,
       Lag = Lag,
       na.rm = na.rm
     )
@@ -41,7 +41,7 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Silent=F
       Data[neg] = 0
       if(isFALSE(Silent))
         warning(
-          "RelativeDifference4TS works only for positive values, negatives are set to zero per default which my be incorrect."
+          "TemporalRelativeDifference works only for positive values, negatives are set to zero per default which my be incorrect."
         )
     }
     nan_ind = which(!is.finite(Data))
@@ -51,12 +51,12 @@ RelativeDifference4TS=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Silent=F
         Data[nan_ind] = 0
         if(isFALSE(Silent))
           message(
-            "RelativeDifference4TS works only for positive values correctly but missing values were found. These cases are set to zero."
+            "TemporalRelativeDifference works only for positive values correctly but missing values were found. These cases are set to zero."
           )
       }else{
         if(isFALSE(Silent))
           warning(
-            "RelativeDifference4TS works only for positive values correctly but missing values were found. These cases are automatically removed."
+            "TemporalRelativeDifference works only for positive values correctly but missing values were found. These cases are automatically removed."
           )
       }
   
