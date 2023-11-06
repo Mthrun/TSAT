@@ -32,7 +32,8 @@ TemporalRelativeDifference=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Sil
       2,
       FUN =  TemporalRelativeDifference,
       Lag = Lag,
-      na.rm = na.rm
+      na.rm = na.rm,
+      Silent=Silent
     )
     return(Rel)
   } else{#Data is vector
