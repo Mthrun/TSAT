@@ -49,22 +49,37 @@ TemporalRelativeDifference=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Sil
     
     if (length(nan_ind) > 0) {
       if (isTRUE(na.rm)){
-        Data[nan_ind] = 0
+          Data=imputeTS::na.interpolation(Data,option = 'linear')
+      }
         if(isFALSE(Silent))
           message(
-            "TemporalRelativeDifference works only for positive values correctly but missing values were found. These cases are set to zero."
+            "TemporalRelativeDifference works only for positive values correctly but missing values were found. These cases are linearly interpolated."
           )
       }else{
         if(isFALSE(Silent))
           warning(
-            "TemporalRelativeDifference works only for positive values correctly but missing values were found. These cases are automatically removed."
+            "TemporalRelativeDifference works only for positive values correctly but missing values were found."
           )
       }
   
-
+    neg_ind = which(Data<0)
+    if (length(neg_ind) > 0) {
+      if (isTRUE(na.rm)){
+        Data[neg_ind]=0
+      }
+      if(isFALSE(Silent))
+        message(
+          "TemporalRelativeDifference works only for positive values correctly but negative values were found. These cases are set to zero."
+        )
+    }else{
+      if(isFALSE(Silent))
+        warning(
+          "TemporalRelativeDifference works only for positive values correctly but negative values were found."
+        )
     }
     
     Today = Data
+  
     Yesterday = LagVector(Data, k = Lag)
     
     #no nan
@@ -75,6 +90,7 @@ TemporalRelativeDifference=function(Data,Lag=1,na.rm=FALSE,PlotIt=FALSE,Time,Sil
       indNan = tail(1:length(Yesterday), Lag)
       Yesterday[indNan] = Yesterday[min(indNan) - 1]
     }
+    
     if (packageVersion("DatabionicSwarm") != "1.3.0") {
       #no silent parameter
       Rel = DatabionicSwarm::RelativeDifference(Y = Today, X = Yesterday, na.rm = F)
