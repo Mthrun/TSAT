@@ -13,7 +13,7 @@ ReadDates(FileName = NULL, InDirectory = getwd(), Silent = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{FileName}{
- string, name of the  file to be written
+ String, name of the  file to be written
 }
   \item{InDirectory}{
 Optional: string, name of directory the data will be saved in, default \code{getwd()} 

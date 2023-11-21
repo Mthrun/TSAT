@@ -2,10 +2,10 @@
 \alias{FilterSuccessiveInds}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Filters consecutive Indizes
+Filters consecutive indices
 }
 \description{
-Filters consecutive Indizes
+Filters consecutive indices
 }
 \usage{
 FilterSuccessiveInds(x)
