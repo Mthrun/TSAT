@@ -5,18 +5,18 @@
 Forecasting with Model for Generalized Autoregressive Conditional Heteroscedasticity
 }
 \description{
-autoregressive conditional heteroskedasticity (ARCH) model is a statistical model for time series data that describes the variance of the current error term or innovation as a function of the actual sizes of the previous time periods' error terms often the variance is related to the squares of the previous innovations - Wikipedia
+Autoregressive conditional heteroskedasticity (ARCH) model is a statistical model for time series data that describes the variance of the current error term or innovation as a function of the actual sizes of the previous time periods error terms often the variance is related to the squares of the previous innovations - Wikipedia
 }
 \usage{
-FcGARCH(Data, VarianceModel = list(model = "sGARCH", garchOrder = c(1, 1)),
+FcGARCH(DataVec, VarianceModel = list(model = "sGARCH", garchOrder = c(1, 1)),
 
  ForecastHorizon, DistributionModel = 'norm', 
 
-PlotIt = TRUE, Summary = FALSE, \dots)
+PlotIt = FALSE, Summary = FALSE, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Data}{
+  \item{DataVec}{
 [1:n] Datavector
 }
   \item{VarianceModel}{
@@ -32,7 +32,7 @@ Optional, see \code{\link{ugarchspec}}
 }
 
   \item{PlotIt}{
-Optional, If TRUE, plots the forecast against the true values
+Optional, If TRUE, plots the forecast
 }
   \item{Summary}{
 Optional, If TRUE, plots the summary of the model
@@ -71,6 +71,14 @@ wrapper for \code{\link{ugarchspec}}
 \seealso{
 \code{\link{ugarchspec}}
 }
+
+\examples{
+# Plot with forecast
+FcGARCH(TempMelbourneAustralia$Temp,ForecastHorizon=10, PlotIt = TRUE)#
+# Plot with summary
+FcGARCH(TempMelbourneAustralia$Temp,ForecastHorizon=10, Summary = TRUE)
+}
+
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

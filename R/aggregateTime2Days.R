@@ -16,7 +16,7 @@
 #
 # Author: MCT
 
-aggregateTime2Days=function(Time,Data,FUN,Header,...){
+aggregateTime2Days=function(Time,Data,FUN,Header,tz="UTC",...){
   
   if(missing(Header)){
     if(is.matrix(Data)|is.data.frame(Data)){
@@ -33,7 +33,7 @@ if(is.vector(Data)){
   DF$Time=cut(Time,breaks='days')
   dsummary = aggregate(DF$Data ~ DF$Time, FUN=FUN,    data=DF,...)
   colnames(dsummary)=c('Time',Header)
-  dsummary$Time=as.Date(dsummary$Time)
+  dsummary$Time=as.Date(dsummary$Time,tz=tz)
 }else{
   for(i in 1:ncol(Data)){
     if(i==1){

@@ -1,4 +1,4 @@
-MAPA_daily2FiskalWeek=function(DailyTime,DailyData,SplitAt,ForecastHorizon=12,ForecastHorizonMonthly=12,FiskalMonthSeason=12,FUN=sum,Confidence=c(0.95),na.rm=TRUE,...){
+MAPA_daily2FiskalWeek=function(DailyTime,DailyData,SplitAt,ForecastHorizon=12,ForecastHorizonMonthly=12,FiskalMonthSeason=12,FUN=sum,Confidence=c(0.95),na.rm=TRUE,tz="UTC",...){
   MonthlyData=TSAT::aggregateDays2FiskalMonths(DailyTime,DailyData,FUN = FUN)
     #print(which(MonthlyData$Time=='2018-01-01'))
   if(isTRUE(na.rm)){
@@ -8,7 +8,7 @@ MAPA_daily2FiskalWeek=function(DailyTime,DailyData,SplitAt,ForecastHorizon=12,Fo
   }
   #print(which(MonthlyData$Time=='2018-01-01'))
   Time=MonthlyData$Time
-  WeeksTime=as.Date(rownames(MonthlyData))
+  WeeksTime=as.Date(rownames(MonthlyData),tz=tz)
   x=MonthlyData$Data
   n=length(x)
   TrainingTime=head(Time,SplitAt)

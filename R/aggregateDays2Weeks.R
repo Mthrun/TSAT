@@ -16,8 +16,8 @@
 #
 # Author: MCT
 
-aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
-  regular=GenerateRegularDailyTS(TimeChar = Time,Datavec = Data,na.rm = 'zero')
+aggregateDays2Weeks=function(Time,Data,FUN,Header,tz="UTC",...){
+  regular=GenerateRegularDailyTS(TimeChar = Time,Datavec = Data,na.rm = 'zero',tz=tz)
   #gibt by tibble: Error: node stack overflow
   # ToDo ist bugfix
   if(length(Time)!=length(regular$Time)){
@@ -69,7 +69,7 @@ aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
   requireNamespace('tibble')
   if(tibble::is_tibble(Data)){
     requireNamespace('dplyr')
-    Time=as.Date(as.matrix(Time))
+    Time=as.Date(as.matrix(Time),tz=tz)
     #cut requires regular TS!
     Data$WeekTime=cut.Date(Time,breaks='weeks', start.on.monday = TRUE)
 
@@ -88,7 +88,7 @@ aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
         if(length(Time)!=length(Data)) stop('Unequal length in Data compared to Time')
       }
     }
-    DF=data.frame(Time=as.Date(Time),Data,stringsAsFactors = F)
+    DF=data.frame(Time=as.Date(Time,tz=tz),Data,stringsAsFactors = F)
     #cut requires regular TS!
     #requireNamespace('chron')
     DF$Time=cut.Date(DF$Time,breaks='weeks', start.on.monday = TRUE)
@@ -105,7 +105,7 @@ aggregateDays2Weeks=function(Time,Data,FUN,Header,...){
     #aggregation of time itself does not make sense
     dsummary=dsummary[,-2]
   }
-    dsummary$'DF$Time'=as.Date(dsummary$'DF$Time')
+    dsummary$'DF$Time'=as.Date(dsummary$'DF$Time',tz=tz)
 
     if(length(Header)==1)
       colnames(dsummary)=c('Time',Header)

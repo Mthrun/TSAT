@@ -21,11 +21,11 @@
 #
 # author MCT
 
-FilterHolidays=function(Time,Datavector=NULL,HolidaysTime=TSAT::GermanHolidays$Time,PlotIt=FALSE){
+FilterHolidays=function(Time,Datavector=NULL,HolidaysTime=TSAT::GermanHolidays$Time,PlotIt=FALSE,tz="UTC"){
   is.Date <- function(x) inherits(x, 'Date')
   
   if(is.Date(Time))
-    ind=!Time%in%as.Date(HolidaysTime)
+    ind=!Time%in%as.Date(HolidaysTime,tz=tz)
   else
     ind=!Time%in%HolidaysTime
   

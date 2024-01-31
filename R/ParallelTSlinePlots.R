@@ -22,7 +22,7 @@
 #
 # Author: MCT
 
-ParallelTSlinePlots=function(Data,Time,DailyRegular=TRUE,scales = list(y = "same"),cols,...){
+ParallelTSlinePlots=function(Data,Time,DailyRegular=TRUE,scales = list(y = "same"),cols,tz="UTC",...){
   requireNamespace('latticeExtra')
   if(!is.matrix(Data)) Data=as.matrix(Data)
   if(!mode(Data)=='numeric') mode(Data)='numeric'
@@ -42,9 +42,9 @@ ParallelTSlinePlots=function(Data,Time,DailyRegular=TRUE,scales = list(y = "same
       # lubridate::month(min(Time))*30
       # lubridate::day(min(Time))
       if(tibble::is.tibble(Time)){
-        Time = as.Date(as.matrix(Time))
+        Time = as.Date(as.matrix(Time),tz=tz)
       }
-      ref_date=as.Date(paste0(lubridate::year(min(Time)),'-01-01'))
+      ref_date=as.Date(paste0(lubridate::year(min(Time)),'-01-01'),tz=tz)
       first_date=min(Time)
       days=difftime(first_date,ref_date,units = "days")
       

@@ -7,7 +7,7 @@
 # DataVec             [1:n] numerical vector or a time series object. If a time series object is given, the argument "Frequency" does not need to be given.
 # SplitAt             Index of row where the DataVec is divided into test and train data. If not given n is used
 # ForecastHorizon     Scalar defining the timesteps to forecast ahead
-# Frequency           either "days", "weeks", "months" or "quarters" or "years", see ConvertNumerical2TSobject. Can be ignored if DataVec is a time series object.
+# Frequency           Either "days", "weeks", "months" or "quarters" or "years", see ConvertNumerical2TSobject. Can be ignored if DataVec is a time series object.
 # Time                [1:n] character vector of Time in the length of data. Can be ignored if DataVec is a time series object.
 # OPTIONAL
 # PlotIt              FALSE (default), do nothing. TRUE: plots the forecast versus test data of time series data.
@@ -25,10 +25,9 @@
 # X-13-ARIMA-SEATS is the standard of the seasonal adjustment software by the US Census Bureau. 
 # This function is an easy-to-use wrapper of the function seasonal::seas calling the interface.
 #
-
-
 # Author: MCT
 #FcSeasonalArima=function(TimeSeries,Horizon,TestandTrain=TRUE,PlotIt=TRUE,...){
+
 FcSeasonalArima=function(DataVec,SplitAt,ForecastHorizon,Frequency,Time,PlotIt=TRUE,...) {
   
   if(missing(SplitAt)) {

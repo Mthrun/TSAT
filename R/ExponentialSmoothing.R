@@ -1,4 +1,24 @@
-ExponentialSmoothing=function(Time,Data,Type='StateSpaceModel',PlotIt,...){
+# ExponentialSmoothing = ExponentialSmoothing(Time, Data, Type='StateSpaceModel', PlotIt=False, ...)
+#
+# Description:
+# Exponential smoothing
+# UNDER DEVELOPMENT! 
+#
+# INPUT
+# Time
+# Data
+#
+# OPTIONAL
+# Type
+# PlotIt            Boolean, TRUE if plot should be printed, FALSE else. Default is FALSE.
+# ...
+#
+# OUTPUT
+# 
+#
+# Author: 
+
+ExponentialSmoothing = function(Time, Data, Type='StateSpaceModel', PlotIt=False, ...) {
   
   # require(smooth)
   # require(greybox)

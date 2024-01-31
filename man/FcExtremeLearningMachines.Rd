@@ -5,33 +5,30 @@
 Forecasting with Extreme Learning Machines
 }
 \description{
- Special case for a multilayer perceptrone feed forward network with backpropagation used for forecasting [Huang et al., 2005] 
+Special case for a multilayer perceptrone feed forward network with backpropagation used for forecasting [Huang et al., 2005] 
 }
 \usage{
-FcExtremeLearningMachines(DataVector, Time, SplitDataAt = 10,
+FcExtremeLearningMachines(DataVec, Time, SplitAt,
 
-FirstPredictor, SecondPredictor,  No_HiddenLayers = NULL,
+Predictors, ForecastHorizon, No_HiddenLayers = NULL,
 
 Scaled = TRUE, No_TrainingNetworks = 10,
 
-PlotEvaluation = FALSE, PlotFuture = TRUE,\dots)
+PlotEvaluation = FALSE, PlotIt = FALSE,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{DataVector}{
-[1:n] vector with an value of each time j in [1,n]
+  \item{DataVec}{
+[1:n] numerical vector of time series data
 }
   \item{Time}{
-[1:n] time vector
+[1:n] character vector of Time in the length of data
 }
-  \item{FirstPredictor}{
-[1:n] vector with an value of each time j in [1,n]
+  \item{SplitAt}{
+Scalar 'k' with k<n, index of row where the \code{DataFrame} is divided into test and train data
 }
-  \item{SecondPredictor}{
-[1:n] vector with an value of each time j in [1,n]
-}
-  \item{SplitDataAt}{
-scalar 'k' with k<n, index of row where the \code{DataFrame} is divided into test and train data
+  \item{Predictors}{
+[1:n,1:d] data frame or matrix of d predictores with n values each
 }
   \item{No_HiddenLayers}{
 Number of hidden layers, see \code{\link[nnfor]{elm}}
@@ -43,10 +40,10 @@ Should the data and regressors be scaled before applying the model?
 Number of Training Networks, see \code{\link[nnfor]{elm}}
 }
   \item{PlotEvaluation}{
-plot output of training data regarding and netowrk architecture
+Plot output of training data regarding and network architecture
 }
-  \item{PlotFuture}{
-simple plot to compare forecastingof future
+  \item{PlotIt}{
+Simple plot to compare forecasting of future
 }
   \item{\dots}{
 Further arguments passed on to \code{\link[nnfor]{elm}}
@@ -57,7 +54,7 @@ The parameters of hidden nodes (not just the weights connecting inputs to hidden
 }
 \value{
  \item{Model}{
-model paramters, see example
+Model paramters, see example
 }
   \item{Forecast}{
 Forecast, see example
@@ -94,7 +91,7 @@ requireNamespace('ggfortify')
 x=fortify(datasets::sunspot.month)
 x=ggfortify::fortify(datasets::sunspot.month)
 #Example for a bad forecast
-results=FcExtremeLearningMachines(DataVector = x$Data,Time = x$Index, SplitDataAt=2800)
+results=FcExtremeLearningMachines(DataVector = x$Data,Time = x$Index, SplitAt=2800)
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

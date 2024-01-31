@@ -8,19 +8,19 @@ Forecasting with Multilayer Perceptron Feedforward Network with Backpropagation
 Foracasting by multilayer perceptron feedforward network with resilient backpropagation with weight backtracking.
 }
 \usage{
-FcMLP_BP(Response, ForecastHorizont = 365, Predictor1,
+FcMLP_BP(Response, SplitAt, Predictor1,
 
-Predictor2, HiddenLayers = 4, Threshold = 0.05, Repetitions = 10,
+Predictor2, Time, HiddenLayers = 4, Threshold = 0.05, Repetitions = 10,
 
-ErrorFunction = "sse", PlotEvaluation = FALSE, PlotFuture = TRUE)
+ErrorFunction = "sse", PlotEvaluation = FALSE, PlotIt = FALSE)
 }
 
 \arguments{
     \item{Response}{
 [1:n] vector with an value of each time j in [1,n]
 }
-  \item{ForecastHorizont}{
-Number of periods to forecast into the future.
+  \item{SplitAt}{
+Index of row k where the DataVec is divided into test and train data. If not given n is used
 }
   \item{Predictor1}{
 [1:n] vector with an value of each time j in [1,n]
@@ -28,17 +28,21 @@ Number of periods to forecast into the future.
   \item{Predictor2}{
 [1:n] vector with an value of each time j in [1,n]
 }
-  \item{HiddenLayers}{
-Number of hidden layers
+
+  \item{Time}{
+[1:n] character vector of Time in the length of data
 }
+  \item{HiddenLayers}{
+Number of hidden layers, see \code{\link[neuralnet]{neuralnet}
+}}
   \item{Threshold}{
- threshold for the partial derivatives of \code{ErrorFunction} , please see \code{\link[neuralnet]{neuralnet}}
+Threshold for the partial derivatives of \code{ErrorFunction} , please see \code{\link[neuralnet]{neuralnet}}
 }
   \item{Repetitions}{
- Number of repetitions for the neural network's training.
+Number of repetitions for the neural network's training.
 }
   \item{ErrorFunction}{
-differentiable function that is used for the calculation of the error, string alternatives are 'ce' and 'sse', please see \code{\link[neuralnet]{neuralnet}}
+Differentiable function that is used for the calculation of the error, string alternatives are 'ce' and 'sse', please see \code{\link[neuralnet]{neuralnet}}
 }
   \item{PlotEvaluation}{
 Plot output of training for \code{neuralnet}

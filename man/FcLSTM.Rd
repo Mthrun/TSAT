@@ -5,13 +5,13 @@
 Forecasting with Long Short Term Memory Based on Recurrent Neural Network [Hochreiter, 1997].
 }
 \description{
-In simple words the feedword network feeds input not only forward from layer to layer but also in a loop back to specific layers which is called recurrent. LSTM is an improvment in the case of 'vanishing gradients'.
+In simple words the feedword network feeds input not only forward from layer to layer but also in a loop back to specific layers which is called recurrent. LSTM is an improvement in the case of 'vanishing gradients'.
 
 The procedure of this method works as follows:
 We start out with centered and scaled time series data (not necessary: we just need a time series varying in the interval [-1,1]) provided from a numerical vector \code{data} (hence equidistant). Furthermore one has to set a forecast length \code{forecast_length}.
 }
 \usage{
-FcLSTM(Datavector, Percentage = 90, Forecasthorizon = 1, 
+FcLSTM(DataVec, SplitAt, ForecastHorizon, 
 
 Seasonality = 28, Scaled = TRUE, ErrorLoss = "MSE", Epochs = 100, 
 
@@ -21,24 +21,25 @@ Batch_size = 1, Time, PlotIt = FALSE, Silent = TRUE,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Datavector}{
-Regular (equidistant) time series data as numerical vector.
+  \item{DataVec}{
+[1:n] numerical vector of regular (equidistant) time series data.
 }
-  \item{Percentage}{
-percentage of the split between training and test data
+  \item{SplitAt}{
+Index of row where the DataVec is divided into test and train data. If not given n is used
 }
-  \item{Forecasthorizon}{
-Number of time steps to forecast into the future
+  \item{ForecastHorizon}{
+Scalar defining the timesteps to forecast ahead
 }
   \item{Seasonality}{
-main saisonality of data, is used for generating batches of data
+Main saisonality of data, is used for generating batches of data. Default is 28
 }
   \item{Scaled}{
 TRUE: automatic scaling
 }
-  \item{ErrorLoss}{
-  error for the loss function, either
-       "MRD","SRD","MSE","MAE"
+\item{ErrorLoss}{
+Error for the loss function, either
+     "MRD","SRD","MSE","MAE".
+     Default is "MSE"
 }
   \item{Epochs}{
 Number of epochs to train the model, see \code{batch_size} in \code{fit} in [keras].
@@ -47,28 +48,28 @@ Number of epochs to train the model, see \code{batch_size} in \code{fit} in [ker
 Number of units per layer, see \code{units} in \code{\link[keras]{layer_lstm}}.
 }
   \item{ActivationFunction}{
-defines the function of activation to use, please see [Goodfellow, 2016] for details.
+Defines the function of activation to use, please see [Goodfellow, 2016] for details.
 
 }
   \item{RecurrentActivation}{
-defines the function of activation to use, please see [Goodfellow, 2016] for details.
+Defines the function of recurrent activation to use, please see [Goodfellow, 2016] for details.
 }
-  \item{Batch_size}{
+\item{Batch_size}{
 Number of samples per gradient update, see \code{batch_size} in \code{fit} in [keras]. The batch size is the number of \code{data} samples in one forward/backward pass of a RNN before a weight update.
 
 The batch size shouldn't be chosen too high in relation to the forecast_length.
 }
   \item{Time}{
-Optional, Time vector in the length of data
+Optional, [1:n] character vector of Time in the length of data. [1:n] character vector of Time in the length of data.
 }
   \item{PlotIt}{
-Optional, A logical determining whether or not to plot the forecast in comparison to the validation set.
+Optional, FALSE (default), do nothing. TRUE: plots the forecast versus the validation set.
 }
   \item{Silent}{
-Optional, diverse ouptuts of keras
+Optional, if FALSE, print diverse ouptuts of keras. Default is TRUE
 }
   \item{\dots}{
-further arguments for \code{\link[keras]{layer_lstm}}
+Further arguments for \code{\link[keras]{layer_lstm}}
 }
 }
 \details{
@@ -78,20 +79,20 @@ The \code{epochs} are the total number of forward/backward pass iterations. Typi
 
 \code{data} should be scaled between [-1,1] with "sound" distribution, see [Goodfellow, 2016; Mörchen 2006].
 
-Gradients are vanishing if inputs between zero and one are multiplied several times, because then  gradient can shrink to zero. The result is the weights would not change signifiantly in an recurrent ANN of many layers ('deep learning').
+Gradients are vanishing if inputs between zero and one are multiplied several times, because then gradient can shrink to zero. The result is the weights would not change significantly in an recurrent ANN of many layers ('deep learning').
 
-\code{ErrorLoss} defines the objective function which shoud be minimized, see \code{loss} in \code{\link{compile}} in [keras], if you want to use a pre-coded function. You can also put in custom loss functions if you write it in keras backend syntax. (e.g. \code{tensor_srd}. The 'Adam' optimizes is chosen here [Kingma/Ba, 2014].
+\code{ErrorLoss} defines the objective function which should be minimized, see \code{loss} in \code{\link{compile}} in [keras], if you want to use a pre-coded function. You can also put in custom loss functions if you write it in keras backend syntax. (e.g. \code{tensor_srd}. The 'Adam' optimizes is chosen here [Kingma/Ba, 2014].
 }
 \value{
 List of 
-\item{Model}{ Pointer to an ANN model generated by \pkg{keras}, the model is not directly available in R}
+\item{Model}{Pointer to an ANN model generated by \pkg{keras}, the model is not directly available in R}
 \item{FitStats}{Output of \code{fit} in [keras]}
 \item{Forecast}{Forecast generated by the ANN model where we put in the last portion of the training set of length \code{forecast_length} as data to predict from. The test data stays untouched.}
-\item{TestData}{[(k+1):n], the part of Response not used in the model}
-\item{TestTime}{[(k+1):n], time of response not used in the model}
-\item{TrainData}{[1:k], the part of Response used in the model}
-\item{TrainTime}{[1:k], time of Training data if geven}
-\item{ForecastTrain}{[1:k], forecasted value using TrainData}
+\item{TestData}{[(k+1):n] vector, the part of Response not used in the model}
+\item{TestTime}{[(k+1):n] vector, time of response not used in the model}
+\item{TrainData}{[1:k] vector, the part of Response used in the model}
+\item{TrainTime}{[1:k] vector, time of Training data if given}
+\item{TrainingForecast}{[1:k] vector, forecasted value using TrainData}
 }
 \references{
 Goodfellow, I., Bengio, Y., Courville, A., & Bengio, Y.: Deep learning, (Vol. 1), Cambridge: MIT press, 2016.
@@ -146,7 +147,7 @@ data = (data - min) / denom
 data=as.numeric(data)
 # We are ready to apply the LSTM procedure with a batch_size, 
 \dontrun{
-results = FcLSTM( data, Forecasthorizon = 1, Batch_size = 40,Seasonality=48, Epochs=300,ErrorLoss="MRD")
+results = FcLSTM( data, ForecastHorizon = 1, Batch_size = 40,Seasonality=48, Epochs=300,ErrorLoss="MRD")
 
 # Get the forecast data from the returned
 fc = results$Forecast

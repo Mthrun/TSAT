@@ -1,4 +1,4 @@
-GetBalanceSheet=function(Symbol='SAP',URL='yahoo',Silent=TRUE,Port=4445L,...){
+GetBalanceSheet=function(Symbol='SAP',URL='yahoo',Silent=TRUE,Port=4445L,tz="UTC",...){
   #GetBalanceSheet('SAP')
   
   requireNamespace('xml2')
@@ -87,7 +87,7 @@ GetBalanceSheet=function(Symbol='SAP',URL='yahoo',Silent=TRUE,Port=4445L,...){
       Header = Features[, 1]
       Data = t(Features[2:nrow(Features), 2:ncol(Features)])
       mode(Data) = 'numeric'
-      FeaturesT = data.frame(Time = as.Date(strptime(Time, format = '%m/%d/%Y')), Data)
+      FeaturesT = data.frame(Time = as.Date(strptime(Time, format = '%m/%d/%Y',tz=tz),tz=tz), Data)
       colnames(FeaturesT) = Header
       Liste=list(FeaturesT)
       try({

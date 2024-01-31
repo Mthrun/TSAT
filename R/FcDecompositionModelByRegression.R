@@ -1,4 +1,4 @@
-FcDecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,Cycles=list(),Growth="linear",...){
+FcDecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,Cycles=list(),Growth="linear",tz="UTC",...){
   #res=DecompositionModelByRegressio(DataFrame, TimeColumnName = "Time", FeatureName = "Absatz", SplitDataAt, Frequency = "day", ForecastPeriods = 10, Holidays = c(), PlotIt, xlab = "Time", ylab = "Feature", EquiDist=TRUE)
 #
 #     Additive a or multiplicative Decomposition Model by Regression
@@ -202,14 +202,14 @@ if(EquiDist){
   #   from=as.Date(min(DataFrame[,ColNum2])), to=as.Date(max(DataFrame[,ColNum2])), by =Frequency
   # ),
   # y = DataFrame[,ColNum])
-  history <- data.frame(ds = as.Date(DataFrame[,ColNum2]),
+  history <- data.frame(ds = as.Date(DataFrame[,ColNum2],tz=tz),
                         y = DataFrame[,ColNum])
   if(Growth=="logistic"){
     history$cap=DataFrame$cap
     history$floor=DataFrame$floor
   }
 }else{
-  history <- data.frame(ds = as.Date(DataFrame[,ColNum2]),
+  history <- data.frame(ds = as.Date(DataFrame[,ColNum2],tz=tz),
   y = DataFrame[,ColNum])
   warnings('Working progress. May not work properly yet.')
   if(Growth=="logistic"){
@@ -259,7 +259,7 @@ if(EquiDist){
     if(isTRUE(Cycles[["Mirrored"]])){
       indtrain=1:nrow(train)
       Time=train$ds
-      Time2=seq(from=as.Date(min(Time)),length.out =3*nrow(train)+1,by=paste0('-1 ',Frequency))
+      Time2=seq(from=as.Date(min(Time),tz=tz),length.out =3*nrow(train)+1,by=paste0('-1 ',Frequency))
       Time2=sort(Time2,decreasing = FALSE)
       train=rbind(train[rev(indtrain),],train,train[rev(indtrain),],train)
       #train=rbind(train[rev(indtrain),],train)

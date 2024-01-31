@@ -1,5 +1,5 @@
-FcVARIMA=function(Data,ARp,i=1,MAq,ForecastHorizont=14,PlotIt=TRUE,Time){
 #FcVARIMA(Data, ARp, i = 1, MAq, ForecastHorizont = 14, PlotIt = TRUE, Time)
+#
 #Vector autoregessive moving average model with difference filter
 #VARMA and VARIMA modelling for multivariate Forecasting
 #details: Please read [Tsay, 2013].
@@ -12,25 +12,25 @@ FcVARIMA=function(Data,ARp,i=1,MAq,ForecastHorizont=14,PlotIt=TRUE,Time){
 # ForecastHorizont        scalar 'f', forcasting period
 # PlotIt                  TRUE: Evaluation plots
 # Time                    Optional, for evaluation plots
-
-#OUTPUT
-  #   List V with
-  #   \item{Model}{List with
-  #     
-  #     Model: Model output of \code{\link[MTS]{VARMA}}
-  #     
-  #     OptimizedModel: Further optimized Model of Model using \code{\link[MTS]{refVARMA}}
-  #     
-  #   }
-  #   \item{Train}{[1:(N-f),1:d] Training data for building the model}
-  #   \item{Test}{[(N-f+1):N,1:d] Evaluation Data of the Model}
-  #   \item{Forecast}{[(N-f+1):N,1:d] Prediction of the Model}
-  #   
-  # }
+#
+# OUTPUT
+#   List V with
+#   \item{Model}{List with
+#     
+#     Model: Model output of \code{\link[MTS]{VARMA}}
+#     
+#     OptimizedModel: Further optimized Model of Model using \code{\link[MTS]{refVARMA}}
+#     
+#   }
+#   \item{Train}{[1:(N-f),1:d] Training data for building the model}
+#   \item{Test}{[(N-f+1):N,1:d] Evaluation Data of the Model}
+#   \item{Forecast}{[(N-f+1):N,1:d] Prediction of the Model}
+#   
+# }
 # author:     Michael Thrun
 # [Tsay, 2013]  Tsay, R. S.: Multivariate time series analysis: with R and financial applications, John Wiley & Sons, ISBN: 978-1-118-61790-8, 2013.
 
-
+FcVARIMA=function(Data,ARp,i=1,MAq,ForecastHorizont=14,PlotIt=TRUE,Time){
 
 
 #VARMA and VARIMA modelling for multivariate Forecasting  

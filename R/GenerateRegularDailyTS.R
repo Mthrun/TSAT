@@ -1,7 +1,36 @@
+# GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE,
+#                                 format = '%Y-%m-%d', tz = 'UTC',
+#                                 option = 'stine', Header = c('Time','Data'),
+#                                 Start, End, PlotIt = FALSE, AggregateFun = sum, ...)
+# 
+# Description:
+# 
+#
+# INPUT
+# TimeChar
+# Datavec
+# Start
+# End
+#
+# OPTIONAL
+# na.rm             Boolean, if TRUE removes NaN values automatically through spline interpolation. Default is FALSE.
+# format            String for date format. Default is '%Y-%m-%d'.
+# tz                String for timezone. Default is 'UTC'.
+# option              Default is 'stine'.
+# Header              Default is c('Time','Data').
+# PlotIt            Boolean, TRUE if plot should be printed, FALSE else. Default is FALSE.
+# AggregateFun      Aggregation function. Default is summation with sum().
+# ...               
+#
+# OUTPUT
+# re                Data frame
+#
+# Author: 
+
 GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE,
                                 format = '%Y-%m-%d', tz = 'UTC',
                                 option = 'stine',Header = c('Time','Data'),
-                                Start, End, PlotIt = FALSE,AggregateFun = sum,...){
+                                Start, End, PlotIt = FALSE, AggregateFun = sum, ...){
 #GenerateRegularDailyTS(TimeChar, Datavec, na.rm = TRUE, format = '%Y-%m-%d', tz = 'UTC',option = 'stine',Header=c('Time','Data'), Start,End,AggregateFun=sum,PlotIt = FALSE)
   requireNamespace('tibble')
   requireNamespace('imputeTS')
@@ -11,7 +40,10 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE,
   if(is.vector(Datavec)){
 
   if(!lubridate::is.Date(TimeChar))
-    Time=as.Date(strptime(TimeChar,format = format,tz = tz))
+    #BEWARE: as.Date has to be in the same time zone
+    #otherwise it per default sets to UTC
+    #resulting in times that are always found at this day
+    Time=as.Date(strptime(TimeChar,format = format,tz = tz),tz=tz)
   else
     Time=TimeChar
   
@@ -43,7 +75,7 @@ GenerateRegularDailyTS=function(TimeChar, Datavec, na.rm = TRUE,
     End=max(Time)
   
   #FullTime=seq(from=Start,to=End,by='days') # QMS: outdated
-  FullTime=seq.Date(from=as.Date(Start),to=as.Date(End),by='days')
+  FullTime=seq.Date(from=as.Date(Start,tz=tz),to=as.Date(End,tz=tz),by='days')
   
   DF=data.frame(Time=FullTime,Data=NA)
 

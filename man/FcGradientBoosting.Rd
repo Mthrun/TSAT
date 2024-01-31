@@ -5,30 +5,33 @@
 Forecast Gradient Boosting
 }
 \description{
-Gradient Boosting as published by [Chen/Guestrin, 2016] is a machine learning technique for regression and classification problems, which produces a prediction model in the form of the ensemble of weak prediction models, typically decision trees. However it is clamed that an ensemble of weak predictors when combined together should hive a strong model with superior accuracy.
+Gradient Boosting as published by [Chen/Guestrin, 2016] is a machine learning technique for regression and classification problems, which produces a prediction model in the form of the ensemble of weak prediction models, typically decision trees. However it is claimed that an ensemble of weak predictors when combined together should hive a strong model with superior accuracy.
 }
 \usage{
-FcGradientBoosting(Time, Datavector, Frequency = "days", Horizon, FUN = sum, PlotIt = TRUE)
+FcGradientBoosting(DataVec, SplitAt, Time, ForecastHorizon, Frequency = "days", FUN = sum, PlotIt = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Time}{
-vector, daily timestamps
+  \item{DataVec}{
+[1:n] numerical vector of time series data
 }
-  \item{Datavector}{
-vectorm daily data
+  \item{SplitAt}{
+Index of row where the DataVec is divided into test and train data. If not given n is used
+}
+  \item{Time}{
+[1:n] character vector of Time in the length of data
+}
+  \item{ForecastHorizon}{
+Scalar defining the timesteps to forecast ahead
 }
   \item{Frequency}{
-if aggregation required, months or weeks possible
-}
-  \item{Horizon}{
-forecast horizon, splits data to test and train
+If aggregation required. Can be either "days", "weeks", "months" or "quarters" or "years", see ConvertNumerical2TSobject. Default is "days"
 }
   \item{FUN}{
-aggregation function, usually sum
+Aggregation function, usually sum
 }
   \item{PlotIt}{
-plots results if TRUE
+FALSE (default), do nothing. TRUE: Plots the forecast (versus the test set)
 }
 }
 \details{
@@ -45,16 +48,16 @@ List with
 vector
 }
   \item{Model}{
-output of
+Model object of class xgbar, see \code{\link[forecastxgb]{xgbar}}
 }
   \item{ForecastStats}{
-output of
+Forecast statistics object of class forecast, see \pkg{forecast} package
 }
   \item{TestData}{
-data.frame
+[1:n-SplitAt, 1:2] Data frame of test data and test time 
 }
   \item{TrainData}{
-data.frame
+[1:SplitAt, 1:2] Data frame of training data and training time 
 }
 
 }
@@ -74,7 +77,10 @@ Michael Thrun
 \code{\link[forecastxgb]{xgbar}}
 }
 \examples{
-##ToDo
+data('ElectricityBRD')
+# Forecast on a test data set containing the last 30 values
+SplitAt = length(ElectricityBRD$Mrd_KWh)-30
+res = FcGradientBoosting(ElectricityBRD$Mrd_KWh, SplitAt = SplitAt,Time = ElectricityBRD$Time , Frequency='months', ForecastHorizon=30, PlotIt=TRUE)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

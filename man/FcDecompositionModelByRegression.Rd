@@ -124,7 +124,7 @@ Usually, a model should also have a third part of data only used once  and for m
 \examples{
 dates=c("2015-01-01","2015-01-02")
 names=c("New Year's Day","New Year's weekend")
-Holidays=data.frame(ds=as.Date(dates),holiday=names
+holidays=data.frame(ds=as.Date(dates),holiday=names
 )
 data('WeeklySalesUniformRandom')
 \donttest{

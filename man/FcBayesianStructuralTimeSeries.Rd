@@ -5,46 +5,49 @@
 Forecasting with Bayesian Structural Time Series
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Forecasting with Bayesian Structural Time Series
 }
 \usage{
-FcBayesianStructuralTimeSeries(Data, Time, Frequency = "months", nseasons = 12, niter = 250, SplitDataAt = 12, ForecastPeriods = 12, burn = 100)
+FcBayesianStructuralTimeSeries(DataVec, SplitAt, Time, Frequency = "months", ForecastHorizon, nseasons = 12, niter = 250, burn = 100, PlotIt=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Data}{
-%%     ~~Describe \code{Data} here~~
+  \item{DataVec}{
+[1:n] numerical vector of time series data.
+}
+  \item{SplitAt}{
+Index of row where the DataVec is divided into test and train data. If not given n is used
 }
   \item{Time}{
-%%     ~~Describe \code{Time} here~~
+[1:n] character vector of Time in the length of data
 }
   \item{Frequency}{
-%%     ~~Describe \code{Frequency} here~~
+Either \code{days}, \code{weeks}, \code{months} or \code{quarters} or \code{years}, see \code{\link{ConvertNumerical2TSobject}}.
 }
   \item{nseasons}{
-%%     ~~Describe \code{nseasons} here~~
+Optional, number of seasons. See \code{\link[bsts]{AddSeasonal}}
 }
   \item{niter}{
-%%     ~~Describe \code{niter} here~~
-}
-  \item{SplitDataAt}{
-%%     ~~Describe \code{SplitDataAt} here~~
-}
-  \item{ForecastPeriods}{
-%%     ~~Describe \code{ForecastPeriods} here~~
-}
+Optional, number of Iterations. See \code{\link[bsts]{bsts}}}
+
   \item{burn}{
-%%     ~~Describe \code{burn} here~~
+Optional, Number of MCMC iterations to be discarded as burn-in. See \code{\link[bsts]{predict.bsts}}
+}
+  \item{PlotIt}{
+FALSE (default), do nothing. TRUE: plots the forecast versus test data of time series data.
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+Wrapper for functions of the bsts package.
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
+List with
+\item{Forecast}{[1:ForecastHorizon] forecasted values}
+\item{ForecastTime}{[1:ForecastHorizon] Time values of forecasts}
+\item{UpperLower}{[1:2,1:ForecastHorizon] matrix of upper and lower bounds of the credible interval for the prediction, see \code{\link[bsts]{predict.bsts}}}
+\item{ModelPrediction}{Object of class predict of bsts package, see \code{\link[bsts]{predict.bsts}}}
+\item{Model}{Model object of class bsts, see \code{\link[bsts]{bsts}}}
+
 %% ...
 }
 \references{
@@ -78,10 +81,6 @@ ff=FcBayesianStructuralTimeSeries(log(AirPassengers$Data),AirPassengers$Time,Spl
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.
+\keyword{bsts}
+\keyword{Forecast}
+\concept{Bayesian Structural Time Series}

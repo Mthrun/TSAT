@@ -1,8 +1,25 @@
-GetFullWeeksPerMonth=function(Time,DaysOrWeeks=TRUE,IgnoreWeekend=TRUE){
+# GetFullWeeksPerMonth = GetFullWeeksPerMonth(Time, DaysOrWeeks=TRUE, IgnoreWeekend=TRUE)
+#
+# Description:
+# 
+#
+# INPUT
+# Time              Vector of Time values.
+#
+# OPTIONAL
+# DaysOrWeeks       Boolean, TRUE if Days, FALSE if Weeks. Default is TRUE.
+# IgnoreWeekend     Boolean, if FALSE removes weekends. Default is TRUE.
+#
+# OUTPUT
+# month             
+#
+# Author: 
+
+GetFullWeeksPerMonth = function(Time, DaysOrWeeks=TRUE, IgnoreWeekend=TRUE,tz="UTC"){
   
   requireNamespace('lubridate')
   
-  if(is.character(Time)) Time=as.Date(Time)
+  if(is.character(Time)) Time=as.Date(Time,tz=tz)
 
   if(isTRUE(DaysOrWeeks)){#Days
     temp=rep(1,length(Time))

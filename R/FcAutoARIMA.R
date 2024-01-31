@@ -27,6 +27,9 @@
 # - Moving Average (MA) with Lag 4 w.r.t noise term
 # - requires homoscedastic time series - variance does not depend on time
 #
+# If length(DataVec)-SplitAt=ForecastHorizon than forecast is completely  on test data set.
+# Is ForecastHorizon>length(DataVec)-SplitAt than a real forecast is made of ForecastHorizon-(n-SplitAt) steps.
+#
 # Author: MCT
 
 #FcAutoARIMA=function(Data,Time,ForecastHorizon,SplitAt,PlotIt=TRUE,Seasonal=TRUE,PlotBackwardInd,main='',xlab='Time',ylab='Data',...){
@@ -103,7 +106,19 @@ FcAutoARIMA=function(DataVec,SplitAt,ForecastHorizon,Time,PlotIt=TRUE,Seasonal=T
   #trainingForecast=forecast::forecast(train,h=ForecastHorizon)
   future=forecast::forecast(fit,h=ForecastHorizon)
   if(PlotIt){
+    if(ForecastHorizon>n-SplitAt){
+      time_interval = mean(diff(Time))
+      extended_time = c(DataFrame$Time, seq(from = DataFrame$Time[nrow(DataFrame)], by=time_interval,
+                                             length.out = ForecastHorizon-(n-SplitAt)))
+      DataFrame=data.frame(Time=extended_time,Data=c(DataVec, rep(NaN, ForecastHorizon-(n-SplitAt))))
+      
+    }
+    
     plot(tail(DataFrame$Time,PlotBackwardInd),tail(DataFrame$Data,PlotBackwardInd),type='l',main=paste(main,future$method,' - black calls, red predicton, blue 85% confindence interval'),xlab=xlab,ylab=ylab,...)
+    #points(tail(DataFrame$Time,ForecastHorizon),future$mean,type='l',col='red')
+    #points(tail(DataFrame$Time,ForecastHorizon),future$lower[,1],type='l',col='blue')
+    #points(tail(DataFrame$Time,ForecastHorizon),future$upper[,1],type='l',col='blue')
+
     points(tail(DataFrame$Time,ForecastHorizon),future$mean,type='l',col='red')
     points(tail(DataFrame$Time,ForecastHorizon),future$lower[,1],type='l',col='blue')
     points(tail(DataFrame$Time,ForecastHorizon),future$upper[,1],type='l',col='blue')

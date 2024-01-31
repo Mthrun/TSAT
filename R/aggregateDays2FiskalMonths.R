@@ -20,11 +20,11 @@
 #
 # Author: MCT
 
-aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
+aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,tz="UTC",...){
   requireNamespace('lubridate')
-  if (!lubridate::is.Date(Time)) {
+  if (!lubridate::is.Date(Time,tz=tz)) {
     warning("'Time' is not a date. Calling as.Date()")
-    Time = as.Date(Time)
+    Time = as.Date(Time,tz=tz)
   }
   
   if (is.vector(Data)) {
@@ -51,12 +51,12 @@ aggregateDays2FiskalMonths=function(Time,Data,FUN,Header,...){
       zoo::as.zoo(x = Weekly$Data, order.by = as.Date(Weekly$Time),frequency=7)
     
     fprior = zoo::zoo(, seq(
-      from = as.Date(start(outage.zoo)),
-      to = as.Date(end(outage.zoo)),
+      from = as.Date(start(outage.zoo,tz=tz)),
+      to = as.Date(end(outage.zoo,tz=tz)),
       by = "7 days"
     ))
     tempful = merge(outage.zoo, fprior, all = T)
-    WeeklyNa = data.frame(Time = as.Date(zoo::index(tempful)), Data = tempful)
+    WeeklyNa = data.frame(Time = as.Date(zoo::index(tempful),tz=tz), Data = tempful)
     WeeklyNa$Data[is.na(WeeklyNa$Data)] = 0
     Weekly = WeeklyNa
     

@@ -1,4 +1,4 @@
-ReadDates=function(FileName=NULL,InDirectory=getwd(),Silent=TRUE){
+ReadDates=function(FileName=NULL,InDirectory=getwd(),Silent=TRUE,tz="UTC"){
 #V=ReadDates(FileName = NULL, InDirectory = getwd(), Silent = TRUE)
 # read univariate or multivariate time series similar to the LRN format
   # INPUT
@@ -189,7 +189,7 @@ if(!identical(TibbleDF_temp[,1],TibbleDF_temp[orderedtime,1])) warning('ReadDate
   
   setwd(currentWD)
   try({
-  Time=as.Date((as.matrix(TibbleDF[,1])))
+  Time=as.Date((as.matrix(TibbleDF[,1])),tz=tz)
   Data=as.matrix(TibbleDF[,2:ncol(TibbleDF)])
   #mode(Data)="numeric"
   #delete time name from header

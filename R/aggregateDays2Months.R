@@ -17,13 +17,13 @@
 #
 # Author: MCT
 
-aggregateDays2Months=function(Time,Data,FUN,Header,Period="month",...){
+aggregateDays2Months=function(Time,Data,FUN,Header,Period="month",tz="UTC",...){
   requireNamespace('tibble')
   requireNamespace('dplyr')
   requireNamespace('lubridate')
   if(!lubridate::is.Date(Time)){
     warning("'Time' is not a date. Calling as.Date()")
-    Time=as.Date(Time)
+    Time=as.Date(Time,tz=tz)
   }
 
   if(is.vector(Data)){

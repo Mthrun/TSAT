@@ -36,3 +36,4 @@ Michael Thrun
 \keyword{RelativeDifferenceBetweenTS}% use one of  RShowDoc("KEYWORDS"
 \keyword{RelativeDifference}
 \concept{relative difference }
+\keyword{RelDiff}

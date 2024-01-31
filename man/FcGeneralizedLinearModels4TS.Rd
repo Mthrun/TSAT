@@ -8,7 +8,7 @@ Forecasting with Generalized Linear Models for time series
 Generalized linear models for the forecast of time series in the multivariate case
 }
 \usage{
-FcGeneralizedLinearModels4TS(Response, SplitDataAt, Predictor1, Predictor2 = NULL, 
+FcGeneralizedLinearModels4TS(Response, SplitAt, Predictor1, Predictor2 = NULL, 
 
 CorrectionFactor=FALSE, PlotIt = TRUE,Time, Summary = FALSE,\dots)
 }
@@ -17,33 +17,33 @@ CorrectionFactor=FALSE, PlotIt = TRUE,Time, Summary = FALSE,\dots)
   \item{Response}{
 [1:n] vector with an value of each time j in [1,n]
 }
-  \item{SplitDataAt}{
+  \item{SplitAt}{
 scalar 'k' with k<n, index of row where the \code{DataFrame} is divided into test and train data
 }
   \item{Predictor1}{
 [1:n] vector with an value of each time j in [1,n]
 }
   \item{Predictor2}{
-[1:n] vector with an value of each time j in [1,n]
+[1:n] vector with an value of each time j in [1,n]. Can also be \code{NULL} if not used
+}
+  \item{Time}{
+Optional, [1:n] time vector in case of \code{PlotIt=TRUE}
 }
   \item{CorrectionFactor}{
 Scalar, if TRUE: the predicted time series will begin at the same point as the last value of the training set. All other values will be mulitplied by a factor accordingly.
 }
   \item{PlotIt}{
-Optional, TRUE: Plots data model and prediction with
-}
-  \item{Time}{
-Optional, [1:n] time vector in case of \code{PlotIt=TRUE}
+Optional,FALSE (default), do nothing. TRUE: plots an evaluation of the forecast on the test data FALSE: Plots data model and prediction with
 }
   \item{Summary}{
-Output of \code{glm} is evaluted further
+Output of \code{glm} is evaluated further
 }
   \item{\dots}{
 Further arguments passed to \code{glm}
 }
 }
 \details{
-Assumption: \code{Response} and 'Predictors' have the same time intervalls, the same starting time and the same length.
+Assumption: \code{Response} and 'Predictors' have the same time intervals, the same starting time and the same length.
 }
 \value{
 list with

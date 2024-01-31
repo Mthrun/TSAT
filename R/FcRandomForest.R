@@ -1,5 +1,5 @@
 FcRandomForest=function(Time, DF, formula=NULL,SplitDataAt,Horizon,Package='randomForest',
-                              AutoCorrelation=NULL,AutoCorrelationNo=1,NoOfTree=200,PlotIt=TRUE,Holidays,SimilarPoints=TRUE,...){
+                              AutoCorrelation=NULL,AutoCorrelationNo=1,NoOfTree=200,PlotIt=TRUE,Holidays,SimilarPoints=TRUE,tz="UTC",...){
   N=nrow(as.matrix(DF))
   requireNamespace('lubridate')
 
@@ -11,7 +11,7 @@ FcRandomForest=function(Time, DF, formula=NULL,SplitDataAt,Horizon,Package='rand
   if(!missing(Time)&!is.null(formula)){
     if(!lubridate::is.Date(Time)){
       warning('Time is not a date, calling "as.Date".')
-      Time=as.Date(Time)
+      Time=as.Date(Time,tz=tz)
     }
     if(length(Time)!=N){
       warning('Time has not the length of No. of rows of DF. Algorithm could be failing.')
@@ -29,7 +29,7 @@ FcRandomForest=function(Time, DF, formula=NULL,SplitDataAt,Horizon,Package='rand
     }else{
       hols=Holidays
     }
-    hols$Time=as.Date(hols$Time)
+    hols$Time=as.Date(hols$Time,tz=tz)
     DF$Holidays=Time %in% hols$Time
     DF$Workingdays=GetWorkingDays(Time,HolidaysTime = hols$Time,GermanBridgeDay = F)$WorkingDay
 

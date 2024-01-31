@@ -1,4 +1,4 @@
-GetFinancialStatement=function(Symbol='SAP',URL='yahoo',Silent=TRUE){
+GetFinancialStatement=function(Symbol='SAP',URL='yahoo',tz="UTC",Silent=TRUE){
 #   #GetFinancialStatement('SAP')
   #Symbol='SAP'
   #URL='morningstar'
@@ -127,7 +127,7 @@ GetFinancialStatement=function(Symbol='SAP',URL='yahoo',Silent=TRUE){
         Header = Features[, 1]
         Data = t(Features[2:nrow(Features), 2:ncol(Features)])
         mode(Data) = 'numeric'
-        FeaturesT = data.frame(Time = as.Date(strptime(Time, format = '%m/%d/%Y')), Data)
+        FeaturesT = data.frame(Time = as.Date(strptime(Time, format = '%m/%d/%Y',tz=tz),tz=tz), Data)
         colnames(FeaturesT) = Header
         #Data=list(FeaturesT)
         FinanceStatements[[i]]=FeaturesT

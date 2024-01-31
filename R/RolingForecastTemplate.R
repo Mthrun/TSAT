@@ -1,4 +1,4 @@
-RolingForecastTemplate=function(Dataframe,ForecastingFunction=FcRandomForest,Horizon=7,Steps=371:7,TimeColumnInd=1,PlotMAE=FALSE,...){
+RolingForecastTemplate=function(Dataframe,ForecastingFunction=FcRandomForest,Horizon=7,Steps=371:7,TimeColumnInd=1,PlotMAE=FALSE,tz="UTC",...){
 
 DF=Dataframe[,-TimeColumnInd]
 Time=Dataframe[,TimeColumnInd]
@@ -32,7 +32,7 @@ if(is.vector(ff)$is.vector(testd))
   names(mae)=CreationDate
 
 if(PlotMAE&is.vector(ff)$is.vector(testd))
-  plot(as.Date( names(mae)),mae)
+  plot(as.Date( names(mae),tz=tz),mae)
 
 return(list(RollingForecasts=ForecastingListe,MAE=mae))
 }

@@ -60,6 +60,7 @@ ElectricityBRD$Mrd_KWh))
 }
 
 \keyword{RelativeDifference}
+\keyword{RelDiff}
 \concept{relative difference }
 \concept{temporal relative difference }
 % \keyword{ ~kwd2 }
