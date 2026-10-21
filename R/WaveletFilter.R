@@ -1,8 +1,8 @@
-WaveletFilter = function(Data, Filter="haar", NumLevels=2, Boundary="periodic",
-                         Fast=T, PlotIt=F, Threshold="zero", Lambda=0.05,
-                         FilterLevels="all"){
+WaveletFilter = function(Data, Filter = "haar", NumLevels = 2, Boundary = "periodic",
+                         Fast = TRUE, PlotIt = FALSE, Threshold = "zero", Lambda = 0.05,
+                         FilterLevels = "all") {
   # DESCRIPTION
-  # 
+  #
   # INPUT
   # Data[1:n]    Signal filtered with wavelets
   # Filter       Character containing name of wavelet
@@ -28,86 +28,76 @@ WaveletFilter = function(Data, Filter="haar", NumLevels=2, Boundary="periodic",
   #                       FilterLevels[1:n] numeric vector: chooses all wavelet
   #                       levels which are given in vector by setting it to a
   #                       positive number.
-  # 
+  #
   # OUTPUT
   # FilteredData[1:n]    Signal filtered with wavelets
-  # 
+  #
   # Author: QMS 06.10.2021
-  
+
+  # Use logical constants. The short names T and F can be replaced by callers.
+  if (!is.logical(PlotIt) || length(PlotIt) != 1L || is.na(PlotIt))
+    stop("PlotIt must be TRUE or FALSE.", call. = FALSE)
+  if (!is.logical(Fast) || length(Fast) != 1L || is.na(Fast))
+    stop("Fast must be TRUE or FALSE.", call. = FALSE)
+  if (!requireNamespace("wavelets", quietly = TRUE))
+    stop("Install the optional package 'wavelets' to use this method.", call. = FALSE)
+  if (PlotIt) {
+    old <- graphics::par(no.readonly = TRUE)
+    on.exit(graphics::par(old))
+  }
   # Plot original data
-  if(PlotIt == T){
-    plot(Data, type="l")
+  if (PlotIt == TRUE) {
+    plot(Data, type = "l")
   }
-  
+
   # Apply wavelet decomposition (Redundant Wavelet Transform == ModWT)
-  RWT = wavelets::modwt(X = as.numeric(Data), filter=Filter, n.levels=NumLevels,
-                        boundary=Boundary, fast=Fast)
-  
+  RWT = wavelets::modwt(
+    X = as.numeric(Data), filter = Filter, n.levels = NumLevels,
+    boundary = Boundary, fast = Fast
+  )
+
   # Plot wavelet decomposition
-  if(PlotIt == T){
-    par(mfrow=c(NumLevels+1,1))
-    for(i in 1:NumLevels){
-      plot(1:length(RWT@W[[i]]),RWT@W[[i]], type="l", xlab = paste0("Waveletlevel", i), ylab = "")
+  if (PlotIt == TRUE) {
+    par(mfrow = c(NumLevels + 1, 1))
+    for (i in 1:NumLevels) {
+      plot(1:length(RWT@W[[i]]), RWT@W[[i]], type = "l", xlab = paste0("Waveletlevel", i), ylab = "")
     }
-    plot(1:length(RWT@V[[NumLevels]]),RWT@W[[NumLevels]], type="l", xlab = paste0("Smooth approximation level", i), ylab = "")
+    plot(1:length(RWT@V[[NumLevels]]), RWT@W[[NumLevels]], type = "l", xlab = paste0("Smooth approximation level", i), ylab = "")
   }
-  
+
   # Decide the filtering
-  if(is.character(FilterLevels)){
-    if(FilterLevels == "all"){
-      for(i in 1:NumLevels){
-        if(Threshold=="hard"){
+  if (is.character(FilterLevels)) {
+    if (FilterLevels == "all") {
+      for (i in 1:NumLevels) {
+        if (Threshold == "hard") {
           RWT@W[[i]] = hard_thresholding(RWT@W[[i]], Lambda)
-        }else if (Threshold == "soft"){
+        } else if (Threshold == "soft") {
           RWT@W[[i]] = soft_thresholding(RWT@W[[i]], Lambda)
-        }else{
+        } else {
           RWT@W[[i]] = filter_zero(RWT@W[[i]])
         }
       }
     }
-  }else{
-    if(is.vector(FilterLevels)){
-      for(i in FilterLevels){
-        if(Threshold=="hard"){
+  } else {
+    if (is.vector(FilterLevels)) {
+      for (i in FilterLevels) {
+        if (Threshold == "hard") {
           RWT@W[[i]] = hard_thresholding(RWT@W[[i]], Lambda)
-        }else if (Threshold == "soft"){
+        } else if (Threshold == "soft") {
           RWT@W[[i]] = soft_thresholding(RWT@W[[i]], Lambda)
-        }else{
+        } else {
           RWT@W[[i]] = filter_zero(RWT@W[[i]])
         }
       }
     }
   }
-  
+
   # Reconstruct signal from wavelet decomposition
   IRWT = wavelets::imodwt(RWT)
-  
+
   # Plot filtered signal
-  if(PlotIt == T){
-    plot(IRWT, type="l")
+  if (PlotIt == TRUE) {
+    plot(IRWT, type = "l")
   }
   return(IRWT)
-}
-
-filter_zero = function(Data){
-  Data = matrix(0,length(Data), 1)
-  return(Data)
-}
-
-hard_thresholding = function(Data, Lambda){
-  HardThreshold = quantile(abs(Data), probs = Lambda)
-  HardThreshold = quantile(abs(Data), probs = 1)
-  Data[abs(Data) < HardThreshold] = 0
-  return(Data)
-}
-
-soft_thresholding = function(Data, Lambda){
-  HardThreshold = quantile(abs(Data), probs = Lambda)
-  Data[abs(Data) < HardThreshold] = 0
-  for(j in 1:length(Data)){
-    if(abs(Data[j])>=HardThreshold){
-      Data[j] = sign(Data[j])*(abs(Data[j]-HardThreshold))
-    }
-  }
-  return(Data)
 }

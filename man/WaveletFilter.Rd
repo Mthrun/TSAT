@@ -5,7 +5,7 @@ WaveletFilter
 }
 \description{
 The wavelet filter decomposes a signal in its redundant wavelet decomposition
-with a wavelet of choice \code{\link{wavelets}}.
+with a wavelet of choice \code{\link[wavelets]{dwt}}.
 The wavelet levels can be filtered all together or individually.
 The filter can be computed with hard and soft thresholding or with zeroing.
 The wavelet decomposition is then reconstructed.
@@ -14,7 +14,7 @@ There more levels are computed, the more fine granular the choices can be.
 }
 \usage{
 WaveletFilter(Data, Filter="haar", NumLevels=2, Boundary="periodic",
-Fast=T, PlotIt=F, Threshold="zero", Lambda=0.05, FilterLevels="all")
+Fast=TRUE, PlotIt=FALSE, Threshold="zero", Lambda=0.05, FilterLevels="all")
 }
 \arguments{
 \item{Data}{
@@ -66,10 +66,11 @@ https://cran.r-project.org/web/packages/wavelets/index.html
 Q. Stier
 }
 \examples{
-load("TempMelbourneAustralia")
+# Load package data; do not read a file from the working directory.
+data("TempMelbourneAustralia")
 Data = TempMelbourneAustralia$Temp
-WaveletFilter(Data, Filter="haar", NumLevels=2, Boundary="periodic", Fast=T,
-PlotIt=F, Threshold="zero", Lambda=0.05, FilterLevels="all")
+WaveletFilter(Data, Filter="haar", NumLevels=2, Boundary="periodic", Fast=TRUE,
+PlotIt=FALSE, Threshold="zero", Lambda=0.05, FilterLevels="all")
 
 }
 \keyword{wavelet}% use one of  RShowDoc("KEYWORDS")

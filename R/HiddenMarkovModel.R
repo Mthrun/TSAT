@@ -7,10 +7,13 @@ HiddenMarkovModel=function(Data,ClusterNo,DistributionName='NORMAL',Iterations=5
     warning('Data is expected to be a matrix. Trying to transform..')
     Data = as.matrix(Data)
   }
-  requireNamespace('RHmm')
-  requireNamespace('AdaptGauss')
-  requireNamespace('dbt.ClassAnalysis')
-  requireNamespace('Classifiers')
+  if (!requireNamespace("RHmm", quietly = TRUE))
+    stop("Package 'RHmm' is required. Install it first.", call. = FALSE)
+  if (!requireNamespace("dbt.ClassAnalysis", quietly = TRUE))
+    stop("Package 'dbt.ClassAnalysis' is required. Install it first.", call. = FALSE)
+  # The mixture plot is the only step that needs AdaptGauss.
+  if (PlotIt && !requireNamespace("AdaptGauss", quietly = TRUE))
+    stop("Package 'AdaptGauss' is required for PlotIt = TRUE.", call. = FALSE)
   
   HMMmodell <-
     RHmm::HMMFit(
@@ -18,10 +21,10 @@ HiddenMarkovModel=function(Data,ClusterNo,DistributionName='NORMAL',Iterations=5
       nStates = ClusterNo,
       dis = DistributionName,
       control = list(
-        verbose = 1,
         init = 'KMEANS',
         iter = Iterations,
-        verbose = Silent
+        # RHmm requires numeric 0 or 1. Silent = TRUE must disable output.
+        verbose = as.integer(!Silent)
       ),
       # K-means initialisierung
       asymptCov = TRUE
@@ -40,7 +43,13 @@ HiddenMarkovModel=function(Data,ClusterNo,DistributionName='NORMAL',Iterations=5
   
   ########################################################################
   # viterbi Alg zur vorhersage der Zustaende
-  VitPath <- RHmm::viterbi(HMMmodell, Data)
+  # RHmm prints the data dimension during state decoding. Capture this
+  # output so that Silent also applies here. Warnings remain visible.
+  stateOutput <- utils::capture.output(
+    VitPath <- RHmm::viterbi(HMMmodell, Data)
+  )
+  if (!Silent && length(stateOutput))
+    cat(stateOutput, sep = "\n")
   HMMcls <- VitPath$states
   # die vorhergesagten Klassen des HMM
   
@@ -90,10 +99,10 @@ HiddenMarkovModel=function(Data,ClusterNo,DistributionName='NORMAL',Iterations=5
     
     # genauigkeit rechnen
     if (!Silent)
-      print(Classifiers::AnalysisOfClassifier(PriorClassification, HMMcls))
+      print(dbt.ClassAnalysis::AnalysisOfClassifier(PriorClassification, HMMcls))
     
     V <-
-      Classifiers::AnalysisOfClassifier(PriorClassification, HMMcls)
+      dbt.ClassAnalysis::AnalysisOfClassifier(PriorClassification, HMMcls)
     
     Accuracy = sum(V$TotalAccuracy)
     if (!Silent)
@@ -102,5 +111,6 @@ HiddenMarkovModel=function(Data,ClusterNo,DistributionName='NORMAL',Iterations=5
     XTable = NULL
     Accuracy = NULL
   }
-  return(list(HMMmodell=HMMmodell,HMM_means=HMM_means,HMM_SDs=HMM_SDs,HMM_means=HMM_weights,Uebergangsmatrix=Uebergangsmatrix,VitPath=VitPath,HMMcls=HMMcls,XTable=XTable,Accuracy=Accuracy))
+  # Give the weights their documented name. A duplicate HMM_means hides them.
+  return(list(HMMmodell=HMMmodell,HMM_means=HMM_means,HMM_SDs=HMM_SDs,HMM_weights=HMM_weights,Uebergangsmatrix=Uebergangsmatrix,VitPath=VitPath,HMMcls=HMMcls,XTable=XTable,Accuracy=Accuracy))
 }

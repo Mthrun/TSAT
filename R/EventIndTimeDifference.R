@@ -67,7 +67,8 @@ EventIndTimeDifference=function(Timevector,EndInd,BeginInd,Resolution='mins',Sil
     }
     
   }  #End Catching Errors
-  dist=as.numeric(Timevector[EndInd]-Timevector[BeginInd],units=Resolution)
+  # A gap runs from the previous end to the next beginning, in that order.
+  dist=as.numeric(difftime(Timevector[BeginInd],Timevector[EndInd],units=Resolution))
   if(!Silent){
     if(sum(!is.finite(dist))>0){
       indtemp=which(!is.finite(dist))

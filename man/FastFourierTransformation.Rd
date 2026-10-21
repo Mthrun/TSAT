@@ -16,8 +16,7 @@ FastFourierTransformation(Timeseries,na.rm=FALSE,PlotIt=FALSE)
 }
   \item{na.rm}{  if TRUE removes automatically NaN by spline interpolation
 }
-  \item{PlotIt}{
-}
+  \item{PlotIt}{If TRUE, display the frequency spectrum.}
 
 }
 \details{

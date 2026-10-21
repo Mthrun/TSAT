@@ -8,7 +8,8 @@ Write Time Series
   Save series consisting of Time and SeriesVal and eventual further texts to a *.TS file.
 }
 \usage{
-WriteTS(FileName, Time, SeriesVal, FurtherTexts, Header, OutDirectory = getwd(), ForceNumeric = FALSE, Comments)
+WriteTS(FileName, Time, SeriesVal, FurtherTexts, Header, OutDirectory = getwd(),
+  ForceNumeric = FALSE, Comments)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -8,7 +8,7 @@ GetFullWeeksPerMonth
 GetFullWeeksPerMonth
 }
 \usage{
-GetFullWeeksPerMonth(Time, DaysOrWeeks = TRUE, IgnoreWeekend = TRUE)
+GetFullWeeksPerMonth(Time, DaysOrWeeks = TRUE, IgnoreWeekend = TRUE, tz = "UTC") 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,6 +23,7 @@ FALSE: weekly data is assumed
 TRUE: Full week is if even saturday and sunday lies in month
 FALSE: saturday and sunday do not need to lie in the month
 }
+\item{tz}{Time zone used for timestamp conversion.}
 }
 \details{
 none

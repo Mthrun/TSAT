@@ -1,98 +1,58 @@
 \name{FcLSTM}
 \alias{FcLSTM}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Forecasting with Long Short Term Memory Based on Recurrent Neural Network [Hochreiter, 1997].
-}
-\description{
-In simple words the feedword network feeds input not only forward from layer to layer but also in a loop back to specific layers which is called recurrent. LSTM is an improvement in the case of 'vanishing gradients'.
-
-The procedure of this method works as follows:
-We start out with centered and scaled time series data (not necessary: we just need a time series varying in the interval [-1,1]) provided from a numerical vector \code{data} (hence equidistant). Furthermore one has to set a forecast length \code{forecast_length}.
-}
+\title{LSTM forecasts}
+\description{Fit a univariate LSTM network and forecast from one fixed origin.}
 \usage{
-FcLSTM(DataVec, SplitAt, ForecastHorizon, 
-
-Seasonality = 28, Scaled = TRUE, ErrorLoss = "MSE", Epochs = 100, 
-
-Neurons = 28, ActivationFunction = "relu", RecurrentActivation = "sigmoid",
-
-Batch_size = 1, Time, PlotIt = FALSE, Silent = TRUE,\dots)
+FcLSTM(DataVec, SplitAt = length(DataVec), ForecastHorizon = 1L,
+  Seasonality = NULL, Scaled = TRUE, ErrorLoss = "MSE", Epochs = 100,
+  Neurons = 28, ActivationFunction = "relu", RecurrentActivation = "sigmoid",
+  Batch_size = 1, Time = NULL, PlotIt = FALSE, Silent = TRUE, \dots,
+  Lookback = NULL, TimeStep = NULL, SeasonalPeriod = NULL, FutureTime = NULL,
+  Seed = NULL)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{DataVec}{
-[1:n] numerical vector of regular (equidistant) time series data.
-}
-  \item{SplitAt}{
-Index of row where the DataVec is divided into test and train data. If not given n is used
-}
-  \item{ForecastHorizon}{
-Scalar defining the timesteps to forecast ahead
-}
-  \item{Seasonality}{
-Main saisonality of data, is used for generating batches of data. Default is 28
-}
-  \item{Scaled}{
-TRUE: automatic scaling
-}
-\item{ErrorLoss}{
-Error for the loss function, either
-     "MRD","SRD","MSE","MAE".
-     Default is "MSE"
-}
-  \item{Epochs}{
-Number of epochs to train the model, see \code{batch_size} in \code{fit} in [keras].
-}
-  \item{Neurons}{
-Number of units per layer, see \code{units} in \code{\link[keras]{layer_lstm}}.
-}
-  \item{ActivationFunction}{
-Defines the function of activation to use, please see [Goodfellow, 2016] for details.
-
-}
-  \item{RecurrentActivation}{
-Defines the function of recurrent activation to use, please see [Goodfellow, 2016] for details.
-}
-\item{Batch_size}{
-Number of samples per gradient update, see \code{batch_size} in \code{fit} in [keras]. The batch size is the number of \code{data} samples in one forward/backward pass of a RNN before a weight update.
-
-The batch size shouldn't be chosen too high in relation to the forecast_length.
-}
-  \item{Time}{
-Optional, [1:n] character vector of Time in the length of data. [1:n] character vector of Time in the length of data.
-}
-  \item{PlotIt}{
-Optional, FALSE (default), do nothing. TRUE: plots the forecast versus the validation set.
-}
-  \item{Silent}{
-Optional, if FALSE, print diverse ouptuts of keras. Default is TRUE
-}
-  \item{\dots}{
-Further arguments for \code{\link[keras]{layer_lstm}}
-}
+  \item{DataVec}{Numeric response vector. A univariate \code{ts} object is also accepted. Values after \code{SplitAt} are used only for evaluation.}
+  \item{SplitAt}{Index of the last training observation. The forecast starts at the next observation. The usual default uses all supplied observations. See Details for legacy defaults.}
+  \item{ForecastHorizon}{Positive integer. Number of observations to predict after \code{SplitAt}. The result always contains this number of forecast rows.}
+  \item{Seasonality}{Legacy name for \code{Lookback} in the neural methods. It controls the input history, not the seasonal period.}
+  \item{Scaled}{If \code{TRUE}, estimate scaling values from training data only. Apply those values during prediction and return response values on the original scale.}
+  \item{ErrorLoss}{LSTM loss: \code{"MSE"}, \code{"MAE"}, \code{"MRD"}, or \code{"SRD"}. MRD is the mean square root of absolute error. SRD is its sum.}
+  \item{Epochs}{Positive integer. Number of LSTM training epochs.}
+  \item{Neurons}{Positive integer. Number of LSTM units.}
+  \item{ActivationFunction}{Activation function for the LSTM units.}
+  \item{RecurrentActivation}{Recurrent activation function for the LSTM units.}
+  \item{Batch_size}{Positive integer. Number of training samples per batch. Must not exceed the available sample count.}
+  \item{Time}{Ordered timestamps, with one timestamp per observation. Use numeric indices, \code{Date}, or \code{POSIXct}. ISO date strings are accepted. If omitted, use the \code{ts} time index or consecutive observation indices. Prophet requires calendar timestamps.}
+  \item{PlotIt}{If \code{TRUE}, display the forecast plot. If \code{FALSE}, do not display plots. Plot settings do not change the forecast values.}
+  \item{Silent}{Control model messages. The VARIMA wrapper suppresses model output when \code{TRUE}. The LSTM wrapper suppresses training progress when \code{TRUE}. Errors remain visible.}
+  \item{\dots}{Additional arguments for the model function identified in Details. Do not repeat arguments that the wrapper sets explicitly.}
+  \item{Lookback}{Number of consecutive past observations supplied to the model. In regression methods, this is an alternative to \code{Lags}. It does not specify a seasonal cycle.}
+  \item{TimeStep}{Time interval. Use a positive number or a calendar unit: \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"hour"}, \code{"min"}, or \code{"sec"}. Numeric intervals use the units of \code{Time}: days for \code{Date}, seconds for \code{POSIXct}, and index units otherwise. If omitted, infer a regular interval from training timestamps.}
+  \item{SeasonalPeriod}{Positive integer. Number of observations in one seasonal cycle. The default uses the frequency of a \code{ts} input, or one for a numeric vector. This setting does not select an input window or aggregate data.}
+  \item{FutureTime}{Optional timestamps for all forecast rows. Supply exactly \code{ForecastHorizon} values after the forecast origin. They must agree with any observed test timestamps and with the regular interval required by the method.}
+  \item{Seed}{Optional nonnegative integer for reproducible random operations. The function restores the R random state after the call. TensorFlow can also depend on the runtime and hardware.}
 }
 \details{
-In this approach the recurrent ANN has several internal parameters set as defined in deep learning, see [Goodfellow, 2016] for details. The last layer is a densely-connected NN layer within a time_distributed layer. Currently only one hidden-layer is set.
+Each training input contains \code{Lookback} past observations. Its target is the next observation. The default input window is 28. Training does not shuffle samples.
 
-The \code{epochs} are the total number of forward/backward pass iterations. Typically more improves model performance unless overfitting occurs at which time the validation accuracy/loss will not improve.
+Forecasts use prior predictions after the origin. Test response values are not network inputs. Additional arguments go to \code{keras::layer_lstm}.
 
-\code{data} should be scaled between [-1,1] with "sound" distribution, see [Goodfellow, 2016; Mörchen 2006].
+The method requires the R packages keras and tensorflow and a compatible Python environment. With R keras 2.16.1, the Python environment must include tf-keras and its matching TensorFlow version. Configure that environment before the call.
 
-Gradients are vanishing if inputs between zero and one are multiplied several times, because then gradient can shrink to zero. The result is the weights would not change significantly in an recurrent ANN of many layers ('deep learning').
-
-\code{ErrorLoss} defines the objective function which should be minimized, see \code{loss} in \code{\link{compile}} in [keras], if you want to use a pre-coded function. You can also put in custom loss functions if you write it in keras backend syntax. (e.g. \code{tensor_srd}. The 'Adam' optimizes is chosen here [Kingma/Ba, 2014].
+The example uses one epoch to test the interface; it does not establish forecast quality. \code{FitStats} contains the training history. Prediction intervals are not supplied.
 }
 \value{
-List of 
-\item{Model}{Pointer to an ANN model generated by \pkg{keras}, the model is not directly available in R}
-\item{FitStats}{Output of \code{fit} in [keras]}
-\item{Forecast}{Forecast generated by the ANN model where we put in the last portion of the training set of length \code{forecast_length} as data to predict from. The test data stays untouched.}
-\item{TestData}{[(k+1):n] vector, the part of Response not used in the model}
-\item{TestTime}{[(k+1):n] vector, time of response not used in the model}
-\item{TrainData}{[1:k] vector, the part of Response used in the model}
-\item{TrainTime}{[1:k] vector, time of Training data if given}
-\item{TrainingForecast}{[1:k] vector, forecasted value using TrainData}
+A named list with the common fields described in \code{\link{ForecastingInterface}}:
+\item{Forecast}{Response predictions. A vector of length \code{ForecastHorizon}, or a matrix with one column per series.}
+\item{ForecastTime}{One timestamp per forecast row.}
+\item{TrainData, TrainTime}{The observed training response and its timestamps.}
+\item{Fitted, Residuals}{Training fitted values and observed-minus-fitted residuals. Unsupported fields are \code{NULL}. Initial values can be missing.}
+\item{TestData, TestTime}{Observed response values aligned with the forecast rows and their timestamps. Unknown future responses are \code{NA}.}
+\item{Lower, Upper, Level}{Prediction bounds and coverage percentages. Unsupported intervals are \code{NULL}. Univariate bounds have one column per level. Multivariate bounds have dimensions horizon by series by level.}
+\item{Model}{The fitted model or model parameters.}
+\item{Accuracy}{The matrix from \code{\link{QualityMeasuresForecasting}}, with one row per response series. It contains N, MAE, RMSE, Bias, MASE, MAPE, SMAPE, AbsoluteError, RAE, RSE, MRD, and MRD_BIAS. It is \code{NULL} when no finite test comparisons are available.}
+\item{Info}{Method name, split index, forecast origin, horizon, time interval, seasonal period, response scale, and method-specific information.}
+See Details for additional fields.
 }
 \references{
 Goodfellow, I., Bengio, Y., Courville, A., & Bengio, Y.: Deep learning, (Vol. 1), Cambridge: MIT press, 2016.
@@ -108,58 +68,18 @@ Hinton, G. E., Srivastava, N., Krizhevsky, A., Sutskever, I., & Salakhutdinov, R
 \author{
 Michael Thrun
 }
-\note{
-# \code{keras} and \code{tensorflow} have to be installed in python, python can be called from console
-
-# Steps are:
-
-devtools::install_github("rstudio/tensorflow")
-
-devtools::install_github("rstudio/keras")
- 
-# Execute the below
- 
-tensorflow::install_tensorflow()
-
-tensorflow::tf_config()
-
-#Todo: Integrate Dropout (removeing units from NNs during training) to improve generalisation (Hinton et al., 2012).
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-\pkg{keras} and \pkg{tensorflow}.
-}
+\seealso{\code{\link{ForecastingInterface}}}
 \examples{
-# Sunspots with autocorrelation for a lag of 10 years above 0.5
-# (aximum at 125 months
-data = datasets::sunspot.month
-
-# scale the subset, reduce the extent of outliers by sqrt
-sub = sqrt(data)
-quants = quantile(data, c(0.01, 0.5, 0.99), na.rm = F)
-min = quants[1]
-max = quants[3]
-denom = max - min
-data = (data - min) / denom
-
-data=as.numeric(data)
-# We are ready to apply the LSTM procedure with a batch_size, 
-\dontrun{
-results = FcLSTM( data, ForecastHorizon = 1, Batch_size = 40,Seasonality=48, Epochs=300,ErrorLoss="MRD")
-
-# Get the forecast data from the returned
-fc = results$Forecast
-
-# Rescale the forecast data to be comparable to the original dataset
-fc_rescaled = (denom * fc + min)^2
-
-# Plot out the forecast (in tail use the forecast_length, here 120)
-plot(tail(data, 120), type="l")
-points(fc_rescaled, col="red")
+if (requireNamespace("tensorflow", quietly = TRUE) &&
+    requireNamespace("keras", quietly = TRUE) &&
+    keras::is_keras_available() &&
+    isTRUE(tryCatch(!is.null(tensorflow::tf_version()),
+                    error = function(e) FALSE))) {
+  y <- sin(seq_len(80)/5)
+  out <- FcLSTM(y, SplitAt = 60, ForecastHorizon = 3, Lookback = 4,
+    Epochs = 1, Neurons = 2, Seed = 1)
+  stopifnot(NROW(out$Forecast) == 3, length(out$ForecastTime) == 3,
+            all(is.finite(out$Forecast)))
 }
 }
-\keyword{LSTM}% use one of  RShowDoc("KEYWORDS")
-\keyword{keras}% __ONLY ONE__ keyword per line
-\keyword{ANN}
+\keyword{ts}

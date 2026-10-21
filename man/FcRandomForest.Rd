@@ -1,100 +1,66 @@
 \name{FcRandomForest}
 \alias{FcRandomForest}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Forecasting with Random Forest
-}
-\description{
-Random forest for forecasting using multivariate regression as published in [Breiman, 2001].
-
-This function was succesfully used in [Thrun et al., 2019].
-}
+\title{Random forest forecasts}
+\description{Fit a random forest with external predictors, response lags, or calendar variables.}
 \usage{
-FcRandomForest(Time, DF, formula=NULL,Horizon,
-
-Package='randomForest', AutoCorrelation,NoOfTree=200,
-
-PlotIt=TRUE,Holidays,SimilarPoints=TRUE,...)
+FcRandomForest(Time = NULL, DF = NULL, formula = NULL, SplitDataAt = NULL,
+  Horizon = NULL, Package = "randomForest", AutoCorrelation = NULL,
+  AutoCorrelationNo = 1, NoOfTree = 200, PlotIt = FALSE, Holidays = NULL,
+  SimilarPoints = FALSE, tz = "UTC", \dots, DataVec = NULL, SplitAt = NULL,
+  ForecastHorizon = NULL, Predictors = NULL, FuturePredictors = NULL,
+  Lags = NULL, Lookback = NULL, TimeStep = NULL, SeasonalPeriod = NULL,
+  FutureTime = NULL, Seed = NULL)
 }
 \arguments{
-  \item{Time}{
-Time [1:n] bector of objects of \code{as.Date}, if not missing all possible saisonalites are used as indicators for the predictor. \code{formula} should be set to "\code{predictor} ~ ." in order that Time is used. This idea is applied in [Thrun et al., 2019] was not published in [Breiman, 2001].
-
-}
-  \item{DF}{
-Dataframe [1:n,1:d] with \code{d} variables defined by \code{d-1} indicators and one predictor.
-}
-  \item{formula}{
-Either a formula describing praediktors and indicators or NULL. Usually set to \code{formula} should be set to "\code{predictor} ~ ." if all \code{d-1} indicators should be used. 
-}
-  \item{Horizon}{
-Forecast horizon as a number of days. The test set is defined by \code{[n-Horizon,n,1:d]} and the trainings set by \code{[1:(n-Horizon),1:d]}.
-}
-  \item{Package}{
-Either 'ranger' or 'randomForest'
-}
-  \item{AutoCorrelation}{
-If not missing a name of variable stored in DF can be given, it should be the predictor and be also defined in \code{formula}. The lag of autocorrelation is defined by Horizon and the strength can be checkt by \code{\link[TSAT]{AutoCorr}}
-}
-
-  \item{NoOfTree}{
-Number of trees to grow, [Hastie et al., 2013] suggests that random forest often stabilize aroundd 200, for big numbers there is no improvement contrary to boosting.
-}
-
-  \item{PlotIt}{
-Plots MAE results, but if \code{formula=NULL} plots time series of forecasted values of test set.
-}
-  \item{Holidays}{
-Either German Holidays are used if missing, else a data frame or vector of \code{as.Date} objects defining the holidays.
-
-will only be used if \code{Time} given, 
-}
-\item{SimilarPoints}{highly experimental, please set FALSE if you want to publish your results
-}
-
-  \item{\dots}{
-Further parameters of random forest such as \code{mtry}, \code{nodesize}, \code{maxnodes}, or \code{min.node.size}.
-}
+  \item{Time}{Ordered timestamps, with one timestamp per observation. Use numeric indices, \code{Date}, or \code{POSIXct}. ISO date strings are accepted. If omitted, use the \code{ts} time index or consecutive observation indices. Prophet requires calendar timestamps.}
+  \item{DF}{Legacy data frame. The formula identifies the response column. Without a formula, the first column is the response and other columns are external predictors.}
+  \item{formula}{Optional regression formula for \code{DF}. Calendar columns can be used when calendar timestamps are supplied. The wrapper preserves the right-hand side and uses its internal response name.}
+  \item{SplitDataAt}{Legacy name for \code{SplitAt}.}
+  \item{Horizon}{Legacy forecast horizon. In the random forest and optimized compound wrappers, an omitted split with this argument selects the last \code{Horizon} observations as test data.}
+  \item{Package}{Random forest implementation: \code{"randomForest"} or \code{"ranger"}.}
+  \item{AutoCorrelation}{Legacy column index for the response in \code{DF}. It enables response lags. Use \code{Lags} in new calls.}
+  \item{AutoCorrelationNo}{Legacy number of consecutive response lags.}
+  \item{NoOfTree}{Positive integer. Number of trees.}
+  \item{PlotIt}{If \code{TRUE}, display the forecast plot. If \code{FALSE}, do not display plots. Plot settings do not change the forecast values.}
+  \item{Holidays}{For Prophet, a holiday data frame accepted by \code{prophet}. For random forest, an optional data frame with a \code{Time} column. Dates must be known at the forecast origin.}
+  \item{SimilarPoints}{Legacy option. Must be \code{FALSE}. The old feature used future response values and is not a valid forecast predictor.}
+  \item{tz}{Time zone used for calendar conversion where applicable. The default is UTC.}
+  \item{\dots}{Additional arguments for the model function identified in Details. Do not repeat arguments that the wrapper sets explicitly.}
+  \item{DataVec}{Numeric response vector. A univariate \code{ts} object is also accepted. Values after \code{SplitAt} are used only for evaluation.}
+  \item{SplitAt}{Index of the last training observation. The forecast starts at the next observation. The usual default uses all supplied observations. See Details for legacy defaults.}
+  \item{ForecastHorizon}{Positive integer. Number of observations to predict after \code{SplitAt}. The result always contains this number of forecast rows.}
+  \item{Predictors}{Optional data frame or matrix of external predictors. Supply one row per training observation or one row per supplied response observation. Values used for prediction must be available at the forecast origin.}
+  \item{FuturePredictors}{Optional predictor values for all forecast rows. Supply exactly \code{ForecastHorizon} rows and the same column names as \code{Predictors}. If omitted, use the corresponding rows after \code{SplitAt} in \code{Predictors}.}
+  \item{Lags}{Optional vector of distinct positive lag indices. For example, \code{c(1, 7)} uses the previous observation and the observation seven steps earlier. Later forecast steps use prior predictions when the required response is not yet observed.}
+  \item{Lookback}{Number of consecutive past observations supplied to the model. In regression methods, this is an alternative to \code{Lags}. It does not specify a seasonal cycle.}
+  \item{TimeStep}{Time interval. Use a positive number or a calendar unit: \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"hour"}, \code{"min"}, or \code{"sec"}. Numeric intervals use the units of \code{Time}: days for \code{Date}, seconds for \code{POSIXct}, and index units otherwise. If omitted, infer a regular interval from training timestamps.}
+  \item{SeasonalPeriod}{Positive integer. Number of observations in one seasonal cycle. The default uses the frequency of a \code{ts} input, or one for a numeric vector. This setting does not select an input window or aggregate data.}
+  \item{FutureTime}{Optional timestamps for all forecast rows. Supply exactly \code{ForecastHorizon} values after the forecast origin. They must agree with any observed test timestamps and with the regular interval required by the method.}
+  \item{Seed}{Optional nonnegative integer for reproducible random operations. The function restores the R random state after the call. TensorFlow can also depend on the runtime and hardware.}
 }
 \details{
-\code{mtry}: Number of variables randomly sampled as candidates at each split, usually d/3 or higher but lower than d
+Additional arguments go to the selected random forest function.
 
-\code{nodesize}('randomForest') or \code{min.node.size} ('ranger'): Default 5, Setting this number larger causes smaller trees to be grown . Trees are grown to the maximum node size possible. [Hastie et al., 2013] to grow as large trees as possible
+With calendar timestamps and a formula, available columns include \code{Weekdays}, \code{WeekNo}, \code{Months}, \code{Quarters}, \code{Years}, \code{Holidays}, and \code{Workingdays}. Weekdays use Monday = 1. Working days exclude weekends and supplied holidays. No national holiday calendar is assumed.
 
-\code{maxnodes}('randomForest' only):Maximum number of terminal nodes trees in the forest can have,If not given, trees are grown to the maximum possible (subject to limits by nodesize). [Hastie et al., 2013] to grow as large trees as possible
+The old \code{SimilarPoints} feature is rejected because it used future responses. If no predictors or lags are supplied, use lag one.
 
-if NULL than autocorralation defined by Horizon is used as predictor.
+\code{Fitted} contains in-sample regression predictions, not out-of-bag predictions. \code{FeatureImportance} stores model importance values. Prediction intervals are not supplied.
+
+New calls with \code{DataVec} default to a horizon of one. Legacy response calls without a horizon use the available test tail, or one step when there is no test tail.
 }
 \value{
-List with
-  \item{Forecast}{
-Vector [1:Horizon] of predicted forecast values of the test data, names if  \code{Time} given
-}
-  \item{TestDataPredictor}{
-
-See also \code{Horizon} for definiton, rownames are defined by \code{Time} if given.
-}
-
-
-\item{FeatureImportance}{
-	Importance of Features for Forecast, see \code{\link[randomForest]{importance}} or inpute parameter \code{importance} in \pkg{ranger} for details 
-}
-
-  \item{Accuracy}{
-Output of \code{\link[forecast]{accuracy}}
-}
-  \item{Model}{
-Output of either \code{\link[randomForest]{randomForest}} or  \code{\link[ranger]{ranger}}
-}
-
-  \item{TestDataIndicators}{
-data.frame[1:(d-1),1:Horizon], in the multivariate case all variables except predictor, in the other case NULL. 
-
-See also \code{Horizon} for definiton of length, rownames are defined by \code{Time} if given.
-}
-  \item{TrainData}{
-data.frame[1:d,1:k], see \code{Horizon} for definiton, rownames are defined by \code{Time} if given.
-}
+A named list with the common fields described in \code{\link{ForecastingInterface}}:
+\item{Forecast}{Response predictions. A vector of length \code{ForecastHorizon}, or a matrix with one column per series.}
+\item{ForecastTime}{One timestamp per forecast row.}
+\item{TrainData, TrainTime}{The observed training response and its timestamps.}
+\item{Fitted, Residuals}{Training fitted values and observed-minus-fitted residuals. Unsupported fields are \code{NULL}. Initial values can be missing.}
+\item{TestData, TestTime}{Observed response values aligned with the forecast rows and their timestamps. Unknown future responses are \code{NA}.}
+\item{Lower, Upper, Level}{Prediction bounds and coverage percentages. Unsupported intervals are \code{NULL}. Univariate bounds have one column per level. Multivariate bounds have dimensions horizon by series by level.}
+\item{Model}{The fitted model or model parameters.}
+\item{Accuracy}{The matrix from \code{\link{QualityMeasuresForecasting}}, with one row per response series. It contains N, MAE, RMSE, Bias, MASE, MAPE, SMAPE, AbsoluteError, RAE, RSE, MRD, and MRD_BIAS. It is \code{NULL} when no finite test comparisons are available.}
+\item{Info}{Method name, split index, forecast origin, horizon, time interval, seasonal period, response scale, and method-specific information.}
+See Details for additional fields.
 }
 \references{
 [Breiman, 2001]  Breiman, L., Random Forests, Machine Learning 45(1), 5-32, 2001.
@@ -107,19 +73,14 @@ data.frame[1:d,1:k], see \code{Horizon} for definiton, rownames are defined by \
 \author{
 Michael Thrun
 }
-
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-\seealso{
-\code{\link[randomForest]{randomForest}}, \code{\link[ranger]{ranger}}
-}
+\seealso{\code{\link{ForecastingInterface}}}
 \examples{
-##ToDo
+if (requireNamespace("randomForest", quietly = TRUE)) {
+  y <- as.numeric(Nile)
+  out <- FcRandomForest(DataVec = y, SplitAt = 80, ForecastHorizon = 3,
+    Lookback = 2, NoOfTree = 10, Seed = 1)
+  stopifnot(NROW(out$Forecast) == 3, length(out$ForecastTime) == 3,
+            all(is.finite(out$Forecast)))
 }
-\note{For n=1 example of forecasting [Thrun et al.,2019] it was visible to the data scientist that even with the choice of the same parameters and data \pkg{randomForest} extremly outperformed \pkg{ranger}. The reason is unknown and this information remains unpublished.
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{RandomForestForecast}% use one of  RShowDoc("KEYWORDS")
-\keyword{randomForest }% __ONLY ONE__ keyword per line
-\keyword{Forecast}
+\keyword{ts}

@@ -16,7 +16,7 @@ Ind = c((i-lag):(i+lag))
 Ind[Ind<1] = 1
 Ind[Ind>AnzDatavec] = AnzDatavec 
 if(Robust)
-  MovingStandardDeviation[i] = dbt.Statistics::stdrobust(Datavec[Ind])
+  MovingStandardDeviation[i] = DataVisualizations::Stdrobust(Datavec[Ind])
 else
   MovingStandardDeviation[i] = sd(Datavec[Ind],na.rm = na.rm)
 }

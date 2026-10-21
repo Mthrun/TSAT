@@ -1,107 +1,68 @@
 \name{FcDecompositionModelByRegression}
 \alias{FcDecompositionModelByRegression}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Forecasting with Automatic Decomposition Model By Regression
-}
-\description{
-Automatic approach for additive of multiplicative decomposition model generation. Dataset is divided into training and test data by SplitDataAt.
-}
+\title{Prophet decomposition forecasts}
+\description{Fit Prophet trend, seasonal, holiday, and optional external-regressor components.}
 \usage{
-FcDecompositionModelByRegression(DataFrame, TimeColumnName = "Time", 
-
-FeatureName ="Absatz", SplitDataAt, Frequency = "day",
-
-                 ForecastPeriods = 10, Holidays = NULL, PlotIt = TRUE,
-                 
-                 xlab = "Time", ylab = "Feature", EquiDist = TRUE,
-                 
-                 MinLowerBound = NULL, MaxUpperBound = NULL, \dots)
+FcDecompositionModelByRegression(DataFrame = NULL, TimeColumnName = "Time",
+  FeatureName = "Absatz", SplitDataAt = NULL, Frequency = NULL,
+  ForecastPeriods = NULL, Holidays = NULL, PlotIt = FALSE, xlab = "Time",
+  ylab = "Feature", EquiDist = TRUE, MinLowerBound = NULL, MaxUpperBound = NULL,
+  Cycles = list(), Growth = "linear", tz = "UTC", \dots, DataVec = NULL,
+  Time = NULL, SplitAt = NULL, ForecastHorizon = NULL, TimeStep = NULL,
+  FutureTime = NULL, Level = 80, Predictors = NULL, FuturePredictors = NULL,
+  PlotComponents = FALSE, Seed = NULL)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{DataFrame}{
-data frame of at least two columns of Time and a Feauture, see example
-}
-  \item{TimeColumnName}{
-name of time column in data frame, see example
-}
-  \item{FeatureName}{
-Feature name of variable which should be forecasted, see example
-}
-  \item{SplitDataAt}{
-index of row where the \code{DataFrame} is divided into test and train data, see example
-}
-  \item{Frequency}{
-'day', 'week', 'month', 'quarter', 'year', 1(1 sec), 60(1 minute) or 3600(1 hour)
-
-}
-  \item{ForecastPeriods}{
-how many days, weeks, etc,, should the model be foracested on?
-}
-  \item{Holidays}{
-data frame of time and dates, see example
-}
-  \item{PlotIt}{
-Plots data model and prediction with
-
-black dots: data
-
-dark green line: model based on training data
-
-red dots: prediction
-
-blue range: confidence intervall of model
-}
-  \item{xlab}{
-see ggplot2
-}
-  \item{ylab}{
-see ggplot2
-}
-  \item{EquiDist}{
-TRUE: time difference between each two points is equidisant, if not set FALSE
-}
-  \item{MinLowerBound}{
-due to bug from prophet does not work currently
-}
-  \item{MaxUpperBound}{
-due to bug from prophet does not work currently
-}
-  \item{\dots}{
-model paramters, see example
-}
+  \item{DataFrame}{Legacy Prophet data frame with time and response columns. Logistic growth can also use \code{cap} and \code{floor} columns.}
+  \item{TimeColumnName}{Name of the time column in \code{DataFrame}.}
+  \item{FeatureName}{Name of the response column in \code{DataFrame}.}
+  \item{SplitDataAt}{Legacy name for \code{SplitAt}.}
+  \item{Frequency}{Legacy name for \code{TimeStep}. The function does not aggregate observations. Aggregate data before the call.}
+  \item{ForecastPeriods}{Legacy name for \code{ForecastHorizon}.}
+  \item{Holidays}{For Prophet, a holiday data frame accepted by \code{prophet}. For random forest, an optional data frame with a \code{Time} column. Dates must be known at the forecast origin.}
+  \item{PlotIt}{If \code{TRUE}, display the forecast plot. If \code{FALSE}, do not display plots. Plot settings do not change the forecast values.}
+  \item{xlab}{Label for the time axis in the model-specific plot. In the ARIMA wrapper, this legacy argument is accepted for call compatibility.}
+  \item{ylab}{Label for the response axis in the model-specific plot. In the ARIMA wrapper, this legacy argument is accepted for call compatibility.}
+  \item{EquiDist}{If \code{TRUE}, require regular timestamps. If \code{FALSE}, allow irregular Prophet timestamps. Supply \code{FutureTime} when an interval cannot be inferred.}
+  \item{MinLowerBound}{Optional finite lower bound. Set the Prophet floor and clip returned predictions and bounds at this value.}
+  \item{MaxUpperBound}{Optional finite upper bound. Set the Prophet capacity and clip returned predictions and bounds at this value.}
+  \item{Cycles}{Optional Prophet cycle settings. Logical entries \code{monthly}, \code{quaterly} (legacy spelling), and \code{biyearly} enable cycles of 30.5, 365.25/4, and 2*365.25 days. \code{Orders} and \code{PriorScale} contain three values each. \code{Mirrored = TRUE} adds reflected training history; see Details.}
+  \item{Growth}{Prophet growth model, such as \code{"linear"} or \code{"logistic"}. Logistic growth requires capacity values.}
+  \item{tz}{Time zone used for calendar conversion where applicable. The default is UTC.}
+  \item{\dots}{Additional arguments for the model function identified in Details. Do not repeat arguments that the wrapper sets explicitly.}
+  \item{DataVec}{Numeric response vector. A univariate \code{ts} object is also accepted. Values after \code{SplitAt} are used only for evaluation.}
+  \item{Time}{Ordered timestamps, with one timestamp per observation. Use numeric indices, \code{Date}, or \code{POSIXct}. ISO date strings are accepted. If omitted, use the \code{ts} time index or consecutive observation indices. Prophet requires calendar timestamps.}
+  \item{SplitAt}{Index of the last training observation. The forecast starts at the next observation. The usual default uses all supplied observations. See Details for legacy defaults.}
+  \item{ForecastHorizon}{Positive integer. Number of observations to predict after \code{SplitAt}. The result always contains this number of forecast rows.}
+  \item{TimeStep}{Time interval. Use a positive number or a calendar unit: \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"hour"}, \code{"min"}, or \code{"sec"}. Numeric intervals use the units of \code{Time}: days for \code{Date}, seconds for \code{POSIXct}, and index units otherwise. If omitted, infer a regular interval from training timestamps.}
+  \item{FutureTime}{Optional timestamps for all forecast rows. Supply exactly \code{ForecastHorizon} values after the forecast origin. They must agree with any observed test timestamps and with the regular interval required by the method.}
+  \item{Level}{Prediction interval coverage, in percent. Each value must be between zero and 100. X-13, MAPA, and Prophet accept one value per call. Other methods can accept several values.}
+  \item{Predictors}{Optional data frame or matrix of external predictors. Supply one row per training observation or one row per supplied response observation. Values used for prediction must be available at the forecast origin.}
+  \item{FuturePredictors}{Optional predictor values for all forecast rows. Supply exactly \code{ForecastHorizon} rows and the same column names as \code{Predictors}. If omitted, use the corresponding rows after \code{SplitAt} in \code{Predictors}.}
+  \item{PlotComponents}{If \code{TRUE}, also display the Prophet component plots when \code{PlotIt} is \code{TRUE}.}
+  \item{Seed}{Optional nonnegative integer for reproducible random operations. The function restores the R random state after the call. TensorFlow can also depend on the runtime and hardware.}
 }
 \details{
-training data is used for model generation, test data is used for evaluating the quality by a comparision to given data.
+Additional arguments go to \code{prophet::prophet}. Custom cycle periods use days, not observation counts. Built-in seasonal options retain their Prophet meaning.
+
+\code{Cycles$Mirrored = TRUE} adds synthetic reflected training history. It requires regular Date timestamps and no external predictors. Use this option only when its assumption is appropriate.
+
+Logistic capacity values must cover all forecast dates. Bounds explicitly supplied by the user also clip predictions and intervals. With \code{uncertainty.samples = 0}, interval fields are \code{NULL}.
+
+The specific plot and component plots are preserved. \code{ModelForecast} contains the full prediction table. \code{ggObject} contains the forecast plot. \code{TrainingData} and \code{TrainingSetForecast} retain Prophet tables. Legacy data-frame calls with an omitted horizon forecast the test tail.
 }
 \value{
-
-  \item{Forecast}{
-Forecast, see example
-}
-  \item{TestData}{
-TestData, see example
-}
-  \item{TrainingData}{
-TrainingData, see example
-}
-  \item{Model}{
-model paramters, see example
-}
-
-  \item{ggObject}{
-ggplot object to change plot with
-
-black dots: data
-
-dark green line: model based on training data
-
-red dots: prediction
-
-blue range: confidence intervall of model
-}
-
+A named list with the common fields described in \code{\link{ForecastingInterface}}:
+\item{Forecast}{Response predictions. A vector of length \code{ForecastHorizon}, or a matrix with one column per series.}
+\item{ForecastTime}{One timestamp per forecast row.}
+\item{TrainData, TrainTime}{The observed training response and its timestamps.}
+\item{Fitted, Residuals}{Training fitted values and observed-minus-fitted residuals. Unsupported fields are \code{NULL}. Initial values can be missing.}
+\item{TestData, TestTime}{Observed response values aligned with the forecast rows and their timestamps. Unknown future responses are \code{NA}.}
+\item{Lower, Upper, Level}{Prediction bounds and coverage percentages. Unsupported intervals are \code{NULL}. Univariate bounds have one column per level. Multivariate bounds have dimensions horizon by series by level.}
+\item{Model}{The fitted model or model parameters.}
+\item{Accuracy}{The matrix from \code{\link{QualityMeasuresForecasting}}, with one row per response series. It contains N, MAE, RMSE, Bias, MASE, MAPE, SMAPE, AbsoluteError, RAE, RSE, MRD, and MRD_BIAS. It is \code{NULL} when no finite test comparisons are available.}
+\item{Info}{Method name, split index, forecast origin, horizon, time interval, seasonal period, response scale, and method-specific information.}
+See Details for additional fields.
 }
 \references{
 About the package behind it
@@ -117,108 +78,17 @@ concentrations: hydrology and biology contributions, Scientific Reports, Nature,
 \author{
 Michael Thrun for the easy-to-use wrapper, algorithm of prophet is used (see url)
 }
-\note{
-Usually, a model should also have a third part of data only used once  and for manual verification.
-}
-
+\seealso{\code{\link{ForecastingInterface}}}
 \examples{
-dates=c("2015-01-01","2015-01-02")
-names=c("New Year's Day","New Year's weekend")
-holidays=data.frame(ds=as.Date(dates),holiday=names
-)
-data('WeeklySalesUniformRandom')
-\donttest{
-
-##Forcasting 10 weeks of 166 weeks data of sales
-
-weeklyres=FcDecompositionModelByRegression(DataFrame = WeeklySalesUniformRandom,TimeColumnName ='Time' ,
-
-FeatureName = 'Sales',SplitDataAt = 156,Frequency = 'week',
-
-ForecastPeriods = 10,PlotIt = T,
-
-Holidays = holidays)
-
-\dontshow{
-#decrapricated
-#complete accurcay showing among other things
-# average sales difference between prediction and data (MAE)
-#weeklyres$Accuracy
-
-#mean Prediction quality
-#1-abs(mean(weeklyres$TestData$y) - weeklyres$Accuracy[2,3])/weeklyres$Accuracy[2,3]
+if (requireNamespace("prophet", quietly = TRUE)) {
+  y <- as.numeric(Nile)
+  time <- seq(as.Date("2000-01-01"), by = "day", length.out = length(y))
+  out <- FcDecompositionModelByRegression(DataVec = y, Time = time,
+    SplitAt = 80, ForecastHorizon = 3, Seed = 1,
+    yearly.seasonality = FALSE, weekly.seasonality = FALSE,
+    daily.seasonality = FALSE, uncertainty.samples = 20)
+  stopifnot(NROW(out$Forecast) == 3, length(out$ForecastTime) == 3,
+            all(is.finite(out$Forecast)))
 }
-#Plot components
-prophet::plot_forecast_component(weeklyres$Forecast,name = c('seasonal'))
-prophet::plot_forecast_component(weeklyres$Forecast,name = c('trend'))
-#further compoents in names(weeklyres$Forecast)
 }
-
-\donttest{
-###Forcasting thirdy days of 1093 days sales data frame
-##Grid Search fo Best Parameters
-
-#Generate all combinations of relevant paramters
-prophetGrid <- expand.grid(changepoint_prior_scale = c(0.05, 0.5, 0.001),
-                           seasonality_prior_scale = c(150,100,50, 10, 1,0.1),
-                           holidays_prior_scale = c(150,100,50, 10, 1,0.1),
-                           daily_seasonality=c(TRUE,FALSE)
-)
-
-results <- matrix(NaN, ncol=2,nrow = nrow(prophetGrid))
-#calculate all
-for (i in seq_len(nrow(prophetGrid))) {
-  parameters <- prophetGrid[i, ]
-  temp=FcDecompositionModelByRegression(
-    DataFrame = DailySales,TimeColumnName ='Time' ,
-    FeatureName = 'Sales',SplitDataAt = 1093,Frequency = 'day',
-    ForecastPeriods = 30,PlotIt = F,Holidays = holidays2,
-    seasonality.prior.scale = parameters$seasonality_prior_scale, 
-    changepoint.prior.scale = parameters$changepoint_prior_scale,
-    holidays.prior.scale = parameters$holidays_prior_scale,
-    daily.seasonality=parameters$daily_seasonality
-  )
-  results[i,]=temp$Accuracy[1,2:3]
-}
-# choose rmse or mae
-plot(results)
-#rmse chosen
-prophetGrid <- cbind(prophetGrid, results[,1])
-#best paramters found
-DailyParameters <- prophetGrid3[prophetGrid3results == min(results[,1]), ]
-
-dailyres=FcDecompositionModelByRegression(DataFrame = DailySales,TimeColumnName ='Time',
-
-FeatureName = 'Sales',SplitDataAt = 1093,Frequency = 'day',
-
-ForecastPeriods = 30,PlotIt = T,Holidays = holidays2,
-
-seasonality.prior.scale = DailyParameters$seasonality_prior_scale, 
-
-changepoint.prior.scale = DailyParameters$changepoint_prior_scale,
-
-holidays.prior.scale = DailyParameters$holidays_prior_scale,
-
-daily.seasonality=DailyParameters$daily_seasonality)
-
-dailyres$Accuracy
-
-1-abs(mean(dailyres$TestData$y) - dailyres$Accuracy[2,3])/dailyres$Accuracy[2,3]
-}
-
-##multiplikative
-
-data(AirPassengers)
-DF=ConvertTS2DF(AirPassengers)
-model=FcDecompositionModelByRegression(DataFrame = DF,TimeColumnName ='Time' ,
-
-FeatureName = 'Data',SplitDataAt = 120,Frequency = 'month',
-
-ForecastPeriods = 24,PlotIt = T,seasonality.mode = 'multiplicative')
-
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{decomposition}% use one of  RShowDoc("KEYWORDS")
-\keyword{decomposition model}% __ONLY ONE__ keyword per line
-\keyword{prophet}%
+\keyword{ts}

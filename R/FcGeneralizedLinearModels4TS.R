@@ -1,124 +1,134 @@
-# res = FcGeneralizedLinearModels4TS(Response, SplitAt, Predictor1, Time)
-#
-# DESCRIPTION
-# Generalized linear models for the forecast of time series in the multivariate case
-#
-# INPUT
-# Response            [1:n] vector with an value of each time j in [1,n]
-# SplitAt             Index of row where the DataVec is divided into test and train data. If not given n is used
-# Predictor1          [1:n] vector with an value of each time j in [1,n]
-# Predictor2          [1:n] vector with an value of each time j in [1,n]. Can also be NULL if not used
-# OPTIONAL
-# Time                [1:n] time vector in case of PlotIt=TRUE
-# CorrectionFactor    Scalar, if TRUE: the predicted time series will begin at the same point as the last value of the training set. All other values will be mulitplied by a factor accordingly.
-# PlotIt              FALSE (default), do nothing. TRUE: plots an evaluation of the forecast on the test data
-# Summary             Output of glm is evaluated further
-# ...                 Further arguments passed to glm
-#
-# OUTPUT
-# Forecast            [k:n], the forecast, of the time interval [k,n] which was not used in the model
-# TestSet             [k:n], the part of Response not used in the model
-# Accuracy            ME, RMSE, MAE, MPE, MAPE of training and test dataset in a matrix 
-# Errors              Residuals: TestSet-Forecast
-# Model               Output of glm
-#
-# DETAILS
-# Assumption: Response and Predictors have the same time intervals, the same starting time and the same length.
-#
-# Author: MCT
-
-FcGeneralizedLinearModels4TS=function(Response,SplitAt,Predictor1,Predictor2=NULL,Time,CorrectionFactor=FALSE,PlotIt=FALSE,Summary=FALSE,...){
-  #response : Full$CallsAsIssues
-  #predictiors:  Full$Temperature
-  
-  
-  if(missing(SplitAt)) {
-    warning('Input for SplitAt was not given. Setting SplitAt to length(DataVec)')
-    SplitAt = length(Response)
+FcGeneralizedLinearModels4TS <- function(
+  Response = NULL, SplitAt = NULL,
+  Predictor1 = NULL, Predictor2 = NULL, Time = NULL, CorrectionFactor = FALSE,
+  PlotIt = FALSE, Summary = FALSE, ..., DataVec = NULL, ForecastHorizon = NULL,
+  Predictors = NULL, FuturePredictors = NULL, Lags = NULL, Lookback = NULL,
+  TimeStep = NULL, SeasonalPeriod = NULL, FutureTime = NULL
+) {
+  if (!is.null(DataVec) && !is.null(Response) &&
+    !isTRUE(all.equal(DataVec, Response, check.attributes = FALSE)))
+    stop("Use either DataVec or Response, or give equal values.", call. = FALSE)
+  DataVec <- if (is.null(DataVec)) Response else DataVec
+  if (is.null(SplitAt)) SplitAt <- length(DataVec)
+  if (is.null(ForecastHorizon))
+    ForecastHorizon <- if (is.null(Response)) 1L else max(1L, length(DataVec) - SplitAt)
+  if (!is.null(Predictor1)) {
+    old <- data.frame(Predictor1 = Predictor1)
+    if (!is.null(Predictor2)) old$Predictor2 <- Predictor2
+    if (!is.null(Predictors) && !is.null(old) &&
+      !isTRUE(all.equal(Predictors, old, check.attributes = FALSE)))
+      stop("Use either Predictors or Predictor1/Predictor2, or give equal values.", call. = FALSE)
+    Predictors <- if (is.null(Predictors)) old else Predictors
+  } else if (!is.null(Predictor2)) stop("Predictor2 requires Predictor1.")
+  p <- forecastPrepare(DataVec, Time, SplitAt, ForecastHorizon, TimeStep,
+    SeasonalPeriod, FutureTime,
+    PlotIt = PlotIt
+  )
+  if (!is.logical(CorrectionFactor) || length(CorrectionFactor) != 1L || is.na(CorrectionFactor))
+    stop("CorrectionFactor must be TRUE or FALSE.", call. = FALSE)
+  if (!is.logical(Summary) || length(Summary) != 1L || is.na(Summary))
+    stop("Summary must be TRUE or FALSE.", call. = FALSE)
+  if (!is.null(Lookback)) {
+    if (!is.numeric(Lookback) || length(Lookback) != 1L || !is.finite(Lookback) ||
+      Lookback < 1L || Lookback > .Machine$integer.max || Lookback != floor(Lookback))
+      stop("Lookback must be one positive integer.", call. = FALSE)
+    if (!is.null(Lags) && !identical(Lags, as.numeric(seq_len(Lookback))) &&
+      !identical(Lags, seq_len(Lookback)))
+      stop("Supply either Lags or Lookback, or give equal lag settings.", call. = FALSE)
+    Lags <- seq_len(Lookback)
   }
-  if(missing(Time)) {
-    Time = 1:length(Response)
-    warning('No input for Time was given, will use 1:length(DataVec) for Time')
-  }
-  
-  inputs = checkInputForecasting(Response, Time, SplitAt, 1, PlotIt)
-  Response = inputs$DataVec
-  Time = inputs$Time
-  SplitAt = inputs$SplitAt
-  PlotIt = inputs$PlotIt
-  
-  if(!is.vector(Predictor1) || mode(Predictor1)!="numeric") {
-    stop('Input for Predictor1 should be a numeric vector')
-  }
-
-  
-  if(!is.logical(CorrectionFactor)) {
-    warning('Input for CorrectionFactor is not logical. Setting CorrectionFactor to FALSE')
-    CorrectionFactor = FALSE
-  }
-  
-  if(!is.logical(Summary)) {
-    warning('Input for Summary is not logical. Setting Summary to FALSE')
-    Summary = FALSE
-  }
-  
-  
-  
-  N=length(Response)
-  TestSetTime=Time[(SplitAt+1):N]
-  TrainingTime=Time[1:SplitAt]
-
-
-  if(is.null(Predictor2)){
-    Train=data.frame(Response=Response[1:SplitAt],Predictor1=Predictor1[1:SplitAt])
-    TestSet=data.frame(Response=Response[(SplitAt+1):N],Predictor1=Predictor1[(SplitAt+1):N])
-    
-    model=glm(Response~ Predictor1,data = Train,...)
-  
-    new <- data.frame(Predictor1 = TestSet$Predictor1)
-    predicted=predict(model,new)
-  
-  }else{
-    if(!is.vector(Predictor2) || mode(Predictor2)!="numeric") {
-      stop('Input for Predictor2 should be a numeric vector')
+  if (is.null(Lags)) Lags <- integer()
+  if (!is.numeric(Lags) || any(!is.finite(Lags)) ||
+    any(Lags < 1L | Lags > .Machine$integer.max | Lags != floor(Lags)) ||
+    anyDuplicated(Lags))
+    stop("Lags must contain distinct positive integers.", call. = FALSE)
+  Lags <- as.integer(Lags)
+  # Check predictor rows here so the training split is visible in this model.
+  train.predictors <- future.predictors <- NULL
+  if (is.null(Predictors)) {
+    if (!is.null(FuturePredictors))
+      stop("FuturePredictors requires training Predictors.", call. = FALSE)
+  } else {
+    predictors <- as.data.frame(Predictors)
+    if (!(NROW(predictors) %in% c(p$k, p$n)) || !NCOL(predictors) ||
+      anyDuplicated(names(predictors)) ||
+      any(grepl("^\\.(Response$|Lag[0-9]+$|Season[0-9]+$)", names(predictors))))
+      stop("Predictors need one row per training or supplied observation and unique column names.",
+        call. = FALSE
+      )
+    train.predictors <- predictors[seq_len(p$k), , drop = FALSE]
+    if (anyNA(train.predictors) || any(vapply(
+      train.predictors,
+      function(column) is.numeric(column) && any(!is.finite(column)), logical(1)
+    )))
+      stop("Training Predictors contain missing or infinite values.", call. = FALSE)
+    if (is.null(FuturePredictors)) {
+      if (NROW(predictors) < p$k + p$h)
+        stop("Supply FuturePredictors for all forecast steps.", call. = FALSE)
+      future.predictors <- predictors[p$k + seq_len(p$h), , drop = FALSE]
+    } else {
+      future.predictors <- as.data.frame(FuturePredictors)
+      if (NROW(future.predictors) != p$h ||
+        !identical(names(future.predictors), names(train.predictors)))
+        stop("FuturePredictors needs ForecastHorizon rows and the training predictor columns.",
+          call. = FALSE
+        )
     }
-    
-    Train=data.frame(Response=Response[1:SplitAt],Predictor1=Predictor1[1:SplitAt],Predictor2=Predictor2[1:SplitAt])
-    TestSet=data.frame(Response=Response[(SplitAt+1):N],Predictor1=Predictor1[(SplitAt+1):N],Predictor2=Predictor2[(SplitAt+1):N])
-    
-    model=glm(Response~ Predictor1+Predictor2,data = Train)
-    
-    new <- data.frame(Predictor1 = TestSet$Predictor1,Predictor2 = TestSet$Predictor2)
-    predicted=predict(model,new)
+    if (anyNA(future.predictors) || any(vapply(
+      future.predictors,
+      function(column) is.numeric(column) && any(!is.finite(column)), logical(1)
+    )))
+      stop("FuturePredictors contain missing or infinite values.", call. = FALSE)
   }
-  if(CorrectionFactor)
-    # Factor=mean(c((Response[SplitAt]/predicted[1]),1))
-    Factor=Response[SplitAt]/predicted[1]
-  else
-    Factor=1
-  
-  predicted=predicted*Factor
-  
-  if(Summary){
-    summary(model)
-    # 1-pchisq(410883496,68)
-    
-    plot(model)
+  regressors <- list(Train = train.predictors, Future = future.predictors)
+  # LagVector shifts the response. Remove the initial rows with unavailable lags.
+  if (is.null(regressors$Train) && !length(Lags)) Lags <- 1L
+  offset <- if (length(Lags)) max(Lags) else 0L
+  if (p$k - offset < 3L)
+    stop("The input history leaves too few training rows.", call. = FALSE)
+  training.rows <- seq.int(offset + 1L, p$k)
+  training.data <- data.frame(.Response = p$Train[training.rows])
+  if (!is.null(regressors$Train))
+    training.data <- cbind(training.data, regressors$Train[training.rows, , drop = FALSE])
+  for (lag in Lags)
+    training.data[[paste0(".Lag", lag)]] <- LagVector(p$Train, lag)[training.rows]
+  fit <- stats::glm(.Response ~ ., data = training.data, ...)
+  fc <- RecursiveForecast(p$Train, p$h, forecastPredictGLM, Lags,
+    regressors$Future,
+    Model = fit
+  )
+  factor <- 1
+  if (CorrectionFactor) {
+    if (fc[1] == 0) stop("CorrectionFactor cannot use a zero first forecast.")
+    factor <- tail(p$Train, 1L) / fc[1]
+    fc <- fc * factor
   }
-  
-  if(PlotIt){
-    if(missing(Time)){
-      # plot(TestSet$Response,type = 'l')
-      # points(predicted,type='l',col='red')
-      plotEvaluationFilteredTS(1:length(predicted),TestSet$Response,predicted,TRUE)
-    }else{
-      plotEvaluationFilteredTS(Time[(SplitAt+1):N],TestSet$Response,predicted,FALSE)
-    }
-  }
-  x=predicted
-  y=TestSet$Response
-  Residuals=x-y
-  AccuracyTrain=forecast::accuracy(predicted, TestSet$Response)
-  # InspectVariable(abs(x-y)/max(y))
-  return(invisible(list(Forecast=predicted,TestData=data.frame(Response=TestSet$Response,Time=TestSetTime),Accuracy=AccuracyTrain,Residuals=Residuals,Model=model,TrainData=data.frame(Response=Train$Response,Time=TrainingTime),CorrectionFactor=Factor)))
+  fitted <- rep(NA_real_, p$k)
+  fitted[training.rows] <- stats::fitted(fit)
+  if (Summary) print(summary(fit))
+  forecast <- as.numeric(fc)
+  if (length(forecast) != p$h || any(!is.finite(forecast)))
+    stop("The model did not return a finite forecast of the requested size.", call. = FALSE)
+  if (length(fitted) != p$k)
+    stop("Fitted values do not match the training data.", call. = FALSE)
+  result <- list(
+    Forecast = forecast, ForecastTime = p$ForecastTime,
+    TrainData = p$Train, TrainTime = p$TrainTime,
+    Fitted = fitted, Residuals = p$Train - fitted,
+    TestData = p$TestData, TestTime = p$ForecastTime,
+    Lower = NULL, Upper = NULL,
+    Level = NULL, Model = fit,
+    Accuracy = QualityMeasuresForecasting(p$TestData, forecast,
+      TrainingData = p$Train, SeasonalPeriod = p$Season
+    ),
+    Info = list(
+      Method = "Generalized linear model", SplitAt = p$k, Origin = tail(p$TrainTime, 1L),
+      ForecastHorizon = p$h, TimeStep = p$Step, SeasonalPeriod = p$Season,
+      Scale = "response",
+      Lags = Lags
+    ),
+    CorrectionFactor = factor
+  )
+  if (PlotIt) PlotForecast(result)
+  result
 }

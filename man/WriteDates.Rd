@@ -8,7 +8,8 @@ Write Dates
   Saves univariate or multivariate time series in daily resolution to a *.csv file similar to a *.lrn
 }
 \usage{
-WriteDates(FileName, TSdata, Key = c(), OutDirectory = getwd(), Comments = NULL)
+WriteDates(FileName, TSdata, Key = c(), OutDirectory = getwd(),
+  CleanNames = FALSE, Comments = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,6 +28,7 @@ Optional: String, name of directory the data will be saved in, default \code{get
   \item{Comments}{
 A string which is inserted as a comment in the first line in the file
 }
+\item{CleanNames}{If TRUE, remove control characters from text values.}
 }
 \details{
   Comfortably writes univariate or multivariate time series in daily resolution to a file similar to the LRN Format. The header is always the named columns of the data.frame or tibble.

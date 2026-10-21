@@ -9,16 +9,14 @@ MAPA does not work on daily data well. Hence, data is aggregated to monthly data
 of a Fiskal week (5-4-4 week months).
 }
 \usage{
-MAPA_daily2FiskalWeek(DailyTime, DailyData, SplitAt, ForecastHorizon = 12, ForecastHorizonMonthly = 12, FiskalMonthSeason = 12, FUN = sum, Confidence = c(0.95), na.rm = TRUE, ...)
+MAPA_daily2FiskalWeek(DailyTime, DailyData, SplitAt, ForecastHorizon = 12,
+  ForecastHorizonMonthly = 12, FiskalMonthSeason = 12, FUN = sum,
+  Confidence = c(0.95), na.rm = TRUE, tz = "UTC", \dots)
 }
 
 \arguments{
-  \item{DailyTime}{
-%%     ~~Describe \code{DailyTime} here~~
-}
-  \item{DailyData}{
-%%     ~~Describe \code{DailyData} here~~
-}
+  \item{DailyTime}{Daily observation timestamps.}
+  \item{DailyData}{Numeric daily response vector.}
   \item{SplitAt}{
 Integer for splitting time of a monthly frequency
 }
@@ -31,29 +29,22 @@ numer of weeks can not be higher than the weeks given in the months of
   \item{ForecastHorizonMonthly}{
 Forecast horizon in months used in mapa, 
 }
-  \item{FiskalMonthSeason}{
-%%     ~~Describe \code{FiskalMonthSeason} here~~
-}
-  \item{FUN}{
-%%     ~~Describe \code{FUN} here~~
-}
-  \item{Confidence}{
-%%     ~~Describe \code{Confidence} here~~
-}
-  \item{na.rm}{
-%%     ~~Describe \code{na.rm} here~~
-}
+  \item{FiskalMonthSeason}{Fiscal months per seasonal cycle.}
+  \item{FUN}{Aggregation function, normally sum.}
+  \item{Confidence}{One prediction coverage probability between zero and one.}
+  \item{na.rm}{If TRUE, pass na.rm=TRUE to the aggregation function.}
   \item{\dots}{
 Further arguments for \code{\link[MAPA]{mapa}}
 }
+\item{tz}{Time zone used for timestamp conversion.}
 }
 \details{
-Multiple Aggregation Prediction Algorithm is used. Function assumes a regular time series of daily data and a split at the monthly level.
+Aggregate daily observations to ISO fiscal months. Fit MAPA using only months through SplitAt. Divide each monthly forecast equally across its fiscal weeks. The pattern is 5, 4, 4 weeks per quarter; ISO week 53 belongs to month 12. Future dates do not depend on test data. Unknown future observations are NA. The monthly training sequence must be complete and finite. Removing missing daily values does not remove missing fiscal months. The bounds describe equal allocations of monthly totals, not the variation of individual weekly observations.
 }
 \value{
 List of
 \item{MAPA_F}{data frame, 1:ForecastHorizon, testdata, testtime and forecast FF}
-\item{MAPA_Object}{}
+\item{MAPA_Object}{Native MAPA result.}
 \item{Conf}{data frame, 1:ForecastHorizon of Confidence Intervall}
 }
 \references{

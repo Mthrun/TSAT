@@ -1,4 +1,8 @@
 RelativeDifferenceBetweenTS=function(TS1,TS2,na.rm=TRUE,Silent=FALSE){
+#TS1:Today = 3
+#TS2:Yesterday = 2
+#TemporalRelativeDifference(c(2,3),Lag=1)[2] ==RelativeDifferenceBetweenTS(2,3)
+
     if(isTRUE(na.rm)){
       requireNamespace('imputeTS')
       if(sum(!is.finite(TS1))>0)
@@ -19,10 +23,7 @@ RelativeDifferenceBetweenTS=function(TS1,TS2,na.rm=TRUE,Silent=FALSE){
         "RelativeDifferenceBetweenTS works only for positive values correctly but negative values were found in TS1. These cases are set to zero."
       )
   }else{
-    if(isFALSE(Silent))
-      warning(
-        "RelativeDifferenceBetweenTS works only for positive values correctly but negative values were found in TS1."
-      )
+
   }
   
   
@@ -33,13 +34,10 @@ RelativeDifferenceBetweenTS=function(TS1,TS2,na.rm=TRUE,Silent=FALSE){
     }
     if(isFALSE(Silent))
       message(
-        "RelativeDifferenceBetweenTS works only for positive values correctly but negative values were found in TS1. These cases are set to zero."
+        "RelativeDifferenceBetweenTS works only for positive values correctly but negative values were found in TS2. These cases are set to zero."
       )
   }else{
-    if(isFALSE(Silent))
-      warning(
-        "RelativeDifferenceBetweenTS works only for positive values correctly but negative values were found in TS1."
-      )
+
   }
   
     deno <- TS1 + TS2
@@ -47,7 +45,8 @@ RelativeDifferenceBetweenTS=function(TS1,TS2,na.rm=TRUE,Silent=FALSE){
     if (sum(nZeroInd) > 0) {
       deno[nZeroInd] = 1
     }
-    relDiff = 2 * (TS1 - TS2)/deno
+    #analog zu RelativeDifference und TemporalRelativeDifferences
+    relDiff = 2 * (TS2 - TS1)/deno
     return(relDiff)
 
 }

@@ -18,7 +18,7 @@ This can be done in two ways:
 }
 \usage{
 WaveletOutlierDetection(Data, Factor = 1.5, Strategy="mean",
-Order = 7, Filter="haar", NumLevels=2, Boundary="periodic", Fast=T, PlotIt=F,
+Order = 7, Filter="haar", NumLevels=2, Boundary="periodic", Fast=TRUE, PlotIt=FALSE,
 Threshold="zero", Lambda=0.05, FilterLevels="all")
 }
 \arguments{
@@ -85,7 +85,8 @@ https://cran.r-project.org/web/packages/wavelets/index.html
 Q. Stier
 }
 \examples{
-load("TempMelbourneAustralia")
+# Load package data; do not read a file from the working directory.
+data("TempMelbourneAustralia")
 VarO1 = TempMelbourneAustralia$Temp
 VarI1 = forecast::na.interp(VarO1)
 Outliers = WaveletOutlierDetection(VarI1, Order = 7)

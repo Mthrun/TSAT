@@ -1,64 +1,14 @@
-EventCounts=function(Events,PlotIt=FALSE,main="Histogram of Events",xlab='Event Names'){
-#EventCounts(Events,PlotIt=FALSE,main="Histogram of Events",xlab='Event names')
-# INPUT
-# Events [1:n] vector of events to be counted, character or numerical
-# PlotIt TRUE (default): Plots histogram
-# main #title of plot
-# xlab  #xlabel of pöot
-# Output
-# Data[1:k,1:3] k breaks of (k different events) with counts as second column and event names as third column 
-#author: MT 12/2017
-z=Events
-Counts=c()
-if(is.numeric(z)){
-
-  Breaks=1:max(unique(z),na.rm = T)
-  Breaks2=Breaks
-  for(i in 1:max(Breaks)){
-    tempvr=sum(z==Breaks[i],na.rm = T)
-     #if(tempvr>0)#{
-      Counts=c(Counts,tempvr)
-    # }else{
-    #   Breaks2=Breaks2[-i]
-    # }
-    tempvr=c()
-  } 
-  # Breaks=Breaks2
-  ind=which(Counts!=0)
-  Counts=Counts[ind]
-  names=as.character(Breaks[ind])
-  Breaks=1:length(Breaks[ind])
-
-  MiN=1#min(z, na.rm = TRUE)
-  MaX=length(Breaks[ind])#max(z, na.rm = TRUE)
-
-}else{
-  MiN=1
-  x=sort(unique(z))
-  MaX=length(x)
-  Breaks=1:length(x)
-  
-  for(i in 1:max(Breaks)) {
-     tempvr=sum(z==x[i],na.rm = T)
-    # if(tempvr>0){
-       Counts=c(Counts,tempvr)
-    # }else{
-    #   x=x[-i]
-    #   Breaks=Breaks[-i]
-    # }
-
-  }
-  names=x
-}
-
-ind=order(Counts,decreasing = T,na.last = T)
-Counts=Counts[ind]
-names=names[ind]
-
-if(PlotIt)
-  PlotEventCounts(Counts,Names=names,main=main,xlab=xlab)
-
-Data=cbind(Breaks,Counts,names)
-colnames(Data)=c('Breaks','Counts','Names')
-return(Data)
+EventCounts <- function(Events, PlotIt = FALSE, main = "Histogram of Events", xlab = "Event Names") {
+  if (!is.atomic(Events) || !is.null(dim(Events))) stop("Events must be a vector.")
+  if (!is.logical(PlotIt) || length(PlotIt) != 1L || is.na(PlotIt))
+    stop("PlotIt must be TRUE or FALSE.", call. = FALSE)
+  events <- Events[!is.na(Events)]
+  # Count the actual labels. A sequence from one omits zero and negative events.
+  labels <- sort(unique(events))
+  counts <- tabulate(match(events, labels), nbins = length(labels))
+  index <- order(counts, decreasing = TRUE)
+  counts <- counts[index]
+  labels <- as.character(labels[index])
+  if (PlotIt && length(counts)) PlotEventCounts(counts, Names = labels, main = main, xlab = xlab)
+  cbind(Breaks = as.character(seq_along(counts)), Counts = as.character(counts), Names = labels)
 }

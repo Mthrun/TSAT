@@ -8,7 +8,8 @@ Plots many time series in parallel from a matrix of Data
 It is a shortcut wrapper for \code{\link[latticeExtra]{horizonplot}} in order to omit the manual creation of \code{ts} objects
 }
 \usage{
-ParallelTSlinePlots(Data, Time, DailyRegular = TRUE, scales = list(y = "same"), cols, ...)
+ParallelTSlinePlots(Data, Time, DailyRegular = TRUE, scales = list(y = "same"),
+  cols, tz = "UTC", \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,6 +31,7 @@ Optional, color scale as character vector. Default is \code{\link[DataVisualizat
   \item{\dots}{
 Optional arguments passed on to \code{\link[latticeExtra]{horizonplot}} 
 }
+\item{tz}{Time zone used for timestamp conversion.}
 }
 \details{
 If \code{DailyRegular=FALSE}, then the x axis will be in UNIX seconds since 1970-01-01.

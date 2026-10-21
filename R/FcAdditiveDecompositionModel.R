@@ -1,108 +1,60 @@
-FcAdditiveDecompositionModel=function(Data,SeasonalLength,NoSteps,alpha,beta,gamma,Silent=FALSE){
-  #author: MCT
-  #SAP empfielt bei produkten multiplicativen holt winters
-  if(length(Data)<(2*SeasonalLength)-1) warning('Data is to small for Seasonal length. Either generarate more data or reduce the length of season.')
-
-    if(alpha>1){
-      if(isTRUE(Silent)){
-      warning(
-        'Please set alpha only below one.'
-      )
-      }
-     alpha=0.999
-    }  
-    if(alpha<0){
-      if(isTRUE(Silent)){
-      warning(
-        'Please set alpha only above zero.'
-      )
-      }
-      alpha=0.001
-    }
-    if(beta>1){
-      if(isTRUE(Silent)){
-      warning(
-        'Please set beta only below one.'
-      )
-      }
-      beta=0.999
-    }  
-    if(beta<0){
-      if(isTRUE(Silent)){
-      warning(
-        'Please set beta only above zero.'
-      )
-      }
-      beta=0.001
-    }
-    if(gamma>1){
-      if(isTRUE(Silent)){
-      warning(
-        'Please set gamma only below one.'
-      )
-      }
-      gamma=0.999
-    }  
-    if(gamma<0){
-      if(isTRUE(Silent)){
-      warning(
-        'Please set gamma only above zero.'
-      )
-      }
-      gamma=0.001
-    }
-  if(sum(alpha+beta+gamma)>1){
-    warning('Sum of parameters should not be higher than one.')
-  }
-  ## Trend part ----
-  InitialTrend=0
-  for(i in 1:(SeasonalLength)){
-    InitialTrend=InitialTrend+(Data[(i-1)+SeasonalLength]-Data[i])/SeasonalLength
-  }
-  InitialTrend=InitialTrend/SeasonalLength
-  InitialTrend
-  
-  # Seasonal part ----
-  NoSeasons=floor(length(Data)/SeasonalLength)
-  if(NoSeasons!=length(Data)/SeasonalLength) warning('Length of Data is cannot be divided by SeasonalLength without a rest.')
-  
-  SeasonsAverage=c()#[1]=sum(Data[seq(from=1,to=SeasonalLength,by=1)])/SeasonalLength
-  for(i in 1:NoSeasons){
-    SeasonsAverage[i]=sum(Data[seq(from=SeasonalLength*(i-1)+1,to=(SeasonalLength*(i-1)+SeasonalLength),by=1)])/SeasonalLength
-  }
-
-  Seasonals=c()
-  for(i in 1:SeasonalLength){
-    Bin=0
-    for(j in 1:NoSeasons){
-      Bin=Bin+Data[SeasonalLength*(j-1)+i]-SeasonsAverage[j]
-    }
-    Seasonals[i]=Bin/NoSeasons
-  }
- 
-  #Additive Decomposition
-  FitAndForecast=c()
-  for(i in 1:(length(Data)+NoSteps)){
-    if(i==1){
-      Level=Data[1]
-      Trend=InitialTrend
-      FitAndForecast[i]=Level
-    }
-    if(i>length(Data)){
-      m=i-length(Data)
-      FitAndForecast[i]=Level+m*Trend+Seasonals[(i)%%SeasonalLength+1]
-    }else{
-      cur=Data[i]
-      LastLevel=Level
-      #Level
-      Level=alpha*(cur-Seasonals[(i)%%SeasonalLength+1])+(1-alpha)*(Level+Trend)
-      #Trend
-      Trend=beta*(Level-LastLevel)+(1-beta)*Trend
-      #Seasonal
-      Seasonals[(i)%%SeasonalLength+1]=gamma*(cur-Level)+(1-gamma)*Seasonals[(i)%%SeasonalLength+1]
-      #FitAndForecast
-      FitAndForecast[i]=Level+Trend+Seasonals[(i)%%SeasonalLength+1]
-    }
-  }
-  return(FitAndForecast)
+FcAdditiveDecompositionModel <- function(
+  Data = NULL, SeasonalLength = NULL,
+  NoSteps = NULL, alpha = 0.2, beta = 0.1, gamma = 0.1, Silent = TRUE,
+  DataVec = NULL, Time = NULL, SplitAt = NULL, ForecastHorizon = NULL,
+  TimeStep = NULL, SeasonalPeriod = NULL, FutureTime = NULL, PlotIt = FALSE
+) {
+  if (!is.null(DataVec) && !is.null(Data) &&
+    !isTRUE(all.equal(DataVec, Data, check.attributes = FALSE)))
+    stop("Use either DataVec or Data, or give equal values.", call. = FALSE)
+  DataVec <- if (is.null(DataVec)) Data else DataVec
+  if (!is.null(SeasonalPeriod) && !is.null(SeasonalLength) &&
+    !isTRUE(all.equal(SeasonalPeriod, SeasonalLength, check.attributes = FALSE)))
+    stop("Use either SeasonalPeriod or SeasonalLength, or give equal values.", call. = FALSE)
+  SeasonalPeriod <- if (is.null(SeasonalPeriod)) SeasonalLength else SeasonalPeriod
+  if (!is.null(ForecastHorizon) && !is.null(NoSteps) &&
+    !isTRUE(all.equal(ForecastHorizon, NoSteps, check.attributes = FALSE)))
+    stop("Use either ForecastHorizon or NoSteps, or give equal values.", call. = FALSE)
+  ForecastHorizon <- if (is.null(ForecastHorizon)) NoSteps else ForecastHorizon
+  if (is.null(ForecastHorizon)) ForecastHorizon <- 1L
+  if (is.null(SplitAt)) SplitAt <- length(DataVec)
+  p <- forecastPrepare(DataVec, Time, SplitAt, ForecastHorizon, TimeStep,
+    SeasonalPeriod, FutureTime,
+    PlotIt = PlotIt
+  )
+  if (!is.logical(Silent) || length(Silent) != 1L || is.na(Silent))
+    stop("Silent must be TRUE or FALSE.", call. = FALSE)
+  parameters <- c(alpha, beta, gamma)
+  if (length(parameters) != 3L || any(!is.finite(parameters)) || any(parameters < 0 | parameters > 1))
+    stop("alpha, beta, and gamma must each be a number between zero and one.")
+  if (p$k < 2L * p$Season || p$k %% p$Season != 0L)
+    stop("The compound model requires at least two complete training cycles and no partial cycle.")
+  values <- forecastAdditiveFit(p$Train, p$Season, p$h, alpha, beta, gamma, Silent)
+  fit <- list(AlphaBetaGamma = parameters, SeasonalPeriod = p$Season)
+  forecast <- as.numeric(tail(values, p$h))
+  if (length(forecast) != p$h || any(!is.finite(forecast)))
+    stop("The model did not return a finite forecast of the requested size.", call. = FALSE)
+  fitted <- as.numeric(head(values, p$k))
+  if (length(fitted) != p$k)
+    stop("Fitted values do not match the training data.", call. = FALSE)
+  out <- list(
+    Forecast = forecast, ForecastTime = p$ForecastTime,
+    TrainData = p$Train, TrainTime = p$TrainTime,
+    Fitted = fitted, Residuals = p$Train - fitted,
+    TestData = p$TestData, TestTime = p$ForecastTime,
+    Lower = NULL, Upper = NULL,
+    Level = NULL, Model = fit,
+    Accuracy = QualityMeasuresForecasting(p$TestData, forecast,
+      TrainingData = p$Train, SeasonalPeriod = p$Season
+    ),
+    Info = list(
+      Method = "Additive compound model", SplitAt = p$k, Origin = tail(p$TrainTime, 1L),
+      ForecastHorizon = p$h, TimeStep = p$Step, SeasonalPeriod = p$Season,
+      Scale = "response",
+      FittedType = "one-step prediction after two initialization cycles"
+    ),
+    FitAndForecast = values, AlphaBetaGamma = parameters
+  )
+  if (PlotIt) forecastCompoundPlot(out)
+  out
 }

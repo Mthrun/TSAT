@@ -1,80 +1,45 @@
 \name{FcAdditiveDecompositionModel}
 \alias{FcAdditiveDecompositionModel}
-
-\title{
-Forecasting with Additive Decomposition Model
-}
-\description{
-Triple exponential smoothing method to fit an additive decomposition model.
-
-Similar component modelling approach to Lewandowski's Forsys [Lewandowski, 1982, 1984] and Holt-Winters [Holt 1957; Winters 1960].
-The three parameters have to be set between zero and one. 
-The parameters describe the memory decay rate, the higher they are the faster the method "forgets" its past average, season or trend.
-}
+\title{Additive compound forecasts}
+\description{Fit additive level, trend, and seasonal components with supplied update coefficients.}
 \usage{
-FcAdditiveDecompositionModel(Data, SeasonalLength, NoSteps,
-
- alpha, beta, gamma,Silent=FALSE)
+FcAdditiveDecompositionModel(Data = NULL, SeasonalLength = NULL, NoSteps = NULL,
+  alpha = 0.2, beta = 0.1, gamma = 0.1, Silent = TRUE, DataVec = NULL,
+  Time = NULL, SplitAt = NULL, ForecastHorizon = NULL, TimeStep = NULL,
+  SeasonalPeriod = NULL, FutureTime = NULL, PlotIt = FALSE)
 }
 \arguments{
-  \item{Data}{
-[1:n] numerical vector, a.k.a. training set, but without test set
-}
-  \item{SeasonalLength}{
-A season is an interval which is repetitive. such an regular interval is called a season and has a length. 
-Seasonal Length L (length of expected season) has to be defined by user, e.g. often 12 for monthly Data data
-}
-  \item{NoSteps}{
-number of steps to extrapolate model
-}
-  \item{alpha}{
-Data smoothing factor: If you select the big number (near to 1) for alpha, it means you rely more on recent past data rather than old past data.
-}
-  \item{beta}{
-Trend smoothing factor: If you choose the big number (near to 1) for beta, it means you rely more on past data's trend and you believe the trend will go on in future too. (you increase the weight of trend smoothing)
-
-}
-  \item{gamma}{
-Seasonal change smoothing factor: If you choose the big number (near to 1) for gamma, it means you rely more on past data's seasonality and you believe the seasonality factors will remain in future.
-}
-
-  \item{Silent}{
-FALSE: Warnings are printed, TRUE: no Warnings are printed
-  }
+  \item{Data}{Legacy response input. Use \code{DataVec} for univariate methods. For VARIMA, supply a numeric matrix with one series per column.}
+  \item{SeasonalLength}{Legacy name for \code{SeasonalPeriod}.}
+  \item{NoSteps}{Legacy name for \code{ForecastHorizon}. The public forecast interface requires a positive horizon.}
+  \item{alpha}{Level update coefficient between zero and one.}
+  \item{beta}{Trend update coefficient between zero and one.}
+  \item{gamma}{Seasonal update coefficient between zero and one.}
+  \item{Silent}{Control model messages. The VARIMA wrapper suppresses model output when \code{TRUE}. The LSTM wrapper suppresses training progress when \code{TRUE}. Errors remain visible.}
+  \item{DataVec}{Numeric response vector. A univariate \code{ts} object is also accepted. Values after \code{SplitAt} are used only for evaluation.}
+  \item{Time}{Ordered timestamps, with one timestamp per observation. Use numeric indices, \code{Date}, or \code{POSIXct}. ISO date strings are accepted. If omitted, use the \code{ts} time index or consecutive observation indices. Prophet requires calendar timestamps.}
+  \item{SplitAt}{Index of the last training observation. The forecast starts at the next observation. The usual default uses all supplied observations. See Details for legacy defaults.}
+  \item{ForecastHorizon}{Positive integer. Number of observations to predict after \code{SplitAt}. The result always contains this number of forecast rows.}
+  \item{TimeStep}{Time interval. Use a positive number or a calendar unit: \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"hour"}, \code{"min"}, or \code{"sec"}. Numeric intervals use the units of \code{Time}: days for \code{Date}, seconds for \code{POSIXct}, and index units otherwise. If omitted, infer a regular interval from training timestamps.}
+  \item{SeasonalPeriod}{Positive integer. Number of observations in one seasonal cycle. The default uses the frequency of a \code{ts} input, or one for a numeric vector. This setting does not select an input window or aggregate data.}
+  \item{FutureTime}{Optional timestamps for all forecast rows. Supply exactly \code{ForecastHorizon} values after the forecast origin. They must agree with any observed test timestamps and with the regular interval required by the method.}
+  \item{PlotIt}{If \code{TRUE}, display the forecast plot. If \code{FALSE}, do not display plots. Plot settings do not change the forecast values.}
 }
 \details{
-This approach called exponential, because the formula is mulitplied with itself for each value and added a mulitplication of the previous weight before the current one,  recursivly. The parameter alpha is defined in such a way to be sure that all weights for an weighted average (level) sum up to one (the same goes for trend and seasonal). It is called smoothing because a moving average smooths the current values of a time series by forecasting future values (e.g. outliers are "averaged") if you look at the formula form the point of view of a graph.
-
-Formula:
-
-Let m be the number if steps ahead and L the length of the Season then,
-
-\code{Level}: l_x=alpha(y_x - s_(x-L)) + (1 - alpha)(l_(x-1) + b(x-1))
-
-\code{Trend}: b_x=betha(l_x - l_(x-1)) + (1 - betha)b_(x-1)   
-
-\code{Seasonal}: s_x=gamma(y_x - l_x) + (1 - gamma)s_(x-L)     
-
-\code{Forecast}: yhat_(x+m)=l_x + mb_x + s_(x-L+1+(m-1)mod(L)) 
-
-Note, that the level \code{l} is sometimes also called the baseline or intercept in general, or in this special context also known as the exponentially weighted moving average.
-
-Note, that the trend \code{b} is sometimes also called the slope in the case the time series is regular and for each two values the difference in time is one and therefore instead of dividing by the difference in time, it is sufficient to calculate only the difference in values.
-
-Note, that only the usage of a season allows this method to foecast more than one point in future (\code{m}). Disregarding a seasing means that this method is only able to forecast one step in future.
-
-The main difference is that Holt-Winters [Holt 1957; Winters 1960] is a static algorithm in which the alpha, beta, and gamma values do not change until they are manually altered.
-
-In Contrast, the Lewandowski algorithm [Lewandowski, 1982, 1984], is an adaptive algorithm where alpha, beta, and gamma are tweaked automatically by proprietary algorithms. Contrary to this code, the Lewandowski method uses an multiplicative decomposition model.
-
-The Lewandoweski method was evaluated positively on 1001 time series in [Makridakis, 1982].
-
+The method uses an additive level, trend, and seasonal recursion. The first two complete cycles initialize the components. Their fitted values are NA. Later fitted values are one-step predictions calculated before the current observation updates the state. Training must contain at least two complete cycles and no partial cycle. The seasonal index repeats at SeasonalPeriod. Prediction intervals are not supplied. The compound plot is preserved.
 }
 \value{
-[1:(n+NoSteps)] numerical vector of fitting (on Training set or full data) and forecasting (often of Test set) where no difference is made between training and test set.
-
-Training set and test set have to be splitted up priorly (if required for model evaluation), and testset forecast length is defined by \code{NoSteps} which defines the number of forecast steps into the future, see example.
-
+A named list with the common fields described in \code{\link{ForecastingInterface}}:
+\item{Forecast}{Response predictions. A vector of length \code{ForecastHorizon}, or a matrix with one column per series.}
+\item{ForecastTime}{One timestamp per forecast row.}
+\item{TrainData, TrainTime}{The observed training response and its timestamps.}
+\item{Fitted, Residuals}{Training fitted values and observed-minus-fitted residuals. Unsupported fields are \code{NULL}. Initial values can be missing.}
+\item{TestData, TestTime}{Observed response values aligned with the forecast rows and their timestamps. Unknown future responses are \code{NA}.}
+\item{Lower, Upper, Level}{Prediction bounds and coverage percentages. Unsupported intervals are \code{NULL}. Univariate bounds have one column per level. Multivariate bounds have dimensions horizon by series by level.}
+\item{Model}{The fitted model or model parameters.}
+\item{Accuracy}{The matrix from \code{\link{QualityMeasuresForecasting}}, with one row per response series. It contains N, MAE, RMSE, Bias, MASE, MAPE, SMAPE, AbsoluteError, RAE, RSE, MRD, and MRD_BIAS. It is \code{NULL} when no finite test comparisons are available.}
+\item{Info}{Method name, split index, forecast origin, horizon, time interval, seasonal period, response scale, and method-specific information.}
+See Details for additional fields.
 }
 \references{
 [Lewandowski, 1984]  Lewandowski, R. "Lewandowski's FORSYS Method." The forecasting Accuracy of Major Time Series Methods (1984): 245-253
@@ -90,38 +55,12 @@ Training set and test set have to be splitted up priorly (if required for model 
 \author{
 Michael Thrun
 }
-\note{
-State-space models are models that use state variables to describe a system by a set of first-order differential or difference equations. An additive decomposition Model ("additives Komponentenmodel") is a sub-catagory.
-}
-
-\seealso{
-\code{\link{HoltWinters}}, \code{\link[smooth]{es}},  \code{\link[forecast]{ses}}, \code{\link[forecast]{ets}}
-}
+\seealso{\code{\link{ForecastingInterface}}}
 \examples{
-data("AirPassengers")
-Data=as.numeric(AirPassengers)
-Train=Data[1:132]
-fit=FcAdditiveDecompositionModel(Train,12,12,0.1,0.2,0.9)
-plot(Data,type='l')
-points(fit,col='red')
-
-#in principle it should be the same as
-#model=forecast::ets(Train,model=c('ZZZ')) #automatic model choice
-#plot(forecast(model))
-#resulting in
-#model=forecast::ets(Train,model=c('AAA')) #setting for additive model with seasonality
-#but the latter has the error Nonseasonal data
-#and the former just fits a trend
-
+y <- 100 + seq_len(60)/5 + rep(c(-3, 0, 3, 0), 15)
+out <- FcAdditiveDecompositionModel(DataVec = y, SplitAt = 48,
+  ForecastHorizon = 3, SeasonalPeriod = 4)
+stopifnot(NROW(out$Forecast) == 3, length(out$ForecastTime) == 3,
+          all(is.finite(out$Forecast)))
 }
-
-\keyword{compound model}
-\keyword{component model}
-\keyword{decomposition model}
-\keyword{additive decomposition model}
-\keyword{decomposition}
-\keyword{lewandowski}
-\keyword{forsys}
-\keyword{holt-winters}
-\keyword{exponential smoothing}
-\keyword{state-space model}
+\keyword{ts}

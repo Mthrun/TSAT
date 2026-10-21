@@ -5,11 +5,11 @@
 Electricity production in BRD
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of the dataset. ~~
+Stored monthly electricity observations for Germany.
 }
 \usage{data("ElectricityBRD")}
 \format{
-  A data frame with 0 observations on the following 2 variables.
+  A data frame with 300 observations on the following 2 variables.
   \describe{
     \item{\code{Mrd_KWh }}{Value in units}
     \item{\code{Time}}{as.Date object}

@@ -1,5 +1,6 @@
 \name{YearlyInterestRatesData}
 \alias{YearlyInterestRatesData}
+\alias{YearlyInterestRates}
 \docType{data}
 \title{
 Yearly Interest Rates Data

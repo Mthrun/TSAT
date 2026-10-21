@@ -107,7 +107,10 @@ EventDurationAndTimeDifference=function(Time,EventNameorValue,EventArrayOrEvent,
    # print(EventAnfangIndTmp)
     if(length(EventAnfangInd)>1){
       #letztes Ende und erster Anfang werden geloescht
-      AbstandPerDevice=EventIndTimeDifference(TimeChar,EventAnfangInd[-1],EventEndeInd[-length(EventEndeInd)],units,Silent = Silent)
+      # Name the indices so the previous end is not confused with the next beginning.
+      AbstandPerDevice=EventIndTimeDifference(TimeChar,
+        EndInd=EventEndeInd[-length(EventEndeInd)],BeginInd=EventAnfangInd[-1],
+        Resolution=units,Silent=Silent)
       Counts=length(DauerPerDevice)
     }else{
       AbstandPerDevice=NULL

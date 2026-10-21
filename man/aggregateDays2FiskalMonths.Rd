@@ -1,54 +1,28 @@
 \name{aggregateDays2FiskalMonths}
 \alias{aggregateDays2FiskalMonths}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Aggregate Days to Fiskal Months
-}
-\description{
-Aggregation of many Days over several years to fiskal months is possible.
-A fiskal month is defined by the following. Every first month in a quarter has five weeks the following two months have
-exactly four weeks. The first month in the year starts with a monday (and every following month).
-A month has only full weeks included in it.
-}
+\title{Aggregate time-series observations}
+\description{Group observations by time and apply a summary function.}
 \usage{
-aggregateDays2FiskalMonths(Time,Data,FUN,Header, \dots)
+aggregateDays2FiskalMonths(Time, Data, FUN, Header, tz = "UTC", \dots) 
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Time}{
-[1:n] vector of \code{POSIXlt} or \code{POSIXct} or \code{as.Date} objects
-}
- \item{Data}{
-[1:n,1:d] matrix or dataframe, d can be also 1, then vector
-}
-  \item{FUN}{
-aggregate by a function like \code{sum} or \code{mean}
-}
-  \item{Header}{
-colnames for data
-}
-  \item{\dots}{
-further arguments passed on to \code{FUN}
-}
+  \item{Time}{One timestamp per data row. Weekly fiscal input must use Monday Date values.}
+  \item{Data}{Numeric vector, matrix, or data frame.}
+  \item{FUN}{Function that returns one numeric value per group and column.}
+  \item{Header}{Optional column names. Supply one name per data column, or names for all output columns. A single name is repeated with unique suffixes for matrix input.}
+  \item{tz}{Time zone used when converting timestamps to dates.}
+  \item{\dots}{Additional arguments for FUN, such as na.rm=TRUE.}
 }
 \details{
-The rownames of the data frame depict either the first week (usually) of the month the data is aggregated by  or, in the case of the first time interval until a full month of data exists, the last week where data was existed (see example).
-The fiskal month is often used to compare weekly and monthly forecasts consistently.
+Use ISO week years and a repeating 5, 4, 4 week pattern. Add ISO week 53 to fiscal month 12. The fiscal year starts on the Monday of ISO week one. Time labels identify fiscal year and month; they are not calendar boundaries. Missing periods are not filled with zero. Daily values are aggregated directly, so partial weeks do not distort means. Row names give the first observed week in each group.
 }
 \value{
-dataframe[1:m,1:(d+1)] with m<n and first column being the time in \code{as.Date} format
-}
-\author{
-Michael Thrun
+Data frame. The first column gives group dates. Other columns contain the aggregated data.
 }
 \examples{
-#Generating Data
-data(Sales)
-Time=seq(from=as.Date('1970-01-01'),by='1 day',length.out = 2*length(Sales))
-#Aggregation
-Monthly=aggregateDays2FiskalMonths(Time,c(Sales,Sales),sum)
-str(Monthly)
+time <- as.Date("2020-01-01")+0:99
+out <- aggregateDays2FiskalMonths(time,rep(1,length(time)),sum)
+stopifnot(sum(out$Data) == length(time))
 }
 
-\keyword{aggregateDays2FiskalMonths}% use one of  RShowDoc("KEYWORDS")
-\keyword{aggregate}% __ONLY ONE__ keyword per line
+\keyword{ts}

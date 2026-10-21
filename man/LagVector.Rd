@@ -23,7 +23,7 @@ The number of lags (in units of observations): back shifting: positiv value, for
 for time series please use \code{lag}
 }
 \value{
-Shifted vector [1:n] with k NaN values at the beginning (k positive) or the end (k negative)
+A vector of the same length and class as x. Unavailable observations are NA. If the absolute lag is at least the vector length, all values are NA.
 }
 
 \author{

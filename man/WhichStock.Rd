@@ -12,12 +12,8 @@ WhichStock(TickerSymbols, MatchingTableNames = "BoerseFR")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{TickerSymbols}{
-%%     ~~Describe \code{TickerSymbols} here~~
-}
-  \item{MatchingTableNames}{
-%%     ~~Describe \code{MatchingTableNames} here~~
-}
+  \item{TickerSymbols}{Ticker symbols to match.}
+  \item{MatchingTableNames}{Table of symbols and matching names.}
 }
 \details{
 under development

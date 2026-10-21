@@ -32,7 +32,7 @@ EventTimeFilter=function(Time,Feature,units='mins',PeriodBetweenEvents=1,formati
     }
   }
   n=length(TimeChar)
-  if(length(TimeChar)!=n) stop('Length of Time does not equal number of rows in Feature of length of vector Feature')
+  if(length(Feature)!=n) stop('Length of Time does not equal number of rows in Feature of length of vector Feature')
   if(!is.numeric(PeriodBetweenEvents)){
     stop('PeriodBetweenEvents has to be a numerical value above zero')
   }
@@ -51,7 +51,8 @@ EventTimeFilter=function(Time,Feature,units='mins',PeriodBetweenEvents=1,formati
       for(k in 1:(length(Feature)-2)){#Das Ende definiert nur der aktuelle Fehler, letztes Event ist sicher vorbei dank Jan
         if(Feature2[k]==1){#Sobald ein Event anliegt
           #if(LatencyCheck[k]&LatencyCheck[k+1])#der Abstand vom anliegen zum naechsten und uebernachsten Event ist kleiner als eine Minute
-          if(LatencyCheck[k+1])#der Abstand vom anliegen zum naechsten Event ist kleiner als eine Minute
+          # The interval from k to k+1 is stored at k, not at k+1.
+          if(LatencyCheck[k])#der Abstand vom anliegen zum naechsten Event ist kleiner als eine Minute
             if(Feature[k+1]==0)#wenn dort eine falsche null vorliegt, es koennte auch ein anderer wert kommen
               Feature[k+1]=Feature[k] #Dann liegt er auch beim naechsten Zeitstempel noch an, dabei ist esgal ob der uebernaechste
           #Zeitstempel eine null oder eine 1 hat (event anliegt oder nicht)

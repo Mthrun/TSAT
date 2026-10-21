@@ -1,53 +1,29 @@
 \name{aggregateDays2Months}
 \alias{aggregateDays2Months}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Aggregate Days to Months
-}
-\description{
-Aggregation of many Days over several years to Months is possible with this function
-}
+\title{Aggregate time-series observations}
+\description{Group observations by time and apply a summary function.}
 \usage{
-aggregateDays2Months(Time,Data,FUN,Header,Period="month", \dots)
+aggregateDays2Months(Time, Data, FUN, Header, Period = "month", tz = "UTC",      \dots) 
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Time}{
-[1:n] vector of \code{POSIXlt} or \code{POSIXct} or \code{as.Date} obects
-}
- \item{Data}{
-[1:n,1:d] matrix or dataframe, d can be also 1, then vector
-}
-  \item{FUN}{
-aggregate by a function like \code{sum} or \code{mean}
-}
-  \item{Header}{
-colnames for data
-}
-  \item{Period}{
-string defining the period, but only \code{"month"} was tested
-}
-  \item{\dots}{
-further arguments passed on to \code{FUN}
-}
+  \item{Time}{One timestamp per data row. Weekly fiscal input must use Monday Date values.}
+  \item{Data}{Numeric vector, matrix, or data frame.}
+  \item{FUN}{Function that returns one numeric value per group and column.}
+  \item{Header}{Optional column names. Supply one name per data column, or names for all output columns. A single name is repeated with unique suffixes for matrix input.}
+  \item{Period}{Calendar grouping unit, such as month, quarter, or year.}
+  \item{tz}{Time zone used when converting timestamps to dates.}
+  \item{\dots}{Additional arguments for FUN, such as na.rm=TRUE.}
 }
 \details{
-A shortcut for aggregation using \pkg{dplyr}
+Apply the same grouping rule to every data column. Weekly groups start on Monday. Missing observations are passed to FUN. No missing period is filled with zero.
 }
 \value{
-dataframe[1:m,1:(d+1)] with m<n and first column being the time in \code{as.Date} format
-}
-\author{
-Michael Thrun
+Data frame. The first column gives group dates. Other columns contain the aggregated data.
 }
 \examples{
-#Generating Data
-data(Sales)
-Time=seq(from=as.Date('1970-01-01'),by='1 day',length.out = 2*length(Sales))
-#Aggregation
-Monthly=aggregateDays2Months(Time,c(Sales,Sales),sum)
-str(Monthly)
+time <- as.Date("2020-01-01")+0:99
+out <- aggregateDays2Months(time,rep(1,length(time)),sum)
+stopifnot(sum(out$Data) == length(time))
 }
 
-\keyword{aggregateDays2Months}% use one of  RShowDoc("KEYWORDS")
-\keyword{aggregate}% __ONLY ONE__ keyword per line
+\keyword{ts}

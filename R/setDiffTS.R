@@ -19,10 +19,15 @@
 #author: MCT
 
 setDiffTS=function(Time1,Time2,Vector1=NULL,Vector2=NULL){
+  if (!is.null(Vector1) && length(Vector1) != length(Time1))
+    stop("Vector1 and Time1 must have equal lengths.")
+  if (!is.null(Vector2) && length(Vector2) != length(Time2))
+    stop("Vector2 and Time2 must have equal lengths.")
   ind1=!Time1 %in% Time2
   ind2=!Time2 %in% Time1
-  TS1notinTS2 =  list(Time1[ind1],Vector1[ind2])
-  TS2notinTS1 =  list(Time2[ind2],Vector2[ind1])
+  # Select each value with the same mask as its own timestamp.
+  TS1notinTS2 =  list(Time1[ind1],Vector1[ind1])
+  TS2notinTS1 =  list(Time2[ind2],Vector2[ind2])
   
   return(list(TS1notinTS2=TS1notinTS2,TS2notinTS1=TS2notinTS1))
 }

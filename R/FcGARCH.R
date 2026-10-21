@@ -1,95 +1,103 @@
-# res = FcGARCH(DataVec)
-#
-# DESCRIPTION
-# Autoregressive conditional heteroskedasticity (ARCH) model is a statistical model for time series data 
-# that describes the variance of the current error term or innovation as a function of the actual sizes of the 
-# previous time periods error terms often the variance is related to the squares of the previous innovations - Wikipedia
-#
-# INPUT
-# DataVec             [1:n] numerical vector of time series data.
-# SplitAt             Index of row where the DataVec is divided into test and train data. If not given n is used
-# ForecastHorizon     Scalar defining the timesteps to forecast ahead
-# TestandTrain        TRUE: Data is divided by Horizon, FALSE: Real Forecast is generated
-# OPTIONAL
-# Time                [1:n] character vector of Time in the length of data
-# PlotIt              FALSE (default), do nothing. TRUE: plots the forecast versus test data of time series data.
-# Silent              If FALSE, print diverse ouptuts of keras. Default is TRUE
-# ...                 Further specification using the seasonal::seas interface of the X-13-ARIMA-SEATS standard. 
-#                     Please see also references for further details
-#
-# OUTPUT
-# Forecast            [1:Horizont] object of stats::ts
-# Model               Model, the output of ugarchspec in mode invisible
-#
-# DETAILS
-# Quelle: http://www.unstarched.net/r-examples/rugarch/a-short-introduction-to-the-rugarch-package/
-# warning('Under Development')
-#
-# Author: MCT 2014
-
-FcGARCH=function(DataVec,VarianceModel=list(model = "sGARCH", garchOrder = c(1, 1)),ForecastHorizon, DistributionModel = 'norm',PlotIt=FALSE,Summary=FALSE,...){
-  #RelSchluss=dbt.Transforms::relDiff4Prices(DataVec)
-#  if(missing(ForecastHorizon))
-#    ForecastHorizon=round(0.2*length(DataVec))
-  
-#  if(missing(SplitAt)) {
-#    warning('Input for SplitAt was not given. Setting SplitAt to length(DataVec)')
-#    SplitAt = length(DataVec)
-#  }
-  if(missing(ForecastHorizon)) {
-    warning('Input for ForecastHorizon was not given. Setting ForecastHorizon to 1')
-    ForecastHorizon = 1
+FcGARCH <- function(
+  DataVec, VarianceModel = list(model = "sGARCH", garchOrder = c(1, 1)),
+  ForecastHorizon = 1L, DistributionModel = "norm", PlotIt = FALSE, Summary = FALSE, ...,
+  Time = NULL, SplitAt = length(DataVec), TimeStep = NULL, SeasonalPeriod = NULL,
+  FutureTime = NULL, Level = c(80, 95), Difference = TRUE
+) {
+  if (!requireNamespace("rugarch", quietly = TRUE))
+    stop("Install the optional package 'rugarch' to use this method.", call. = FALSE)
+  if (!is.logical(Summary) || length(Summary) != 1L || is.na(Summary))
+    stop("Summary must be TRUE or FALSE.", call. = FALSE)
+  if (!is.logical(Difference) || length(Difference) != 1L || is.na(Difference))
+    stop("Difference must be TRUE or FALSE.", call. = FALSE)
+  p <- forecastPrepare(
+    DataVec, Time, SplitAt, ForecastHorizon, TimeStep,
+    SeasonalPeriod, FutureTime, Level, PlotIt
+  )
+  y <- if (Difference) diff(p$Train) else p$Train
+  spec <- rugarch::ugarchspec(
+    variance.model = VarianceModel,
+    distribution.model = DistributionModel, ...
+  )
+  fit <- rugarch::ugarchfit(spec, data = y, solver.control = list(trace = 0))
+  # rugarch returns a filter, not a fitted model, when all parameters are fixed.
+  # Forecast the specification directly in that case.
+  fixed <- methods::is(fit, "uGARCHfilter")
+  if (fixed) {
+    fc <- rugarch::ugarchforecast(spec, data = y, n.ahead = p$h)
+  } else {
+    if (fit@fit$convergence != 0L) stop("GARCH fitting did not converge.")
+    fc <- rugarch::ugarchforecast(fit, n.ahead = p$h)
   }
-#  if(missing(Time)) {
-#    Time = 1:length(DataVec)
-#    warning('No input for Time was given, will use 1:length(DataVec) for Time')
-#  }
-  
-  if(!is.logical(Summary)) {
-    warning('Input for Summary is not logical. Setting Summary to FALSE')
-    Summary = FALSE
-  }
-  
-
-  #inputs = checkInputForecasting(DataVec, Time, SplitAt, ForecastHorizon, PlotIt)
-  inputs = checkInputForecasting(DataVec, 1:length(DataVec), length(DataVec), ForecastHorizon, PlotIt)
-  DataVec = inputs$DataVec
-  Time = inputs$Time # Currently not used
-  SplitAt = inputs$SplitAt # Currently not used
-  ForecastHorizon = inputs$ForecastHorizon
-  PlotIt = inputs$PlotIt
-  
-  
-  if(isTRUE(PlotIt) && isTRUE(Summary)) {
-    warning('Can either plot forecast or summary. Setting Summary to FALSE')
-    Summary = FALSE
-  }
-  
-
-  errorMessage = packageMissingError("rugarch", n, SplitAt)
-  if(errorMessage != FALSE){
-    return(
-      list(
-        Model = NULL,
-        Forecast = rep(NaN, length(DataVec)),
-        Info = errorMessage
-      )
+  mean <- as.numeric(rugarch::fitted(fc))
+  fitted <- as.numeric(rugarch::fitted(fit))
+  lower <- upper <- NULL
+  if (Difference) {
+    mean <- tail(p$Train, 1L) + cumsum(mean)
+    fitted <- c(NA_real_, head(p$Train, -1L) + fitted)
+  } else if (p$h == 1L) {
+    lower <- upper <- matrix(NA_real_, p$h, length(p$Level),
+      dimnames = list(NULL, paste0(p$Level, "%"))
     )
+    for (j in seq_along(p$Level)) {
+      lower[, j] <- as.numeric(rugarch::quantile(fc, (1 - p$Level[j] / 100) / 2))
+      upper[, j] <- as.numeric(rugarch::quantile(fc, (1 + p$Level[j] / 100) / 2))
+    }
+  } else if (DistributionModel == "norm" &&
+    spec@model$modelinc["arfima"] == 0 &&
+    spec@model$modelinc["archm"] == 0) {
+    # sigma(fc) describes future innovations. ARMA terms propagate these errors
+    # into later response forecasts. Omitting this sum makes bounds too narrow.
+    coefficients <- rugarch::coef(fit)
+    ar <- coefficients[grep("^ar[0-9]+$", names(coefficients))]
+    ma <- coefficients[grep("^ma[0-9]+$", names(coefficients))]
+    psi <- c(1, stats::ARMAtoMA(ar = ar, ma = ma, lag.max = p$h - 1L))
+    variance <- as.numeric(rugarch::sigma(fc))^2
+    se <- sqrt(vapply(seq_len(p$h), function(h)
+      sum(psi[seq_len(h)]^2 * rev(variance[seq_len(h)])), numeric(1)))
+    bounds <- forecastBounds(mean, se, p$Level)
+    lower <- bounds$Lower
+    upper <- bounds$Upper
   }
-  
-  RelSchluss=DiffFilter(DataVec)
-
-  # Initialisierung
-  spec <- rugarch::ugarchspec(variance.model = VarianceModel, distribution.model = DistributionModel,...)
-  
-  # Analyse der Renditen
-  garchfit <- rugarch::ugarchfit(spec=spec,data=RelSchluss,solver.control=list(trace=0),show=TRUE)
-  #str(garchfit) #Was ist in hier gespeichert?
-  if(Summary)
-    rugarch::plot(garchfit,which="all")
-  # Sum Squares Error betrachten, sind die Resdiuen um Null herum?
-  forc = rugarch::ugarchforecast(garchfit, n.ahead=ForecastHorizon) # this means that 100 data points are left from the end with which to
-  if(PlotIt)
-    rugarch::plot(forc,which=1)
-  return(invisible(list(Forecast=forc,Model=garchfit)))
+  # Multi-step non-Gaussian, fractional, and variance-in-mean distributions need
+  # path simulation. Do not label innovation quantiles as response intervals.
+  forecast <- as.numeric(mean)
+  if (length(forecast) != p$h || any(!is.finite(forecast)))
+    stop("The model did not return a finite forecast of the requested size.", call. = FALSE)
+  if (length(fitted) != p$k)
+    stop("Fitted values do not match the training data.", call. = FALSE)
+  if (is.null(lower) != is.null(upper))
+    stop("Both prediction bounds are required.", call. = FALSE)
+  if (!is.null(lower)) {
+    if (!identical(dim(lower), c(p$h, length(p$Level))) ||
+      !identical(dim(upper), dim(lower)) || any(!is.finite(lower)) ||
+      any(!is.finite(upper)) || any(lower > upper))
+      stop("Prediction bounds must be finite, ordered, and match the forecast size.", call. = FALSE)
+  }
+  out <- list(
+    Forecast = forecast, ForecastTime = p$ForecastTime,
+    TrainData = p$Train, TrainTime = p$TrainTime,
+    Fitted = fitted, Residuals = p$Train - fitted,
+    TestData = p$TestData, TestTime = p$ForecastTime,
+    Lower = lower, Upper = upper,
+    Level = if (is.null(lower)) NULL else p$Level, Model = fit,
+    Accuracy = QualityMeasuresForecasting(p$TestData, forecast,
+      TrainingData = p$Train, SeasonalPeriod = p$Season
+    ),
+    Info = list(
+      Method = "GARCH", SplitAt = p$k, Origin = tail(p$TrainTime, 1L),
+      ForecastHorizon = p$h, TimeStep = p$Step, SeasonalPeriod = p$Season,
+      Scale = "response",
+      Difference = Difference,
+      VolatilityScale = if (Difference) "first differences" else "response",
+      Interval = if (Difference) "unavailable on the integrated response scale"
+      else if (p$h == 1L) "conditional distribution"
+      else if (is.null(lower)) "unavailable for this multi-step distribution"
+      else "Gaussian approximation with propagated ARMA uncertainty"
+    ),
+    Volatility = as.numeric(rugarch::sigma(fc)), ModelForecast = fc
+  )
+  if (PlotIt) PlotForecast(out)
+  if (PlotIt && Summary) graphics::plot(fit, which = "all")
+  out
 }

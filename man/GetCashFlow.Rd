@@ -8,9 +8,8 @@ GetCashFlow
 Get data of quaterly Financial Cash Flows
 }
 \usage{
-GetCashFlow(Symbol = "SAP",
-
- URL = "yahoo", Silent = TRUE,Port=4445L,\dots)
+GetCashFlow(Symbol = "SAP", URL = "yahoo", Silent = TRUE, Port = 4445L,
+  tz = "UTC", \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,6 +32,7 @@ in the caseof yahoo: port accessable for direct internet connection
   \item{\dots}{
 in the case of yahoo: further arguments for \code{\link[RSelenium]{rsDriver}} 
 }
+\item{tz}{Time zone used for timestamp conversion.}
 }
 \details{
 yahoo and morningstar work currently
@@ -53,6 +53,8 @@ Michael Thrun, Hamza Tayyab
 \code{\link{GetFinancialTimeSeries}}
 }
 \examples{
+# Requires a live data service or browser driver.
+\dontrun{
 #DF=GetCashFlow(Symbol='SAP',URL='morningstar')
 \donttest{
 
@@ -66,6 +68,8 @@ for(i in 1:n){
   })
   print(i)
 }
+}
+
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

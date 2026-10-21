@@ -8,7 +8,8 @@ Long2WideTableByTime=function(Time,Id,NumericVector,Freq='days'){
     ind=which(Id==u[i])
     TimeCur=Time[ind]
     DataCur=NumericVector[ind]
-    agg=TSAT::AggregateToUniqueTime(TimeCur,DataCur)
+    # R names are case-sensitive. Call the exported aggregation function.
+    agg=TSAT::aggregateToUniqueTime(TimeCur,DataCur)
     
     indtime=match(agg$UniqueTime,FullTime)
     DataFrame[indtime,i+1]=agg$Aggregation

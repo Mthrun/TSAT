@@ -44,7 +44,7 @@ A list with
 
 \item{PowerSpectrum }{Description of 'comp1'}
 \item{FFT }{see \code{\link{FastFourierTransformation}}}
-\item{ggObject }{object of \code{\pkg{ggplot2}} of \code{PlotIT=TRUE}}
+\item{ggObject }{object of \pkg{ggplot2} of \code{PlotIT=TRUE}}
 }
 \references{
 Lectures of MCT

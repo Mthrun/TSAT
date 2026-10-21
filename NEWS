@@ -1,0 +1,71 @@
+TSAT 1.4.0 - audit corrections
+
+Time series distances
+* Replace TSdist calls with BIDistances and other current CRAN packages.
+  Check the selected package namespace before each call.
+* Keep TSclust as an optional fallback. If it cannot be loaded, report that
+  CRAN archived it on 2026-01-16. Other methods do not require TSclust.
+* Add named method parameters through ... and document all package routes.
+* Correct pair positions in distance matrices with four or more series.
+* Preserve both directions for asymmetric comparisons. Normalize LCSS to
+  a distance from zero to one. The former result was a match count.
+* Return the statistic for ar.mah and a diagonal of one for ar.mah.pvalue.
+  Use direct integration for spec.isd to avoid missing interpolation values.
+* Report unavailable erp, tquest, and dissim methods. Correct the old wav
+  help entry: TSdist did not support it, and TSclust has disabled diss.DWT.
+
+Forecast code structure
+* Remove forecastCommon.R. Keep each named package function in its own R file.
+* Rename the compound fit function to forecastAdditiveFit and update its callers.
+* Keep the active Quarterly_data implementation in one file. Remove the older
+  duplicate definition that was overwritten when the package loaded.
+* Put package, integer, logical, alias, predictor, and lag checks in each caller.
+* Use LagVector to build response lag columns in regression models.
+* Build and check each forecast result directly in its model function.
+* Add public PrepareTS4Forecast, RecursiveForecast, and PlotForecast functions.
+* Use QualityMeasuresForecasting for every forecast accuracy result.
+* QualityMeasuresForecasting now returns a matrix, including for vector input.
+  Use result[, "MAE"] instead of result["MAE"]. Legacy input names remain valid.
+* MASE in QualityMeasuresForecasting now requires TrainingData. It is NA when
+  training data are absent. Test observations no longer set the MASE scale.
+* Keep seed control in forcastSeed.R. Keep calendar, preparation, and interval
+  helpers in separate files with descriptive names.
+
+Seasonal plots
+* Add PlotSeasonalDensity for months, weekdays, and ISO weeks.
+* Use DataVisualizations Pareto density estimates and return the density values.
+* Show sample counts. Use points for constant groups and small samples.
+
+Forecasts
+* Correct the seasonal index and initialize the compound model from two cycles.
+* Return one-step fitted predictions after initialization. Initial values are NA.
+* Optimize squared prediction error. Optimization needs three complete cycles.
+* Propagate ARMA uncertainty into GARCH response intervals. Unsupported intervals
+  are NULL. Multi-step Gaussian intervals remain an approximation.
+* Preserve local clock times and month-end dates for POSIXct calendars.
+* Repair all ExponentialSmoothing branches and use the common forecast result.
+* Validate ArbitratedDynamicEnsemble training input. Use tsensembler::predict
+  and tsensembler::forecast with its native model.
+
+Data and evaluation
+* Remove future data from moving-average initialization and correct derivatives.
+* Preserve value/time alignment, lag classes, zero event labels, and fiscal totals.
+* Use ISO fiscal week years. Put week 53 in fiscal month 12. Do not invent zero
+  values for missing weeks. Aggregate daily means from the original observations.
+* Use percentage MAPE and SMAPE on the 0--200 scale. Older CommonForecastingErrors
+  output used fractional MAPE; older SMAPE output used half the current scale.
+* Return NA for undefined percentage or scaled errors. Do not add random noise.
+* Add optional TrainingData to the legacy error functions for a training MASE scale.
+* Keep repeated observations. NonDuplicatedForecasts is deprecated.
+* Use a serial-correlation test in WhiteNoiseTest. A unit-root test did not test
+  white noise. The new result is an htest object; large p-values do not prove noise.
+
+Package checks
+* Wrap long help usage and example lines for the Rd line-width check.
+* Load the HMM example data explicitly from RHmm. Use Nile in the Kalman filter
+  example. Run both examples during normal package checks.
+* Correct HMM silent output control and the HMM_weights result name.
+* Correct exports, dependencies, help signatures, links, and data examples.
+* Keep the experimental financial-data function separate from the public function.
+* Mark examples that need a live service or browser as examples not run by checks.
+* Add regression tests for the confirmed numerical and calendar faults.

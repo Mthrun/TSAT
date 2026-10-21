@@ -18,7 +18,7 @@ cols=c('black','red'),SaveIt=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{X}{[1:n] vector, both lines require the same xvalues, e.g. the time of the time series, \code{POSIXlt} or \code{POSIXct} or code{as.Date} are accepted}
+  \item{X}{[1:n] vector, both lines require the same xvalues, e.g. the time of the time series, \code{POSIXlt} or \code{POSIXct} or \code{as.Date} are accepted}
   \item{Y}{
 [1:n] vector of historical time series, usually test data
 }

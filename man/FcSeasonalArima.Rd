@@ -1,65 +1,42 @@
 \name{FcSeasonalArima}
 \alias{FcSeasonalArima}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Forecasting with Seasonal Arima
-}
-\description{
-Automatic Forecasting using the seasonal arima method based on the X-13-ARIMA-SEATS standard.
-}
+\title{X-13 ARIMA-SEATS forecasts}
+\description{Fit a seasonal ARIMA model with X-13 and return future response values.}
 \usage{
-FcSeasonalArima(DataVec, SplitAt, ForecastHorizon, Frequency, Time, PlotIt = TRUE, ...)
+FcSeasonalArima(DataVec, SplitAt = length(DataVec), ForecastHorizon = 1L,
+  Frequency = NULL, Time = NULL, PlotIt = FALSE, \dots, TimeStep = NULL,
+  SeasonalPeriod = NULL, FutureTime = NULL, Level = 95)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{DataVec}{
-[1:n] [1:n] numerical vector or a time series object. If a time series object is given, the argument "Frequency" does not need to be given.
-}
-  \item{SplitAt}{
-Index of row where the DataVec is divided into test and train data. If not given n is used
-}
-  \item{ForecastHorizon}{
-Scalar defining the timesteps to forecast ahead. Beware, it is NOT the internal forecast horizont.
-}
-  \item{Frequency}{
-Either \code{days}, \code{weeks}, \code{months} or \code{quarters} or \code{years}, see \code{\link{ConvertNumerical2TSobject}}. Can be ignored if DataVec is a time series object.
-}
-  \item{Time}{
-[1:n] character vector of Time in the length of data. Can be ignored if DataVec is a time series object.
-}
-  \item{PlotIt}{
-FALSE (default), do nothing. TRUE: plots the forecast versus test data of time series data.
-}
-  \item{\dots}{
-Further specification using the \code{\link[seasonal]{seas}} interface of the X-13-ARIMA-SEATS standard. Please see also references for further details
-}
+  \item{DataVec}{Numeric response vector. A univariate \code{ts} object is also accepted. Values after \code{SplitAt} are used only for evaluation.}
+  \item{SplitAt}{Index of the last training observation. The forecast starts at the next observation. The usual default uses all supplied observations. See Details for legacy defaults.}
+  \item{ForecastHorizon}{Positive integer. Number of observations to predict after \code{SplitAt}. The result always contains this number of forecast rows.}
+  \item{Frequency}{Legacy name for \code{TimeStep}. The function does not aggregate observations. Aggregate data before the call.}
+  \item{Time}{Ordered timestamps, with one timestamp per observation. Use numeric indices, \code{Date}, or \code{POSIXct}. ISO date strings are accepted. If omitted, use the \code{ts} time index or consecutive observation indices. Prophet requires calendar timestamps.}
+  \item{PlotIt}{If \code{TRUE}, display the forecast plot. If \code{FALSE}, do not display plots. Plot settings do not change the forecast values.}
+  \item{\dots}{Additional arguments for the model function identified in Details. Do not repeat arguments that the wrapper sets explicitly.}
+  \item{TimeStep}{Time interval. Use a positive number or a calendar unit: \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"hour"}, \code{"min"}, or \code{"sec"}. Numeric intervals use the units of \code{Time}: days for \code{Date}, seconds for \code{POSIXct}, and index units otherwise. If omitted, infer a regular interval from training timestamps.}
+  \item{SeasonalPeriod}{Positive integer. Number of observations in one seasonal cycle. The default uses the frequency of a \code{ts} input, or one for a numeric vector. This setting does not select an input window or aggregate data.}
+  \item{FutureTime}{Optional timestamps for all forecast rows. Supply exactly \code{ForecastHorizon} values after the forecast origin. They must agree with any observed test timestamps and with the regular interval required by the method.}
+  \item{Level}{Prediction interval coverage, in percent. Each value must be between zero and 100. X-13, MAPA, and Prophet accept one value per call. Other methods can accept several values.}
 }
 \details{
-X-13-ARIMA-SEATS is the standard of the seasonal adjustment software by the US Census Bureau. This function is an easy-to-use wrapper of the function \code{\link[seasonal]{seas}} calling the interface.
+This method requires monthly or quarterly observations. Use a seasonal period of 12 or 4 and a valid calendar start. A \code{ts} input retains its start. Legacy \code{Frequency = "months"} or \code{"quarters"} can also set the period when it is omitted.
 
-If \code{n-SplitAt=ForecastHorizon} then forecast is completely on test data.
-
-If \code{ForecastHorizon>n-SplitAt} then a real forecast is made of \code{ForecastHorizon-(n-SplitAt)} steps.
-
-If \code{SplitAt=n} then the complete data set is used in estimating the forecast.
+Additional arguments go to \code{seasonal::seas}. The wrapper selects exactly the requested forecast rows. The extra fields \code{ForecastMaxlead} and \code{TaT} retain the X-13 forecast table and the split data.
 }
 \value{
-List with
-  \item{Forecast}{
-[1:Horizont] object of \code{\link[stats]{ts}}
-}
-  \item{Accuracy}{
-Accuracy of TestSet against Forecast, if \code{TestandTrain==TRUE}
-}
-  \item{TaT}{
-TrainingSet and TestSet, if \code{TestandTrain==TRUE}
-}
-  \item{Model}{
-Output of \code{\link[seasonal]{seas}}
-}
-  \item{ForecastMaxlead}{
-Output of \code{\link[seasonal]{series}}, which is an extended forecast if upper and lower boundary.
-}
+A named list with the common fields described in \code{\link{ForecastingInterface}}:
+\item{Forecast}{Response predictions. A vector of length \code{ForecastHorizon}, or a matrix with one column per series.}
+\item{ForecastTime}{One timestamp per forecast row.}
+\item{TrainData, TrainTime}{The observed training response and its timestamps.}
+\item{Fitted, Residuals}{Training fitted values and observed-minus-fitted residuals. Unsupported fields are \code{NULL}. Initial values can be missing.}
+\item{TestData, TestTime}{Observed response values aligned with the forecast rows and their timestamps. Unknown future responses are \code{NA}.}
+\item{Lower, Upper, Level}{Prediction bounds and coverage percentages. Unsupported intervals are \code{NULL}. Univariate bounds have one column per level. Multivariate bounds have dimensions horizon by series by level.}
+\item{Model}{The fitted model or model parameters.}
+\item{Accuracy}{The matrix from \code{\link{QualityMeasuresForecasting}}, with one row per response series. It contains N, MAE, RMSE, Bias, MASE, MAPE, SMAPE, AbsoluteError, RAE, RSE, MRD, and MRD_BIAS. It is \code{NULL} when no finite test comparisons are available.}
+\item{Info}{Method name, split index, forecast origin, horizon, time interval, seasonal period, response scale, and method-specific information.}
+See Details for additional fields.
 }
 \references{
 \url{https://www.census.gov/ts/x13as/docX13AS.pdf}
@@ -69,33 +46,12 @@ Output of \code{\link[seasonal]{series}}, which is an extended forecast if upper
 \author{
 Michael Thrun
 }
-
-\note{
-The default internal forecast horizont is one year (unless  a  SEATS seasonal adjustment is requested - then the default is three years of forecasts) and 120 is the maximum. Setting \code{Horizont} lower results in 3 year forecast saved in \code{ForecastMaxlead}.
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-\code{\link[seasonal]{seas}}, \code{\link[seasonal]{series}}
-}
+\seealso{\code{\link{ForecastingInterface}}}
 \examples{
-# Example using a time series object for DataVec
-data("AirPassengers")
-ForecastHorizon=12
-FcSeasonalArima(AirPassengers,SplitAt=length(AirPassengers)-ForecastHorizon,
-                ForecastHorizon=ForecastHorizon)
-
-# Example using a numerical vector for DataVec
-data("ElectricityBRD$Mrd_KWh")
-ForecastHorizon=12
-FcSeasonalArima(ElectricityBRD$Mrd_KWh,SplitAt = length(ElectricityBRD$Mrd_KWh) - ForecastHorizon, 
-                Frequency='months', ForecastHorizon = ForecastHorizon, 
-                Time=ElectricityBRD$Time)
-
+if (requireNamespace("seasonal", quietly = TRUE)) {
+  out <- FcSeasonalArima(AirPassengers, SplitAt = 120, ForecastHorizon = 3)
+  stopifnot(NROW(out$Forecast) == 3, length(out$ForecastTime) == 3,
+            all(is.finite(out$Forecast)))
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{SeasonalArima}% use one of  RShowDoc("KEYWORDS")
-\keyword{sarima}% __ONLY ONE__ keyword per line
-\keyword{Forecast}
+}
+\keyword{ts}

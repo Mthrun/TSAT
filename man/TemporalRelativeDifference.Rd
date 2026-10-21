@@ -8,9 +8,8 @@ Temporal Relative Difference
 Calculates the relative difference between positive Data and and lagged Data
 }
 \usage{
-TemporalRelativeDifference(Data,Lag=1,
-
-na.rm=FALSE,PlotIt=FALSE,Time,Silent=FALSE)
+TemporalRelativeDifference(Data, Time, Lag = 1, na.rm = FALSE, PlotIt = FALSE,
+  Silent = FALSE)
 }
 
 \arguments{
@@ -51,7 +50,7 @@ Michael thruh
 \code{\link{RelativeDifferenceBetweenTS}}
 }
 \examples{
-data(ElectricityBRD$Mrd_KWh)
+data("ElectricityBRD")
 V=TemporalRelativeDifference(ElectricityBRD$Mrd_KWh,
 PlotIt=TRUE,Time=(ElectricityBRD$Time))
 

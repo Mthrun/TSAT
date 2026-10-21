@@ -3,3 +3,5 @@
 installdependencies.R
 .Rhistory
 .tgitconfig
+^\.positai$
+^\.claude$

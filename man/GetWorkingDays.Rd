@@ -8,7 +8,7 @@ GetWorkingDays
 Gets Working Days
 }
 \usage{
-GetWorkingDays(Time, HolidaysTime,	GermanBridgeDay=TRUE)
+GetWorkingDays(Time, HolidaysTime, GermanBridgeDay = TRUE, tz = "UTC") 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +20,7 @@ You may put you own holiday definiton as a vector of \code{as.Date} objects, or 
 }
   \item{GermanBridgeDay}{TRUE: includes german bridge days of TSAT::GermanHolidays object,   only valid if HolidaysTime is missing 
 }
+\item{tz}{Time zone used for timestamp conversion.}
 }
 \details{
 in German-speaking countries: day between a weekend and a statutory holiday which many employees like to take off to make their 'weekend' last four instead of two days.

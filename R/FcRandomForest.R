@@ -1,263 +1,185 @@
-FcRandomForest=function(Time, DF, formula=NULL,SplitDataAt,Horizon,Package='randomForest',
-                              AutoCorrelation=NULL,AutoCorrelationNo=1,NoOfTree=200,PlotIt=TRUE,Holidays,SimilarPoints=TRUE,tz="UTC",...){
-  N=nrow(as.matrix(DF))
-  requireNamespace('lubridate')
-
-  if(!is.null(formula)){
-    char=all.vars(formula)
-    char=char[char!='.']
-    Predictor=char[1]
-  }
-  if(!missing(Time)&!is.null(formula)){
-    if(!lubridate::is.Date(Time)){
-      warning('Time is not a date, calling "as.Date".')
-      Time=as.Date(Time,tz=tz)
-    }
-    if(length(Time)!=N){
-      warning('Time has not the length of No. of rows of DF. Algorithm could be failing.')
-    }
-
-    DF$Weekdays=lubridate::wday(Time)
-    DF$WeekNo=lubridate::isoweek(Time)
-    DF$Months=lubridate::month(Time)
-    DF$Quarters=lubridate::quarter(Time)
-    DF$Years=lubridate::year(Time)
-    
-    #Feiertage reinrechnen ----
-    if(missing(Holidays)){
-    hols=TSAT::GermanHolidays
-    }else{
-      hols=Holidays
-    }
-    hols$Time=as.Date(hols$Time,tz=tz)
-    DF$Holidays=Time %in% hols$Time
-    DF$Workingdays=GetWorkingDays(Time,HolidaysTime = hols$Time,GermanBridgeDay = F)$WorkingDay
-
-    if(!missing(SplitDataAt)){
-      if(SplitDataAt>N) stop('"SplitDataAt" is a higher number then length of cases of data')
-      if(!missing(Horizon)) warning('"Horizon" and "SplitDataAt" given, ignoring Horizin.')
-      TrainingTime=head(Time,SplitDataAt)
-      TestTime=tail(Time,N-SplitDataAt)
-    }
-    if(missing(SplitDataAt)){
-      if(missing(Horizon)) stop('Please set either "Horizon" or "SplitDataAt"')
-      
-      TrainingTime = head(Time,N-Horizon)
-      TestTime=tail(Time,Horizon)
-    }
-    #Dauer zwischen zwei Messungen
-    duration=rep(1,length(Time))
-    for(i in 2:(length(Time))){
-      duration[i]=difftime(Time[i],Time[i-1],units = 'days')#as.numeric(Time[i]-Time[i-1],units='days')
-    }
-    DF$Duration=duration
-    
-  }else{
-    Time=NULL
-    TestTime=NULL
-    TrainingTime=NULL
-  }
-
-  #Autokorellation reinrechnen ----
-  if(!is.null(AutoCorrelation)&!is.null(formula)){
-    
-    if(length(AutoCorrelation)>1){
-      AutoCorrelation=AutoCorrelation[1]
-      warning('Currently Autocorrelation for only one feature implemented')
-    }
-    x=DF[,AutoCorrelation]
-    if(missing(Horizon)) 
-      HH=N-SplitDataAt
-    else
-      HH=Horizon
-    
-   if(AutoCorrelationNo>1){
-      DFcorrs=matrix(NaN,nrow =N ,ncol = AutoCorrelationNo)
-      for(cc in 1:AutoCorrelationNo){
-        DFcorrs[,cc]=TSAT::LagVector(x,cc)
-        if((2*cc+1)<N){
-          DFcorrs[1:cc,cc]=mean(DFcorrs[(cc+1):(2*cc),cc],na.rm = T)
-          
-        }else{
-          DFcorrs[1:cc,cc]=0
-        }
-      }
-      colnames(DFcorrs)=paste0('Autocorr',1:AutoCorrelationNo)
-      DF=cbind.data.frame(DF,DFcorrs)
-   }
-    DF$DaysPrior=TSAT::LagVector(x,HH)
-    lastvalue=TSAT::LagVector(x,1)
-    if((2*HH+1)<N){
-      DF$DaysPrior[1:HH]=mean(DF$DaysPrior[(HH+1):(2*HH)],na.rm = T)
-      
-    }else{
-      DF$DaysPrior[1:HH]=0
-    }
-    lastvalue[1]=mean(lastvalue[(1+1):(2*1)],na.rm = T)
-    #Renditen
-    x2=x
-    x2[x2<0]=0
-    lastvalue[lastvalue<0]=0
-    DF$Renditen=suppressWarnings(DatabionicSwarm::RelativeDifference(x2,lastvalue,na.rm = T,epsilon = 10^-14))
-    
-    
-    if(isTRUE(SimilarPoints)){
-      #Aehnlichsten Punkte
-      distance=matrix(NaN,length(x),length(x))
-      for(i in 1:length(x)){
-        for(j in 1:length(x))
-          if(i<j){
-            distance[i,j]=abs(x[i]-x[j])
-          }
-      }
-      distvect=as.numeric(distance[upper.tri(distance,F)])
-      q=quantile(distvect,c(0.05,0.99),na.rm = T)
-      ind=which(distance<=q[1],arr.ind=T)
-      DF$Similar=rep(q[2],length(x))
-      u=sort(unique(ind[,1]))
-      
-      for(l in u){
-        indi=sort(which(ind[,1]==l),decreasing = F)
-        DF$Similar[l]=distance[ind[indi[1],1],ind[indi[1],2]]
-      }
+FcRandomForest <- function(
+  Time = NULL, DF = NULL, formula = NULL, SplitDataAt = NULL,
+  Horizon = NULL, Package = "randomForest", AutoCorrelation = NULL, AutoCorrelationNo = 1,
+  NoOfTree = 200, PlotIt = FALSE, Holidays = NULL, SimilarPoints = FALSE, tz = "UTC", ...,
+  DataVec = NULL, SplitAt = NULL, ForecastHorizon = NULL, Predictors = NULL,
+  FuturePredictors = NULL, Lags = NULL, Lookback = NULL, TimeStep = NULL,
+  SeasonalPeriod = NULL, FutureTime = NULL, Seed = NULL
+) {
+  Package <- match.arg(Package, c("randomForest", "ranger"))
+  if (!requireNamespace(Package, quietly = TRUE))
+    stop("Install the optional package '", Package, "' to use this method.", call. = FALSE)
+  if (!is.logical(SimilarPoints) || length(SimilarPoints) != 1L || is.na(SimilarPoints))
+    stop("SimilarPoints must be TRUE or FALSE.", call. = FALSE)
+  if (SimilarPoints) stop("SimilarPoints uses future response values. Set SimilarPoints = FALSE.")
+  if (!is.numeric(NoOfTree) || length(NoOfTree) != 1L || !is.finite(NoOfTree) ||
+    NoOfTree < 1L || NoOfTree > .Machine$integer.max || NoOfTree != floor(NoOfTree))
+    stop("NoOfTree must be one integer >= 1.", call. = FALSE)
+  NoOfTree <- as.integer(NoOfTree)
+  response.name <- NULL
+  if (!is.null(DF)) {
+    frame <- as.data.frame(DF)
+    response.name <- if (is.null(formula)) names(frame)[1L] else all.vars(formula)[1L]
+    if (!response.name %in% names(frame)) stop("The formula response is not a column in DF.")
+    if (!is.null(DataVec) && !is.null(frame[[response.name]]) &&
+      !isTRUE(all.equal(DataVec, frame[[response.name]], check.attributes = FALSE)))
+      stop("Use either DataVec or DF response, or give equal values.", call. = FALSE)
+    DataVec <- if (is.null(DataVec)) frame[[response.name]] else DataVec
+    columns <- setdiff(names(frame), response.name)
+    if (length(columns)) {
+      if (!is.null(Predictors) && !is.null(frame[columns]) &&
+        !isTRUE(all.equal(Predictors, frame[columns], check.attributes = FALSE)))
+        stop("Use either Predictors or DF predictors, or give equal values.", call. = FALSE)
+      Predictors <- if (is.null(Predictors)) frame[columns] else Predictors
     }
   }
-    requireNamespace('randomForest')
-
-    if(!missing(SplitDataAt)){
-      if(SplitDataAt>N) stop('"SplitDataAt" is a higher number then length of cases of data')
-      if(!missing(Horizon)) warning('"Horizon" and "SplitDataAt" given, ignoring Horizin.')
-    
-    TrainData=head(DF,SplitDataAt)
-    TestData=tail(DF,N-SplitDataAt)
-
-    Splitted=list(TrainingSet=TrainData,TestSet=TestData)
-    }
-    if(missing(SplitDataAt)){
-      if(missing(Horizon)) stop('Please set either "Horizon" or "SplitDataAt"')
-      Splitted=list(
-      TrainingSet = head(DF,N-Horizon),
-      TestSet = tail(DF,Horizon))
-      
-
-    }
-if(is.null(formula)){#does not work with seasonal components
-  #zyklisch zuruecksetzen leads to autocorralation
-  if(missing(Horizon)) 
-    HH=N-SplitDataAt
-  else
-    HH=Horizon
-  
-  Ntrain=nrow(as.matrix(Splitted$TrainingSet))
-  Praediktor=c(tail(Splitted$TrainingSet,HH),head(Splitted$TrainingSet,Ntrain-HH))
-
-  switch (Package,
-          randomForest = {
-            model = randomForest::randomForest(x=Splitted$TrainingSet,y=Praediktor,
-                                               ntree=NoOfTree,...)
-            y_pred = predict(model,newdata = as.matrix(PraediktorTest))
-          },
-          ranger={
-            model = ranger::ranger(data=Splitted$TrainingSet,formula=Praediktor~.,
-                                   num.trees=NoOfTree,classification=FALSE,...)
-            y_pred = predict(model,data = Splitted$TestSet)$predictions
-          },
-          {stop("Please choose either 'ranger' or 'randomForest'.")}
+  if (!is.null(SplitAt) && !is.null(SplitDataAt) &&
+    !isTRUE(all.equal(SplitAt, SplitDataAt, check.attributes = FALSE)))
+    stop("Use either SplitAt or SplitDataAt, or give equal values.", call. = FALSE)
+  SplitAt <- if (is.null(SplitAt)) SplitDataAt else SplitAt
+  if (is.null(SplitAt)) SplitAt <- if (!is.null(Horizon)) length(DataVec) - Horizon else length(DataVec)
+  if (!is.null(ForecastHorizon) && !is.null(Horizon) &&
+    !isTRUE(all.equal(ForecastHorizon, Horizon, check.attributes = FALSE)))
+    stop("Use either ForecastHorizon or Horizon, or give equal values.", call. = FALSE)
+  ForecastHorizon <- if (is.null(ForecastHorizon)) Horizon else ForecastHorizon
+  if (is.null(ForecastHorizon))
+    ForecastHorizon <- if (is.null(DF)) 1L else max(1L, length(DataVec) - SplitAt)
+  p <- forecastPrepare(DataVec, Time, SplitAt, ForecastHorizon, TimeStep,
+    SeasonalPeriod, FutureTime,
+    PlotIt = PlotIt
   )
-
-
-
-  Ntest=nrow(as.matrix(Splitted$TestSet))
-  PraediktorTest=c(tail(Splitted$TestSet,HH),head(Splitted$TestSet,Ntest-HH))
-  TestData=Splitted$TestSet
-  TestDataIndicators=NULL
-}else{
-
-
-  switch (Package,
-          randomForest = {
-            model = randomForest::randomForest(formula=formula,
-                                               data=Splitted$TrainingSet,
-                                               ntree=NoOfTree,...)
-            y_pred = predict(model,newdata = Splitted$TestSet)
-            Importance=randomForest::importance(model)
-            ordered=order(Importance,decreasing = T)
-            Importance=Importance[ordered,]
-          },
-          ranger={
-            model = ranger::ranger(data=Splitted$TrainingSet,formula=formula,
-                                   num.trees=NoOfTree,classification=FALSE,importance = 'permutation',...)
-          
-            y_pred = predict(model,data = Splitted$TestSet)$predictions
-            Importance=model$variable.importance#ranger::importance(model)
-            ordered=order(Importance,decreasing = T)
-            Importance=Importance[ordered]
-            
-          },
-          {stop("Please choose either 'ranger' or 'randomForest'.")}
-  )
-  
- 
-  TestData=subset(Splitted$TestSet,select=Predictor)
-  ind=which(colnames(Splitted$TestSet)==Predictor)
-    if(length(ind)==1){
-      TestDataIndicators=Splitted$TestSet[,-ind]
-    }else{
-      TestDataIndicators=Splitted$TestSet
-    }
-  }# end is.null(formula)
-
-  Forecast = y_pred
-
-  TrainData=Splitted$TrainingSet
-  if(!is.null(TestTime)){
-    names(Forecast)=as.character(TestTime)
-    rownames(TestData)=as.character(TestTime)
-    rownames(TrainData)=as.character(TrainingTime)
-    
+  if (!is.null(AutoCorrelation)) {
+    if (is.null(DF) || length(AutoCorrelation) != 1L ||
+      !identical(names(as.data.frame(DF))[AutoCorrelation], response.name))
+      stop("AutoCorrelation must select the response column. Use Predictors for other series.")
+    if (!is.numeric(AutoCorrelationNo) || length(AutoCorrelationNo) != 1L || !is.finite(AutoCorrelationNo) ||
+      AutoCorrelationNo < 1L || AutoCorrelationNo > .Machine$integer.max || AutoCorrelationNo != floor(AutoCorrelationNo))
+      stop("AutoCorrelationNo must be one integer >= 1.", call. = FALSE)
+    AutoCorrelationNo <- as.integer(AutoCorrelationNo)
+    if (!is.null(Lags) && !is.null(seq_len(AutoCorrelationNo)) &&
+      !isTRUE(all.equal(Lags, seq_len(AutoCorrelationNo), check.attributes = FALSE)))
+      stop("Use either Lags or AutoCorrelationNo, or give equal values.", call. = FALSE)
+    Lags <- if (is.null(Lags)) seq_len(AutoCorrelationNo) else Lags
   }
-  
-  # if(is.null(formula)){
-  #   if(PlotIt){
-  #     plot(1:Horizon,Splitted$TestSet,type='l',col='black')
-  #     points(1:Horizon,y_pred,type='l',col='red')
-  #   }
-  #    requireNamespace('forecast')
-  #    acc=forecast::accuracy(y_pred,Splitted$TestSet)
-  # # }else{
-  #   plot(1:Horizon,Splitted$TestSet,type='l',col='black')
-  #   points(1:Horizon,y_pred,type='l',col='red')
-    
-  # acc=NULL
-  if(PlotIt){
-    if(missing(Horizon)) 
-      HH=N-SplitDataAt
-    else
-      HH=Horizon
-    
-    if(!is.null(TestTime)){
-      plot(1:HH,TestData[,1],type='l',col='black')
-      points(1:HH,y_pred,type='l',col='red')
-    }else{
-      plot(TestTime,TestData[,1],type='l',col='black')
-      points(TestTime,y_pred,type='l',col='red')
-    }
+  if (!is.null(Lookback)) {
+    if (!is.numeric(Lookback) || length(Lookback) != 1L || !is.finite(Lookback) ||
+      Lookback < 1L || Lookback > .Machine$integer.max || Lookback != floor(Lookback))
+      stop("Lookback must be one positive integer.", call. = FALSE)
+    if (!is.null(Lags) && !identical(Lags, as.numeric(seq_len(Lookback))) &&
+      !identical(Lags, seq_len(Lookback)))
+      stop("Supply either Lags or Lookback, or give equal lag settings.", call. = FALSE)
+    Lags <- seq_len(Lookback)
   }
-  # }
-  acc=forecast::accuracy(y_pred,TestData[,1])
-
-  
-
-
-  return(list(
-    Forecast=Forecast,
-    ForecastTime=TestTime,
-    TestDataPredictor =TestData,
-    FeatureImportance=Importance,
-    QualityMeasures=acc,
-    Model = model,
-    TestDataIndicators=TestDataIndicators,
-    TrainData=Splitted$TrainingSet
-
-  ))
+  if (is.null(Lags)) Lags <- integer()
+  if (!is.numeric(Lags) || any(!is.finite(Lags)) ||
+    any(Lags < 1L | Lags > .Machine$integer.max | Lags != floor(Lags)) ||
+    anyDuplicated(Lags))
+    stop("Lags must contain distinct positive integers.", call. = FALSE)
+  Lags <- as.integer(Lags)
+  # Check predictor rows here so the training split is visible in this model.
+  train.predictors <- future.predictors <- NULL
+  if (is.null(Predictors)) {
+    if (!is.null(FuturePredictors))
+      stop("FuturePredictors requires training Predictors.", call. = FALSE)
+  } else {
+    predictors <- as.data.frame(Predictors)
+    if (!(NROW(predictors) %in% c(p$k, p$n)) || !NCOL(predictors) ||
+      anyDuplicated(names(predictors)) ||
+      any(grepl("^\\.(Response$|Lag[0-9]+$|Season[0-9]+$)", names(predictors))))
+      stop("Predictors need one row per training or supplied observation and unique column names.",
+        call. = FALSE
+      )
+    train.predictors <- predictors[seq_len(p$k), , drop = FALSE]
+    if (anyNA(train.predictors) || any(vapply(
+      train.predictors,
+      function(column) is.numeric(column) && any(!is.finite(column)), logical(1)
+    )))
+      stop("Training Predictors contain missing or infinite values.", call. = FALSE)
+    if (is.null(FuturePredictors)) {
+      if (NROW(predictors) < p$k + p$h)
+        stop("Supply FuturePredictors for all forecast steps.", call. = FALSE)
+      future.predictors <- predictors[p$k + seq_len(p$h), , drop = FALSE]
+    } else {
+      future.predictors <- as.data.frame(FuturePredictors)
+      if (NROW(future.predictors) != p$h ||
+        !identical(names(future.predictors), names(train.predictors)))
+        stop("FuturePredictors needs ForecastHorizon rows and the training predictor columns.",
+          call. = FALSE
+        )
+    }
+    if (anyNA(future.predictors) || any(vapply(
+      future.predictors,
+      function(column) is.numeric(column) && any(!is.finite(column)), logical(1)
+    )))
+      stop("FuturePredictors contain missing or infinite values.", call. = FALSE)
+  }
+  regressors <- list(Train = train.predictors, Future = future.predictors)
+  # LagVector shifts the response. Remove the initial rows with unavailable lags.
+  if (is.null(regressors$Train) && !length(Lags)) Lags <- 1L
+  offset <- if (length(Lags)) max(Lags) else 0L
+  if (p$k - offset < 3L)
+    stop("The input history leaves too few training rows.", call. = FALSE)
+  training.rows <- seq.int(offset + 1L, p$k)
+  training.data <- data.frame(.Response = p$Train[training.rows])
+  if (!is.null(regressors$Train))
+    training.data <- cbind(training.data, regressors$Train[training.rows, , drop = FALSE])
+  for (lag in Lags)
+    training.data[[paste0(".Lag", lag)]] <- LagVector(p$Train, lag)[training.rows]
+  use.calendar <- !is.null(formula) && inherits(p$Time, c("Date", "POSIXct"))
+  if (use.calendar) {
+    cal <- forecastCalendarPredictors(p$TrainTime, Holidays, tz)
+    for (name in names(cal)) training.data[[name]] <- cal[[name]][training.rows]
+    if (is.null(regressors$Future)) regressors$Future <- forecastCalendarPredictors(p$ForecastTime, Holidays, tz)
+    else for (name in names(cal)) regressors$Future[[name]] <- forecastCalendarPredictors(p$ForecastTime, Holidays, tz)[[name]]
+  }
+  form <- if (is.null(formula)) stats::as.formula(".Response ~ .") else formula
+  form[[2L]] <- as.name(".Response")
+  forcastSeed(Seed, {
+    if (Package == "randomForest") {
+      fit <- randomForest::randomForest(form, data = training.data, ntree = NoOfTree, ...)
+      importance <- randomForest::importance(fit)
+    } else {
+      fit <- ranger::ranger(form,
+        data = training.data, num.trees = NoOfTree,
+        importance = "permutation", ...
+      )
+      importance <- fit$variable.importance
+    }
+    fc <- RecursiveForecast(p$Train, p$h, forecastPredictRandomForest, Lags,
+      regressors$Future,
+      Model = fit, Package = Package
+    )
+    fitted <- rep(NA_real_, p$k)
+    fitted[training.rows] <- forecastPredictRandomForest(
+      training.data[, -1L, drop = FALSE], fit, Package
+    )
+    forecast <- as.numeric(fc)
+    if (length(forecast) != p$h || any(!is.finite(forecast)))
+      stop("The model did not return a finite forecast of the requested size.", call. = FALSE)
+    if (length(fitted) != p$k)
+      stop("Fitted values do not match the training data.", call. = FALSE)
+    out <- list(
+      Forecast = forecast, ForecastTime = p$ForecastTime,
+      TrainData = p$Train, TrainTime = p$TrainTime,
+      Fitted = fitted, Residuals = p$Train - fitted,
+      TestData = p$TestData, TestTime = p$ForecastTime,
+      Lower = NULL, Upper = NULL,
+      Level = NULL, Model = fit,
+      Accuracy = QualityMeasuresForecasting(p$TestData, forecast,
+        TrainingData = p$Train, SeasonalPeriod = p$Season
+      ),
+      Info = list(
+        Method = paste("Random forest", Package), SplitAt = p$k, Origin = tail(p$TrainTime, 1L),
+        ForecastHorizon = p$h, TimeStep = p$Step, SeasonalPeriod = p$Season,
+        Scale = "response",
+        Lags = Lags, FittedType = "in-sample regression fit"
+      ),
+      FeatureImportance = importance,
+      TestDataPredictor = p$TestData,
+      TestDataIndicators = regressors$Future
+    )
+    if (PlotIt) PlotForecast(out)
+    out$QualityMeasures <- out$Accuracy
+    out
+  })
 }

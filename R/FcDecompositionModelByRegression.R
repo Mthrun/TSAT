@@ -1,396 +1,209 @@
-FcDecompositionModelByRegression=function(DataFrame,TimeColumnName="Time",FeatureName="Absatz",SplitDataAt,Frequency='day',ForecastPeriods,Holidays=NULL,PlotIt=TRUE,xlab='Time',ylab='Feature',EquiDist=TRUE,MinLowerBound=NULL,MaxUpperBound=NULL,Cycles=list(),Growth="linear",tz="UTC",...){
-  #res=DecompositionModelByRegressio(DataFrame, TimeColumnName = "Time", FeatureName = "Absatz", SplitDataAt, Frequency = "day", ForecastPeriods = 10, Holidays = c(), PlotIt, xlab = "Time", ylab = "Feature", EquiDist=TRUE)
-#
-#     Additive a or multiplicative Decomposition Model by Regression
-#     Automatic approach for Decomposition model generation. Dataset is divided into training and test data by SplitDataAt.
-#     training data is used for model generation, test data is used for evaluating the quality by a comparision to given data.
-#     Usually, a model should also have a third part of data only used once  and for manual verification.
-#  
-#  INPUT
-#     \item{DataFrame}{
-#       data frame of at least two columns of Time and a Feauture, see example
-#     }
-#     \item{TimeColumnName}{
-#       name of time column in data frame, see example
-#     }
-#     \item{FeatureName}{
-#       Feature name of variable which should be forecasted, see example
-#     }
-#     \item{SplitDataAt}{
-#       index of row where the \code{DataFrame} is divided into test and train data, see example
-#     }
-#     \item{Frequency}{
-#       'day', 'week', 'month', 'quarter', 'year', 1(1 sec), 60(1 minute) or 3600(1 hour)
-#       
-#     }
-#     \item{ForecastPeriods}{
-#       how many days, weeks, ..., should the model be foracested on?
-#     }
-#     \item{Holidays}{
-#       data frame of time and dates, see example
-#     }
-#     \item{PlotIt}{
-#       Plots data model and prediction
-  # ggplot object to change plot with
-  # 
-  # black dots: data
-  # 
-  # dark green line: model based on training data
-  # 
-  # red dots: prediction
-  # 
-  # blue range: confidence intervall of model
-#     }
-#     \item{xlab}{
-#       see ggplot2
-#     }
-#     \item{ylab}{
-#       see ggplot2
-#     }
-#     \item{Equidist}{
-#       TRUE: time difference between each two points is equidisant, if not set FALSE
-#     }
-#     \item{dots}{
-#       model paramters, see example
-#     }
-#   }
-#
-# OUTPUT
-#     \item{Model}{
-#       model paramters, see example
-#     }
-#     \item{Forecast}{
-#       model paramters, see example
-#     }
-#     \item{TrainingData}{
-#       model paramters, see example
-#     }
-#     \item{TestData}{
-#       model paramters, see example
-#     }
-#     \item{ggObject}{
-#       ggplot object to change plot
-#     }
-#     \item{Accuracy}{
-#       ME, RMSE, MAE, MPE, MAPE of training and test dataset in a matrix
-#     }
-#   }
-#   \references{
-#     About the package behind it
-#     \url{https://facebook.github.io/prophet/}
-#     
-#     Examplary published approach of an (manual) compund model:
-#       
-#       Aubert, A. H., Thrun, M. C., Breuer, L., Ultsch, A.: Knowledge discovery from high-frequency stream nitrate concentrations: hydrology and biology contributions, Scientific Reports, Nature, Vol. 6(31536), pp. 1-8, 2016.
-#     
-#   }
-#
-#   author: 04/2018, Michael Thrun for the easy-to-use wrapper, algorithm of prophet is used (see url)
-#
-# ## Begin of Examples
-#     dates=c("2015-01-01","2015-01-02")
-#     names=c("New Year's Day","New Year's weekend")
-#     Holidays=data.frame(ds=as.Date(dates),holiday=names
-#     )
-#     data('WeeklySalesUniformRandom')
-#       
-#       ##Forcasting 10 weeks of 166 weeks data of sales
-#       
-#       weeklyres=DecompositionModelByRegressio(DataFrame = WeeklySalesUniformRandom,TimeColumnName ='Time' ,
-#                                   
-#                                   FeatureName = 'Sales',SplitDataAt = 156,Frequency = 'week',
-#                                   
-#                                   ForecastPeriods = 10,PlotIt = T,
-#                                   
-#                                   Holidays = holidays)
-#       
-#       #complete accurcay showing among other things
-#       # average sales difference between prediction and data (MAE)
-#       weeklyres$Accuracy
-#       
-#       #mean Prediction quality
-#       1-abs(mean(weeklyres$TestData$y) - weeklyres$Accuracy[2,3])/weeklyres$Accuracy[2,3]
-#       )
-# #Plot components
-# prophet::plot_forecast_component(weeklyres$Forecast,name = c('seasonal'))
-# prophet::plot_forecast_component(weeklyres$Forecast,name = c('trend'))
-# #further compoents in names(weeklyres$Forecast)
-#     
-### Second Example ###
-#   
-#       ###Forcasting thirdy days of 1093 days sales data frame
-#       ##Grid Search fo Best Parameters
-#       
-#       #Generate all combinations of relevant paramters
-#       prophetGrid <- expand.grid(changepoint_prior_scale = c(0.05, 0.5, 0.001),
-#                                  seasonality_prior_scale = c(150,100,50, 10, 1,0.1),
-#                                  holidays_prior_scale = c(150,100,50, 10, 1,0.1),
-#                                  daily_seasonality=c(TRUE,FALSE)
-#       )
-#       
-#       results <- matrix(NaN, ncol=2,nrow = nrow(prophetGrid))
-#       #calculate all
-#       for (i in seq_len(nrow(prophetGrid))) {
-#         parameters <- prophetGrid[i, ]
-#         temp=DecompositionModelByRegressio(
-#           DataFrame = DailySales,TimeColumnName ='Time' ,
-#           FeatureName = 'Sales',SplitDataAt = 1093,Frequency = 'day',
-#           ForecastPeriods = 30,PlotIt = F,Holidays = holidays2,
-#           seasonality.prior.scale = parameters$seasonality_prior_scale, 
-#           changepoint.prior.scale = parameters$changepoint_prior_scale,
-#           holidays.prior.scale = parameters$holidays_prior_scale,
-#           daily.seasonality=parameters$daily_seasonality
-#         )
-#         results[i,]=temp$Accuracy[1,2:3]
-#       }
-#       # choose rmse or mae
-#       plot(results)
-#       #rmse chosen
-#       prophetGrid <- cbind(prophetGrid, results[,1])
-#       #best paramters found
-#       DailyParameters <- prophetGrid3[prophetGrid3results == min(results[,1]), ]
-#       
-#       dailyres=DecompositionModelByRegressio(DataFrame = DailySales,TimeColumnName ='Time',
-#                                  
-#                                  FeatureName = 'Sales',SplitDataAt = 1093,Frequency = 'day',
-#                                  
-#                                  ForecastPeriods = 30,PlotIt = T,Holidays = holidays2,
-#                                  
-#                                  seasonality.prior.scale = DailyParameters$seasonality_prior_scale, 
-#                                  
-#                                  changepoint.prior.scale = DailyParameters$changepoint_prior_scale,
-#                                  
-#                                  holidays.prior.scale = DailyParameters$holidays_prior_scale,
-#                                  
-#                                  daily.seasonality=DailyParameters$daily_seasonality)
-#       
-#       dailyres$Accuracy
-#       
-#       1-abs(mean(dailyres$TestData$y) - dailyres$Accuracy[2,3])/dailyres$Accuracy[2,3]
-#     
-### End of Examples     
-  #ToDo: Frequency Input abruefen auf tippfehler
-
-  library(Rcpp)#hier funktioniert requireNamespace nicht, description und impprt geht auch nicht :-()
-  # Error in cpp_object_initializer(.self, .refClassDef, ...) : 
-  #   could not find function "cpp_object_initializer"
-  
-  requireNamespace('prophet')
-  requireNamespace('dplyr') 
-  library(dplyr) #schalter warnungen ab die ansosnten kommen
-
-  
-  Header=colnames(DataFrame)
-  Names = paste0("\\<", FeatureName, "\\>")
-  if (length(Names) == 1) 
-    ColNum <- grep(paste0(Names), Header)
-  if (length(Names) > 1) 
-    ColNum = sapply(Names, grep, Header, ignore.case = FALSE)
-  if (length(ColNum) == 0) 
-    stop("FeatureName not found.")
-  
-  Names2 = paste0("\\<", TimeColumnName, "\\>")
-  if (length(Names2) == 1) 
-    ColNum2 <- grep(paste0(Names2), Header)
-  if (length(Names2) > 1) 
-    ColNum2 = sapply(Names2, grep, Header, ignore.case = FALSE)
-  if (length(ColNum2) == 0) 
-    stop("TimeColumnName not found.")
-  
-if(EquiDist){
-  # history <- data.frame(ds = seq(
-  #   from=as.Date(min(DataFrame[,ColNum2])), to=as.Date(max(DataFrame[,ColNum2])), by =Frequency
-  # ),
-  # y = DataFrame[,ColNum])
-  history <- data.frame(ds = as.Date(DataFrame[,ColNum2],tz=tz),
-                        y = DataFrame[,ColNum])
-  if(Growth=="logistic"){
-    history$cap=DataFrame$cap
-    history$floor=DataFrame$floor
+FcDecompositionModelByRegression <- function(
+  DataFrame = NULL, TimeColumnName = "Time",
+  FeatureName = "Absatz", SplitDataAt = NULL, Frequency = NULL, ForecastPeriods = NULL,
+  Holidays = NULL, PlotIt = FALSE, xlab = "Time", ylab = "Feature", EquiDist = TRUE,
+  MinLowerBound = NULL, MaxUpperBound = NULL, Cycles = list(), Growth = "linear", tz = "UTC", ...,
+  DataVec = NULL, Time = NULL, SplitAt = NULL, ForecastHorizon = NULL,
+  TimeStep = NULL, FutureTime = NULL, Level = 80, Predictors = NULL,
+  FuturePredictors = NULL, PlotComponents = FALSE, Seed = NULL
+) {
+  if (!requireNamespace("prophet", quietly = TRUE))
+    stop("Install the optional package 'prophet' to use this method.", call. = FALSE)
+  if (!is.logical(EquiDist) || length(EquiDist) != 1L || is.na(EquiDist))
+    stop("EquiDist must be TRUE or FALSE.", call. = FALSE)
+  if (!is.logical(PlotComponents) || length(PlotComponents) != 1L || is.na(PlotComponents))
+    stop("PlotComponents must be TRUE or FALSE.", call. = FALSE)
+  if (!is.list(Cycles)) stop("Cycles must be a list.")
+  if (!is.null(DataFrame)) {
+    if (!all(c(TimeColumnName, FeatureName) %in% names(DataFrame))) stop("DataFrame does not contain the specified time and response columns.")
+    if (!is.null(DataVec) && !is.null(DataFrame[[FeatureName]]) &&
+      !isTRUE(all.equal(DataVec, DataFrame[[FeatureName]], check.attributes = FALSE)))
+      stop("Use either DataVec or DataFrame response, or give equal values.", call. = FALSE)
+    DataVec <- if (is.null(DataVec)) DataFrame[[FeatureName]] else DataVec
+    if (!is.null(Time) && !is.null(DataFrame[[TimeColumnName]]) &&
+      !isTRUE(all.equal(Time, DataFrame[[TimeColumnName]], check.attributes = FALSE)))
+      stop("Use either Time or DataFrame time, or give equal values.", call. = FALSE)
+    Time <- if (is.null(Time)) DataFrame[[TimeColumnName]] else Time
   }
-}else{
-  history <- data.frame(ds = as.Date(DataFrame[,ColNum2],tz=tz),
-  y = DataFrame[,ColNum])
-  warnings('Working progress. May not work properly yet.')
-  if(Growth=="logistic"){
-    history$cap=DataFrame$cap
-    history$floor=DataFrame$floor
-  }
-  # su muesste man es machen
-  # x=seq(from=as.Date(min(DailySales7441884and7571348$Time)),to=as.Date(max(DailySales7441884and7571348$Time)),by='day')
-  # 
-  # y=DailySales7441884and7571348
-  # y$Time=as.Date(y$Time)
-  # 
-  # x=data.frame(Time=x,Absatz=0)
-  # x[x$Time%in%y$Time,2]=y$Absatz
-}
-  xlab=paste0(xlab,' in ',Frequency,'s')
-  
-  if(SplitDataAt>nrow(history)) stop('Number SplitDataAt is higher than number of rows in data'
+  if (is.null(Time)) stop("Prophet requires calendar timestamps in Time.")
+  if (is.character(Time)) Time <- as.Date(Time)
+  if (!inherits(Time, c("Date", "POSIXct"))) stop("Prophet requires Date or POSIXct timestamps.")
+  if (!is.null(SplitAt) && !is.null(SplitDataAt) &&
+    !isTRUE(all.equal(SplitAt, SplitDataAt, check.attributes = FALSE)))
+    stop("Use either SplitAt or SplitDataAt, or give equal values.", call. = FALSE)
+  SplitAt <- if (is.null(SplitAt)) SplitDataAt else SplitAt
+  if (is.null(SplitAt)) SplitAt <- length(DataVec)
+  if (!is.null(ForecastHorizon) && !is.null(ForecastPeriods) &&
+    !isTRUE(all.equal(ForecastHorizon, ForecastPeriods, check.attributes = FALSE)))
+    stop("Use either ForecastHorizon or ForecastPeriods, or give equal values.", call. = FALSE)
+  ForecastHorizon <- if (is.null(ForecastHorizon)) ForecastPeriods else ForecastHorizon
+  if (is.null(ForecastHorizon)) ForecastHorizon <- if (!is.null(DataFrame)) max(1L, length(DataVec) - SplitAt) else 1L
+  if (!is.null(TimeStep) && !is.null(Frequency) &&
+    !isTRUE(all.equal(TimeStep, Frequency, check.attributes = FALSE)))
+    stop("Use either TimeStep or Frequency, or give equal values.", call. = FALSE)
+  TimeStep <- if (is.null(TimeStep)) Frequency else TimeStep
+  p <- forecastPrepare(DataVec, Time, SplitAt, ForecastHorizon, TimeStep,
+    1L, FutureTime, Level, PlotIt,
+    Regular = EquiDist
   )
-  if(!is.null(MinLowerBound)){
-    history$floor=MinLowerBound
-  }
-  if(!is.null(MaxUpperBound)){
-    history$cap=MaxUpperBound
-  }
- 
-  train=history[1:SplitDataAt,]
-
-    if(SplitDataAt<nrow(history)){
-    testind=seq(from=(SplitDataAt+1),to=nrow(history),by=1)
-    testdata=history[testind,]
-    if(missing(ForecastPeriods)){
-      ForecastPeriods=nrow(testdata)
+  if (length(p$Level) != 1L) stop("Prophet supports one Level per call.")
+  # Check predictor rows here so the training split is visible in this model.
+  train.predictors <- future.predictors <- NULL
+  if (is.null(Predictors)) {
+    if (!is.null(FuturePredictors))
+      stop("FuturePredictors requires training Predictors.", call. = FALSE)
+  } else {
+    predictors <- as.data.frame(Predictors)
+    if (!(NROW(predictors) %in% c(p$k, p$n)) || !NCOL(predictors) ||
+      anyDuplicated(names(predictors)) ||
+      any(grepl("^\\.(Response$|Lag[0-9]+$|Season[0-9]+$)", names(predictors))))
+      stop("Predictors need one row per training or supplied observation and unique column names.",
+        call. = FALSE
+      )
+    train.predictors <- predictors[seq_len(p$k), , drop = FALSE]
+    if (anyNA(train.predictors) || any(vapply(
+      train.predictors,
+      function(column) is.numeric(column) && any(!is.finite(column)), logical(1)
+    )))
+      stop("Training Predictors contain missing or infinite values.", call. = FALSE)
+    if (is.null(FuturePredictors)) {
+      if (NROW(predictors) < p$k + p$h)
+        stop("Supply FuturePredictors for all forecast steps.", call. = FALSE)
+      future.predictors <- predictors[p$k + seq_len(p$h), , drop = FALSE]
+    } else {
+      future.predictors <- as.data.frame(FuturePredictors)
+      if (NROW(future.predictors) != p$h ||
+        !identical(names(future.predictors), names(train.predictors)))
+        stop("FuturePredictors needs ForecastHorizon rows and the training predictor columns.",
+          call. = FALSE
+        )
     }
-  }else{
-    if(missing(ForecastPeriods)){
-      ForecastPeriods=1
-    }
-    testdata=history[SplitDataAt,]
-    for(rr in 2:(ForecastPeriods+1))
-      testdata=rbind(testdata,history[SplitDataAt,])
-
-    testdata$ds=seq(from=testdata$ds[1],length.out = ForecastPeriods+1,by = Frequency)
-    testdata=testdata[-1,]
+    if (anyNA(future.predictors) || any(vapply(
+      future.predictors,
+      function(column) is.numeric(column) && any(!is.finite(column)), logical(1)
+    )))
+      stop("FuturePredictors contain missing or infinite values.", call. = FALSE)
   }
-  if(!is.null(Cycles[["Mirrored"]])){
-    if(isTRUE(Cycles[["Mirrored"]])){
-      indtrain=1:nrow(train)
-      Time=train$ds
-      Time2=seq(from=as.Date(min(Time),tz=tz),length.out =3*nrow(train)+1,by=paste0('-1 ',Frequency))
-      Time2=sort(Time2,decreasing = FALSE)
-      train=rbind(train[rev(indtrain),],train,train[rev(indtrain),],train)
-      #train=rbind(train[rev(indtrain),],train)
-      
-      train$ds=c(Time2,Time[-1])
-    }
-    
-  }
-  #Create Prophet object with parametter settings
-  m <- prophet::prophet(holidays=Holidays,growth = Growth,...)
-  
-  if(!is.null(Cycles[["Orders"]])){
-    Orders=Cycles[["Orders"]]
-    if(length(Orders)!=3){
-      warning('Length of vector of "Orders" should be 3 but is not. Using default.')
-      Orders=c(24,8,5)
-    }
-  }else{
-    Orders=c(24,8,5)
-  }
-  
-  if(!is.null(Cycles[["PriorScale"]])){
-    PriorScale=Cycles[["PriorScale"]]
-    if(length(PriorScale)!=3){
-      warning('Length of vector of "Orders" should be 3 but is not. Using default.')
-      PriorScale=c(0.8,0.8,0.8)
-    }
-  }else{
-    PriorScale=c(0.8,0.8,0.8)
-  }
-  
-  if(!is.null(Cycles[["monthly"]])){
-    if(isTRUE(Cycles[["monthly"]])){
-      if(Orders[1]<1){
-          Orders[1]=1
-          warning('Monthly Orders below 1. Setting 1')
-      }
-      m <- prophet::add_seasonality(m, name='monthly', period=30.5, fourier.order=Orders[1],prior.scale = PriorScale[1])
-    print(Orders)
-    print(PriorScale)
+  x <- list(Train = train.predictors, Future = future.predictors)
+  train <- data.frame(ds = p$TrainTime, y = p$Train)
+  future <- data.frame(ds = c(p$TrainTime, p$ForecastTime))
+  if (!is.null(x$Train)) {
+    for (name in names(x$Train)) {
+      if (name %in% c("ds", "y", "cap", "floor")) stop("Predictor names must not use Prophet's reserved columns.")
+      train[[name]] <- x$Train[[name]]
+      future[[name]] <- c(x$Train[[name]], x$Future[[name]])
     }
   }
-  if(!is.null(Cycles[["quaterly"]])){
-    if(isTRUE(Cycles[["quaterly"]])){
-      if(Orders[2]<1){
-        Orders[2]=1
-        warning('Quaterly Orders below 1. Setting 1')
-      }
-      m <- prophet::add_seasonality(m, name='quaterly', period=365.25/4, fourier.order=Orders[2],prior.scale = PriorScale[2])
+  if (!is.null(MinLowerBound)) {
+    if (length(MinLowerBound) != 1L || !is.finite(MinLowerBound)) stop("MinLowerBound must be one finite number.")
+    train$floor <- MinLowerBound; future$floor <- MinLowerBound
+  }
+  if (!is.null(MaxUpperBound)) {
+    if (length(MaxUpperBound) != 1L || !is.finite(MaxUpperBound)) stop("MaxUpperBound must be one finite number.")
+    train$cap <- MaxUpperBound; future$cap <- MaxUpperBound
+  }
+  if (!is.null(MinLowerBound) && !is.null(MaxUpperBound) &&
+    MinLowerBound >= MaxUpperBound)
+    stop("MinLowerBound must be smaller than MaxUpperBound.")
+  if (identical(Growth, "logistic")) {
+    for (name in c("cap", "floor")) if (is.null(train[[name]]) && !is.null(DataFrame[[name]])) {
+      values <- DataFrame[[name]]
+      train[[name]] <- values[seq_len(p$k)]
+      if (length(unique(values)) == 1L) future[[name]] <- values[1L]
+      else if (length(values) >= p$k + p$h) future[[name]] <- values[seq_len(p$k + p$h)]
+      else stop("Supply constant bounds or capacity values for all forecast timestamps.")
     }
+    if (is.null(train$cap)) stop("Logistic growth requires MaxUpperBound or a cap column.")
   }
-  if(!is.null(Cycles[["biyearly"]])){
-    if(isTRUE(Cycles[["biyearly"]])){
-      if(Orders[3]<1){
-        Orders[3]=1
-        warning('Bi-Yearly Orders below 1. Setting 1')
-      }
-      m <- prophet::add_seasonality(m, name='biyearly', period=2*365.25,fourier.order = Orders[3],prior.scale = PriorScale[3])
+  if (isTRUE(Cycles$Mirrored)) {
+    if (!is.null(x$Train) || !inherits(p$TrainTime, "Date") || is.null(p$Step))
+      stop("Mirrored cycles require regular Date timestamps without external predictors.")
+    count <- NROW(train)
+    step <- if (is.numeric(p$Step)) paste(-p$Step, "days") else paste("-1", p$Step)
+    earlier <- sort(seq(p$TrainTime[1], by = step, length.out = 3L * count + 1L))
+    train <- rbind(train[count:1L, ], train, train[count:1L, ], train)
+    train$ds <- c(earlier, p$TrainTime[-1L])
+  }
+  forcastSeed(Seed, {
+    model <- prophet::prophet(
+      holidays = Holidays, growth = Growth,
+      interval.width = p$Level / 100, ...
+    )
+    orders <- if (is.null(Cycles$Orders)) c(24, 8, 5) else Cycles$Orders
+    priors <- if (is.null(Cycles$PriorScale)) c(0.8, 0.8, 0.8) else Cycles$PriorScale
+    if (length(orders) != 3L || length(priors) != 3L) stop("Cycles Orders and PriorScale must each contain three values.")
+    names <- c("monthly", "quaterly", "biyearly")
+    periods <- c(30.5, 365.25 / 4, 2 * 365.25)
+    for (j in seq_along(names)) if (isTRUE(Cycles[[names[j]]])) {
+      if (!is.numeric(orders[j]) || length(orders[j]) != 1L || !is.finite(orders[j]) ||
+        orders[j] < 1L || orders[j] > .Machine$integer.max || orders[j] != floor(orders[j]))
+        stop("Fourier order must be one integer >= 1.", call. = FALSE)
+      order <- as.integer(orders[j])
+      model <- prophet::add_seasonality(model,
+        name = names[j], period = periods[j],
+        fourier.order = order, prior.scale = priors[j]
+      )
     }
-  }
-  
-  #if(Frequency=='month'){
-    #m <- prophet::prophet(weekly.seasonality=FALSE)
-    
-    #m <- prophet::prophet(m,train,holidays=Holidays,fit=T,...)  
-  #} 
-  #train model
-
-  m <- prophet::fit.prophet(m, train)
-
-  #m$logistic.floor=T
-  #fitmodel
-  PastAndfuture=prophet::make_future_dataframe(m, periods = ForecastPeriods, freq = Frequency,include_history=T)
- #print(future)
-  if(!is.null(MinLowerBound)){
-    PastAndfuture$floor=MinLowerBound
-  }
-  if(!is.null(MaxUpperBound)){
-    PastAndfuture$cap=MaxUpperBound
-  }
-  
-  if(Growth=="logistic"){
-    PastAndfuture$cap=DataFrame$cap[1:length(PastAndfuture$cap)]
-    PastAndfuture$floor=DataFrame$floor[1:length(PastAndfuture$cap)]
-  }
-  regression <- predict(m, PastAndfuture)
-  
-  if(!is.null(MinLowerBound)){
-    regression$yhat_lower[regression$yhat_lower<=MinLowerBound]=MinLowerBound
-  }
-  if(!is.null(MaxUpperBound)){
-    regression$yhat_upper[regression$yhat_upper>=MaxUpperBound]=MaxUpperBound
-  }
-  if(!is.null(MinLowerBound)){
-    regression$yhat[regression$yhat<=MinLowerBound]=MinLowerBound
-  }
-  if(!is.null(MaxUpperBound)){
-    regression$yhat[regression$yhat>=MaxUpperBound]=MaxUpperBound
-  }
-  #plot(m, forecast)
-  if(!is.numeric(Frequency)){ #days weeks months,quarters and years
-    m$history$ds=as.Date(m$history$ds)
-    regression$ds=as.Date(regression$ds)
-  }
-  ggObject=NULL
-  ggObject = ggplot()
-  #todo aes toi aes_string
-  ggObject = ggObject + geom_ribbon(data = regression, aes(x = ds, ymin = yhat_lower, ymax = yhat_upper), fill = "blue", alpha = 0.3)
-  ggObject = ggObject + geom_line(data = regression, aes(x = ds, y = yhat), color = "darkgreen",linetype = "solid",size=1)
-  ggObject = ggObject + geom_point(data = train, aes(x = ds, y = y), size = 2)
-  ggObject = ggObject + geom_point(data = testdata, aes(x = ds, y = y), size = 2, color = 'red')
-  ggObject = ggObject+xlab(xlab)+ylab(ylab)
-  if(PlotIt){
-    print(ggObject)
-  }
-  forecast=regression[regression$ds %in% testdata$ds,]
-  TrainingSetForecast=regression[regression$ds %in% train$ds,]
-  acc=matrix(ncol=0,nrow=2)
-  # if(EquiDist){
-  #   #AccuracyTest=c(0,0)
-  #   # print(forecast[, 'yhat'])
-  #   # print(forecast[forecast$ds %in% testdata$ds, 'yhat'])
-  #   # print(testdata$y)
-  # AccuracyTest=forecast::accuracy(forecast[, 'yhat'], testdata$y)
-  # #print(forecast[forecast$ds %in% train$ds, 'yhat'])
-  # #print(train$y)
-  # AccuracyTrain=forecast::accuracy(regression[regression$ds %in% train$ds, 'yhat'], train$y)
-  # acc=rbind(AccuracyTrain,AccuracyTest)
-  # }else{
-  #   acc=matrix(ncol=0,nrow=2)
-  # }
-  rownames(acc)=c('Train set', 'Test set')
-  return(list(Forecast=forecast,Accuracy=acc,TestData=testdata,Model=m,TrainingData=train,TrainingSetForecast=TrainingSetForecast,ggObject=ggObject))
+    if (!is.null(x$Train)) for (name in names(x$Train)) model <- prophet::add_regressor(model, name)
+    model <- prophet::fit.prophet(model, train)
+    raw <- stats::predict(model, future)
+    for (name in intersect(c("yhat", "yhat_lower", "yhat_upper"), names(raw))) {
+      if (!is.null(MinLowerBound)) raw[[name]] <- pmax(raw[[name]], MinLowerBound)
+      if (!is.null(MaxUpperBound)) raw[[name]] <- pmin(raw[[name]], MaxUpperBound)
+    }
+    index <- p$k + seq_len(p$h)
+    lower <- upper <- NULL
+    if (all(c("yhat_lower", "yhat_upper") %in% names(raw))) {
+      lower <- matrix(raw$yhat_lower[index], ncol = 1L, dimnames = list(NULL, paste0(p$Level, "%")))
+      upper <- matrix(raw$yhat_upper[index], ncol = 1L, dimnames = list(NULL, paste0(p$Level, "%")))
+    }
+    observed <- data.frame(ds = p$ForecastTime, y = p$TestData)
+    ds <- yhat <- yhat_lower <- yhat_upper <- y <- NULL
+    ggObject <- ggplot2::ggplot(raw, ggplot2::aes(x = ds, y = yhat))
+    if (!is.null(lower)) ggObject <- ggObject +
+      ggplot2::geom_ribbon(ggplot2::aes(ymin = yhat_lower, ymax = yhat_upper), fill = "blue", alpha = 0.3)
+    ggObject <- ggObject +
+      ggplot2::geom_line(colour = "darkgreen") +
+      ggplot2::geom_point(data = train, ggplot2::aes(x = ds, y = y)) +
+      ggplot2::geom_point(data = observed, ggplot2::aes(x = ds, y = y), colour = "red", na.rm = TRUE) +
+      ggplot2::labs(x = xlab, y = ylab)
+    forecast <- as.numeric(raw$yhat[index])
+    if (length(forecast) != p$h || any(!is.finite(forecast)))
+      stop("The model did not return a finite forecast of the requested size.", call. = FALSE)
+    fitted <- as.numeric(raw$yhat[seq_len(p$k)])
+    if (length(fitted) != p$k)
+      stop("Fitted values do not match the training data.", call. = FALSE)
+    if (is.null(lower) != is.null(upper))
+      stop("Both prediction bounds are required.", call. = FALSE)
+    if (!is.null(lower)) {
+      if (!identical(dim(lower), c(p$h, length(p$Level))) ||
+        !identical(dim(upper), dim(lower)) || any(!is.finite(lower)) ||
+        any(!is.finite(upper)) || any(lower > upper))
+        stop("Prediction bounds must be finite, ordered, and match the forecast size.", call. = FALSE)
+    }
+    out <- list(
+      Forecast = forecast, ForecastTime = p$ForecastTime,
+      TrainData = p$Train, TrainTime = p$TrainTime,
+      Fitted = fitted, Residuals = p$Train - fitted,
+      TestData = p$TestData, TestTime = p$ForecastTime,
+      Lower = lower, Upper = upper,
+      Level = if (is.null(lower)) NULL else p$Level, Model = model,
+      Accuracy = QualityMeasuresForecasting(p$TestData, forecast,
+        TrainingData = p$Train, SeasonalPeriod = p$Season
+      ),
+      Info = list(
+        Method = "Prophet", SplitAt = p$k, Origin = tail(p$TrainTime, 1L),
+        ForecastHorizon = p$h, TimeStep = p$Step, SeasonalPeriod = p$Season,
+        Scale = "response",
+        SeasonalPeriodUnit = "days; specified by Prophet options and Cycles"
+      ),
+      ModelForecast = raw, TrainingData = train,
+      TrainingSetForecast = raw[seq_len(p$k), ], ggObject = ggObject
+    )
+    if (PlotIt) {
+      print(ggObject)
+      if (PlotComponents) print(prophet::prophet_plot_components(model, raw))
+    }
+    out
+  })
 }

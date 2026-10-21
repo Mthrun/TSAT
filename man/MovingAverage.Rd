@@ -1,40 +1,25 @@
 \name{MovingAverage}
 \alias{MovingAverage}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-MovingAverage
-}
-\description{
-Moving Average -  A lowpass filter
-}
+\title{Trailing moving average}
+\description{Average the current observation and its preceding observations.}
 \usage{
-MovingAverage(Data, lag,PlotIt=FALSE)
+MovingAverage(Data, lag, PlotIt = FALSE) 
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Data}{[1:n,1]              time series, in colunns
+  \item{Data}{Numeric vector, time series, or matrix. Matrix columns are separate series.}
+  \item{lag}{Positive integer. Maximum number of observations in each window.}
+  \item{PlotIt}{If TRUE, compare the input and filtered values in a plot.}
 }
-  \item{lag}{ nr or previous data points to average
+\details{
+The first windows use only the available history. Missing values are omitted within each window. An empty window returns NaN. No future observation is used.
 }
-  \item{PlotIt}{ default (FALSE), if TRUE, comparison plot is generated
-}
-}
-
 \value{
-FilteredData[1:n,1]   the filtered data
+Filtered values with the same length or matrix dimensions as Data. A univariate time series retains its time index.
 }
-
-\author{
-Michael Thrun
-}
-\note{
-Because of the way endpoints are handled, the result of signal::filter differs from the result returned by the smooth function.
-}
-
 \examples{
-data("ElectricityBRD")
-averagedVals = MovingAverage(ElectricityBRD$Mrd_KWh, 12, PlotIt=TRUE)
+x <- 1:10
+y <- MovingAverage(x,3)
+stopifnot(y[1] == 1, y[10] == 9)
 }
 
-\keyword{MA}% use one of  RShowDoc("KEYWORDS")
-\keyword{Moving Average}% __ONLY ONE__ keyword per line
+\keyword{ts}

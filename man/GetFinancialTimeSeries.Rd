@@ -8,21 +8,18 @@ GetFinancialTimeSeries
 returns value of a stock in a time frame
 }
 \usage{
-GetFinancialTimeSeries(url="https://finance.yahoo.com",start = "1998-01-01",
-                                quote = "Adj",instrument='ibm',PlotIt=TRUE)
+GetFinancialTimeSeries(url = "https://finance.yahoo.com", start = "1998-01-01",
+  end, quote = "Adj", instrument = "ibm", PlotIt = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{url}{
+  \item{url}{Financial data service URL.}
+  \item{start}{Start date for the requested observations.}
+  \item{quote}{Price field requested from the service.}
+  \item{instrument}{Instrument ticker symbol.}
+  \item{PlotIt}{If TRUE, display the plot.
 }
-  \item{start}{
-}
-  \item{quote}{
-}
-  \item{instrument}{
-}
-  \item{PlotIt}{
-}
+\item{end}{End date for the requested series.}
 }
 \details{
 ...
@@ -43,8 +40,12 @@ Michael Thrun
 \code{\link{GetFinancialStatement}}
 }
 \examples{
-GetFinancialTimeSeries(url="https://finance.yahoo.com",start = "1998-01-01",
+# Requires a live data service or browser driver.
+\dontrun{
+GetFinancialTimeSeries(url="https://finance.yahoo.com",start = "1998-01-01",end="2020-01-01",
                                 quote = "Adj",instrument='sap',PlotIt=TRUE)
+
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

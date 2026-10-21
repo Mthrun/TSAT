@@ -1,14 +1,14 @@
 Package: TSAT
 Type: Package
 Title: Time Series Analysis Tools (TSAT)
-Version: 1.3.0
-Date: 2024-01-31
+Version: 1.4.0
+Date: 2026-10-20
 Authors@R: c(person("Michael", "Thrun", email= "m.thrun@gmx.net",role=c("aut","cre","cph")),person("Quirin", "Stier",role=c("ctr","ctb")),person("Hamza", "Tayyab",role=c("ctr","ctb")))
 Maintainer: Michael Thrun <m.thrun@gmx.net>
-Description: TSAT gives several approaches for the analysis and forecasting of numerical times series, e.g., Filtering through FFT, Karman Filter, LSTM forecasting, etc. Additionally, TSAT can be used to describe event-pattern detection as a part of complex event processing (CEP) for categorial time series.
+Description: TSAT gives several approaches for the analysis and forecasting of numerical times series, e.g., Filtering through FFT, Kalman Filter, LSTM forecasting, etc. Additionally, TSAT can be used to describe event-pattern detection as a part of complex event processing (CEP) for categorial time series.
 License: CC BY-NC 4.0
-Imports:ggplot2, Rcpp, rugarch
-Suggests:  DataVisualizations, xts, lubridate, imputeTS, AdaptGauss, signal, chron, WaveletComp, dlm, zoo, fanplot, forecast, prophet, lmtest, vars, fUnitRoots, tseries, tsibble,dtw,randomForest, mrf, ranger, RHmm, plotly, dplyr, tibble, htmlwidgets,latticeExtra,Metrics,tensorflow, keras, DatabionicSwarm,rvest,TTR,tidyr,tidyverse,wdman,MASS,e1071,colorRamps, Rhmm,MAPA,bsts,RJSONIO,jsonlite,ggfortify, datasets, echos, Classifiers, dbt.ClassAnalysis, dbt.Transforms, wavelets, tsintermittent 
+Imports:ggplot2 (>= 3.4.0), Rcpp, rugarch, methods
+Suggests:  DataVisualizations, xts, lubridate, imputeTS, AdaptGauss, signal, chron, WaveletComp, dlm, zoo, fanplot, forecast, prophet, lmtest, vars, fUnitRoots, tseries, tsibble,dtw,randomForest, mrf, ranger, RHmm, plotly, dplyr, tibble, htmlwidgets,latticeExtra,Metrics,tensorflow, keras, DatabionicSwarm,rvest,TTR,tidyr,tidyverse,wdman,MASS,e1071,colorRamps,MAPA,bsts,RJSONIO,jsonlite,ggfortify, datasets, echos, Classifiers, dbt.ClassAnalysis, dbt.Transforms, wavelets, tsintermittent, seasonal, MTS, nnfor, neuralnet, xgboost, plyr, RSelenium, smooth, BIDistances (>= 1.0.1), dtwclust, SimilarityMeasures, jmotif, FKmL, pdc, proxy, TSclust, tsensembler, xml2 
 Depends: R (>= 3.5)
 NeedsCompilation: no
 SystemRequirements:

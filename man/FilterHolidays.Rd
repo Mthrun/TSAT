@@ -8,9 +8,8 @@ FilterHolidays
 Filters Holidays out of daily data
 }
 \usage{
-FilterHolidays(Time, Datavector=NULL,HolidaysTime = TSAT::GermanHolidays$Time,
-
-PlotIt=FALSE)
+FilterHolidays(Time, Datavector = NULL,
+  HolidaysTime = TSAT::GermanHolidays$Time, PlotIt = FALSE, tz = "UTC")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,11 +20,12 @@ PlotIt=FALSE)
  Optional, [1:n] vector of values or a Key in case of a data frame. Default is \code{NULL}
 }
   \item{HolidaysTime}{
-[1:m] vector of time of holidays, as.Date or POSIXct objects are accepted. Default are german holidays, see \link[GermanHolidays]{GermanHolidays}
+[1:m] vector of time of holidays, as.Date or POSIXct objects are accepted. Default are german holidays, see \link{GermanHolidays}
 }
   \item{PlotIt}{
 Optional, TRUE: Evaluates output of function versus input by plots, works only if Datavector given. Default is FALSE
 }
+\item{tz}{Time zone used for timestamp conversion.}
 }
 \details{
 deletes holidays out of input 

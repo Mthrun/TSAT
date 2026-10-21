@@ -18,7 +18,7 @@ Save=FALSE,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Time}{[1:n] vector, both lines require the same xvalues, e.g. the time of the time series, \code{POSIXlt} or \code{POSIXct} or code{as.Date} are accepted}
+  \item{Time}{[1:n] vector, both lines require the same xvalues, e.g. the time of the time series, \code{POSIXlt} or \code{POSIXct} or \code{as.Date} are accepted}
   \item{Values}{
 [1:n] vector of histroical time series, usually test data
 }

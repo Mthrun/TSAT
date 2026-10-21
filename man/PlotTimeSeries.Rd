@@ -52,7 +52,8 @@ Wrapper in order to unify Input and Output
 
 \examples{
 data(ElectricityBRD)
-PlotTimeSeries(ElectricityBRD$Mrd_KWh, ElectricityBRD$Time, "Mrd KWh", "Time", "Electricity production in BRD")
+PlotTimeSeries(ElectricityBRD$Mrd_KWh, ElectricityBRD$Time,
+               "Mrd KWh", "Time", "Electricity production in BRD")
 }
 
 

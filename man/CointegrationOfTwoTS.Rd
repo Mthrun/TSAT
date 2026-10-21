@@ -30,8 +30,8 @@ TRUE: plot distribution analysis of \code{CointegrationOrder1} (which seems to b
 }
 \details{
 "In the econometric literature, a time series zt is said to be an integrated process of
-order 1, that is, an I(1) process, if (1−B)zt is stationary and invertible. In general, a
-univariate time series zt is an I(d) process if (1−B)dzt is stationary and invertible,
+order 1, that is, an I(1) process, if (1-B)zt is stationary and invertible. In general, a
+univariate time series zt is an I(d) process if (1-B)dzt is stationary and invertible,
 where d > 0. The order d is referred to as the order of integration or the multiplicity
 of a unit root. A stationary and invertible time series is said to be an I(0) process." [Tsay, 2013, p.295]
 

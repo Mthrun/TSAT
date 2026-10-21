@@ -8,7 +8,7 @@ ReadDates
   read univariate or multivariate time series similar to the LRN format
 }
 \usage{
-ReadDates(FileName = NULL, InDirectory = getwd(), Silent = TRUE)
+ReadDates(FileName = NULL, InDirectory = getwd(), Silent = TRUE,      tz = "UTC") 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,6 +22,7 @@ Optional: string, name of directory the data will be saved in, default \code{get
   \item{Silent}{
 If FALSE: Comments and messages are not printed out. Message contains the information if any column is named "Time".
 }
+\item{tz}{Time zone used for timestamp conversion.}
 }
 \details{
 Internally the tibble format is used. If it can be transformed a list is given back as output as defined below. If not, the tibble frame is directly given back as output.

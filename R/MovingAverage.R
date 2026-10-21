@@ -1,31 +1,30 @@
-# Moving Average: FilteredData(i) = mean(Data((i-lag-1):(i-1)))
-#
-# INPUT
-# Data[1:n,1]              Time series, in colums
-# lag                      Nr or previous data points to average
-#
-# OUTPUT
-# FilteredData[1:n,1]   the filtered data
-# author: MT 2017, 
-
-MovingAverage=function(Data, lag,PlotIt=FALSE){
-
-requireNamespace('signal')
-
-FilterVector = c(matrix(1, nrow = 1, ncol = lag),0,matrix(0, nrow = 1, ncol = lag))
-FilterVector = FilterVector / sum(FilterVector) 
-FilteredData = signal::filter(FilterVector,1,Data) 
-# jetzt noch anfang korrigieren
-FilteredData[1] = mean(Data,na.rm=T)#Data[1]
-for(i in 2:lag){
-    FilterVector = c(matrix(1, nrow = 1, ncol = i),0,matrix(0, nrow = 1, ncol = i))
-    FilterVector = FilterVector / sum(FilterVector) 
-    FD           = signal::filter(FilterVector,1,Data) 
-    FilteredData[i] = FD[i] 
-} 
-if(PlotIt){
-  plot.ts(Data,ylim=c(min(Data,na.rm=T)*0.99,max(Data,na.rm=T)*1.01),xlim=c(0,length(Data)),main='Filtering (red) versus Data(blue)',col='blue',xlab='Time',ylab='Range of values')
-  points(as.vector(FilteredData),type='l',col='red',ylim=c(min(Data,na.rm=T)*0.99,max(Data,na.rm=T)*1.01),xlim=c(0,length(Data)))
-}
-return(as.vector(FilteredData))
+MovingAverage <- function(Data, lag, PlotIt = FALSE) {
+  if (!is.numeric(lag) || length(lag) != 1L || !is.finite(lag) ||
+    lag < 1L || lag > .Machine$integer.max || lag != floor(lag))
+    stop("lag must be one integer >= 1.", call. = FALSE)
+  lag <- as.integer(lag)
+  if (!is.logical(PlotIt) || length(PlotIt) != 1L || is.na(PlotIt))
+    stop("PlotIt must be TRUE or FALSE.", call. = FALSE)
+  if (!is.numeric(Data) || !length(Data) || length(dim(Data)) > 2L)
+    stop("Data must be a nonempty numeric vector or matrix.")
+  x <- as.matrix(Data)
+  # A trailing window uses the current observation and earlier observations.
+  # Use only available history at the start. A full-series mean leaks future data.
+  out <- x
+  for (i in seq_len(NROW(x)))
+    out[i, ] <- colMeans(x[seq.int(max(1L, i - lag + 1L), i), , drop = FALSE],
+      na.rm = TRUE
+    )
+  if (PlotIt) {
+    graphics::matplot(x, type = "l", xlab = "Time", ylab = "Response")
+    graphics::matlines(out, col = "red")
+  }
+  if (is.null(dim(Data))) {
+    out <- as.numeric(out)
+    if (stats::is.ts(Data)) out <- stats::ts(out,
+      start = stats::start(Data),
+      frequency = stats::frequency(Data)
+    )
+  }
+  out
 }

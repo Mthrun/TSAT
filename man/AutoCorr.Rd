@@ -44,7 +44,8 @@ Michael Thrun
 
 \examples{
 data("ElectricityBRD")
-res = AutoCorr(ElectricityBRD$Mrd_KWh, nLags = 5, PlotIt = TRUE, main="Electricity production in BRD in Mrd KWh")
+res = AutoCorr(ElectricityBRD$Mrd_KWh, nLags = 5, PlotIt = TRUE,
+              main="Electricity production in BRD in Mrd KWh")
 }
 
 \keyword{acf}

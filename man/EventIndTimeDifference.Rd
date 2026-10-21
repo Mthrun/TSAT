@@ -5,7 +5,7 @@
 Calculates the Difference of Time between two Events 
 }
 \description{
-Low level function that calculates the distance w.r.t the time of at least two Events Using Indices
+Calculate elapsed time from the end of one event to the beginning of the next event.
 }
 \usage{
 EventIndTimeDifference(Timevector,EndInd,BeginInd,Resolution='mins',Silent=FALSE)
@@ -31,7 +31,7 @@ Timevector uses POSIXlt, which stores a list of day, month, year, hour, minute, 
 EventIndTimeDifference() assumes for Timevector, that all list-values within are in the same time zone.
 }
 \value{
-diff[1:m]            Duration of Event
+Numeric vector of time gaps in the requested units. Negative values indicate overlapping events.
 }
 
 \author{

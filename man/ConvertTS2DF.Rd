@@ -26,9 +26,7 @@ See \link[base]{strptime}. A empty string "" represents the current time zone
 \value{
 Dataframe with Time and Data columns
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
+
 \author{
 Michael Thrun
 }

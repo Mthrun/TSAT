@@ -1,6 +1,6 @@
 WaveletOutlierDetection = function(Data, Factor = 1.5, Strategy="mean",
                                    Order = 7, Filter="haar", NumLevels=2,
-                                   Boundary="periodic", Fast=T, PlotIt=F,
+                                   Boundary="periodic", Fast=TRUE, PlotIt=FALSE,
                                    Threshold="zero", Lambda=0.05,
                                    FilterLevels="all"){
   # DESCRIPTION

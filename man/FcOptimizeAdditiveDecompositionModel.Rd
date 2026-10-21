@@ -1,80 +1,54 @@
 \name{FcOptimizeAdditiveDecompositionModel}
 \alias{FcOptimizeAdditiveDecompositionModel}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Forecasting with optimized Additive Decomposition Model function using \code{\link[optimx]{opm}}
-}
-\description{
-The optimization is based on \code{L-BFGS-B} for the three parameters alpha beta and gamma of \code{\link{FcAdditiveDecompositionModel}}.
-}
+\title{Optimized additive compound forecasts}
+\description{Estimate the compound model update coefficients from the training data.}
 \usage{
-FcOptimizeAdditiveDecompositionModel(Data, SeasonalLength = 52,
-
-Horizon = 12, Iterations = 100, PlotIt = TRUE)
+FcOptimizeAdditiveDecompositionModel(Data = NULL, SeasonalLength = NULL,
+  Horizon = NULL, Iterations = 100, PlotIt = FALSE, DataVec = NULL, Time = NULL,
+  SplitAt = NULL, ForecastHorizon = NULL, TimeStep = NULL,
+  SeasonalPeriod = NULL, FutureTime = NULL, Seed = NULL)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Data}{
-[1:n] numerical vector
-}
-  \item{SeasonalLength}{
-see \code{\link{FcAdditiveDecompositionModel}}
-}
-  \item{Horizon}{
-horizon of forecast, autmaticall splits \code{Data} into train and test set
-}
-  \item{Iterations}{
-number of iteratons for the \code{\link[optimx]{opm}} procedure, because it depends on the initial choice of \code{AlphaBetaGamma}.
-}
-  \item{PlotIt}{
-If TRUE, time series and forecast is ploted.
-}
+  \item{Data}{Legacy response input. Use \code{DataVec} for univariate methods. For VARIMA, supply a numeric matrix with one series per column.}
+  \item{SeasonalLength}{Legacy name for \code{SeasonalPeriod}.}
+  \item{Horizon}{Legacy forecast horizon. In the random forest and optimized compound wrappers, an omitted split with this argument selects the last \code{Horizon} observations as test data.}
+  \item{Iterations}{Number of random starts for the compound model optimization. Each start uses bounded L-BFGS-B optimization.}
+  \item{PlotIt}{If \code{TRUE}, display the forecast plot. If \code{FALSE}, do not display plots. Plot settings do not change the forecast values.}
+  \item{DataVec}{Numeric response vector. A univariate \code{ts} object is also accepted. Values after \code{SplitAt} are used only for evaluation.}
+  \item{Time}{Ordered timestamps, with one timestamp per observation. Use numeric indices, \code{Date}, or \code{POSIXct}. ISO date strings are accepted. If omitted, use the \code{ts} time index or consecutive observation indices. Prophet requires calendar timestamps.}
+  \item{SplitAt}{Index of the last training observation. The forecast starts at the next observation. The usual default uses all supplied observations. See Details for legacy defaults.}
+  \item{ForecastHorizon}{Positive integer. Number of observations to predict after \code{SplitAt}. The result always contains this number of forecast rows.}
+  \item{TimeStep}{Time interval. Use a positive number or a calendar unit: \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"hour"}, \code{"min"}, or \code{"sec"}. Numeric intervals use the units of \code{Time}: days for \code{Date}, seconds for \code{POSIXct}, and index units otherwise. If omitted, infer a regular interval from training timestamps.}
+  \item{SeasonalPeriod}{Positive integer. Number of observations in one seasonal cycle. The default uses the frequency of a \code{ts} input, or one for a numeric vector. This setting does not select an input window or aggregate data.}
+  \item{FutureTime}{Optional timestamps for all forecast rows. Supply exactly \code{ForecastHorizon} values after the forecast origin. They must agree with any observed test timestamps and with the regular interval required by the method.}
+  \item{Seed}{Optional nonnegative integer for reproducible random operations. The function restores the R random state after the call. TensorFlow can also depend on the runtime and hardware.}
 }
 \details{
-Limited-memory BFGS is an optimization algorithm in the family of quasi-Newton methods that approximates the Broyden–Fletcher–Goldfarb–Shanno (BFGS) algorithm using a limited amount of computer memory. The object function is defined by \code{\link{RootDeviance}} where \code{MRD} is minimized and the initial choice of \code{AlphaBetaGamma} is random. By selecting \code{Iterations} higher than 1 a simulated annealing procedure is used.
-After this procudure the optimized parameters \code{AlphaBetaGamma} can be used in \code{\link{FcAdditiveDecompositionModel}} to forecast the future.
+Each optimization start minimizes the mean squared one-step prediction errors. The first two cycles initialize the model and are excluded from the objective. Supply at least three complete training cycles and no partial cycle. The optimizer uses L-BFGS-B with coefficients between 0.01 and 0.99. Multiple starts are not simulated annealing. The default seasonal period is 52 and the default horizon is 12. A legacy Horizon call without SplitAt reserves the last Horizon observations for evaluation. Canonical calls fit all supplied observations by default. The compound plot and legacy result fields are preserved.
 }
 \value{
-
-  \item{Forecast}{
-[1:k] forecast, where \code{Horizon=n-k}
+A named list with the common fields described in \code{\link{ForecastingInterface}}:
+\item{Forecast}{Response predictions. A vector of length \code{ForecastHorizon}, or a matrix with one column per series.}
+\item{ForecastTime}{One timestamp per forecast row.}
+\item{TrainData, TrainTime}{The observed training response and its timestamps.}
+\item{Fitted, Residuals}{Training fitted values and observed-minus-fitted residuals. Unsupported fields are \code{NULL}. Initial values can be missing.}
+\item{TestData, TestTime}{Observed response values aligned with the forecast rows and their timestamps. Unknown future responses are \code{NA}.}
+\item{Lower, Upper, Level}{Prediction bounds and coverage percentages. Unsupported intervals are \code{NULL}. Univariate bounds have one column per level. Multivariate bounds have dimensions horizon by series by level.}
+\item{Model}{The fitted model or model parameters.}
+\item{Accuracy}{The matrix from \code{\link{QualityMeasuresForecasting}}, with one row per response series. It contains N, MAE, RMSE, Bias, MASE, MAPE, SMAPE, AbsoluteError, RAE, RSE, MRD, and MRD_BIAS. It is \code{NULL} when no finite test comparisons are available.}
+\item{Info}{Method name, split index, forecast origin, horizon, time interval, seasonal period, response scale, and method-specific information.}
+See Details for additional fields.
 }
-  \item{Accurary}{
-against the test set, see \code{\link[forecast]{accuracy}}
-}
-  \item{Train}{
-[1:m] trainings data with \code{m+k=n}.
-}
-  \item{ForecastTrain}{
-[1:m] forecast fo trainings data
-}
-  \item{Test}{
-[1:k] testset
-}
-  \item{AlphaBetaGamma}{
-parameters of \code{\link{FcAdditiveDecompositionModel}}
-}
-}
-\references{
-Nash JC, and Varadhan R (2011). Unifying Optimization Algorithms to Aid Software System Users: optimx for R., Journal of Statistical Software, 43(9), 1-14., URL http://www.jstatsoft.org/v43/i09/.
-}
+\references{See \code{\link[stats]{optim}} for the L-BFGS-B optimizer. See \code{\link{FcAdditiveDecompositionModel}} for the compound model references.}
 \author{
 Michael Thrun
 }
-\note{
-The optimization of \code{\link[optimx]{opm}} contrary to parameter settings sometimes tries values above 1 or less than zero. This generates warnings, but is catched in \code{\link{FcAdditiveDecompositionModel}}.
-
-}
-
-\seealso{
-\code{\link[optimx]{opm}}
-}
+\seealso{\code{\link{ForecastingInterface}}}
 \examples{
-#ToDo
+y <- 100 + seq_len(60)/5 + rep(c(-3, 0, 3, 0), 15)
+out <- FcOptimizeAdditiveDecompositionModel(DataVec = y, SplitAt = 48,
+  ForecastHorizon = 3, SeasonalPeriod = 4, Iterations = 2, Seed = 1)
+stopifnot(NROW(out$Forecast) == 3, length(out$ForecastTime) == 3,
+          all(is.finite(out$Forecast)))
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{OptimizeAdditiveDecompositionModel}% use one of  RShowDoc("KEYWORDS")
-\concept{time series}
-\concept{Additive decomposition model}
-\concept{Optimize additive decomposition model}
+\keyword{ts}

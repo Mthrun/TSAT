@@ -61,8 +61,13 @@ Michael Thrun
 }
 
 \examples{
-\donttest{
-KalmanFilter(Datavector,PlotIt=TRUE,Short=FALSE)
+if (requireNamespace("dlm", quietly = TRUE) &&
+    requireNamespace("DataVisualizations", quietly = TRUE)) {
+  # Use supplied data so that the example runs in a new R session.
+  Datavector <- as.numeric(datasets::Nile)
+  result <- KalmanFilter(Datavector, PlotIt = TRUE, Short = TRUE)
+  stopifnot(length(result$FilteredData) == length(Datavector),
+            all(is.finite(result$FilteredData)))
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

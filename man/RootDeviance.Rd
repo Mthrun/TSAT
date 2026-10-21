@@ -41,7 +41,7 @@ RootDeviance(x,y,Silent=FALSE)
   }
 }
 \details{
-Calculating the above for the time series represented by \code{x} and \code{y}.
+A perfect forecast has zero bias. Both inputs must be finite numeric vectors of the same positive length.
 }
 \value{
 A list with the following named members

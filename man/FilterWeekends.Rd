@@ -13,7 +13,7 @@ FilterWeekends(Time, Datavector=NULL,EnglishOrGerman=FALSE,PlotIt=FALSE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Time}{
-[1:n] Time object, either code{POSIXlt} or \code{POSIXct} are required with daily frequency
+[1:n] Time object, either \code{POSIXlt} or \code{POSIXct} are required with daily frequency
 }
   \item{Datavector}{
  Optional, default \code{NULL}, [1:n] either Key in case of a dataframe or vector of data

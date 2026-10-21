@@ -1,48 +1,28 @@
 \name{aggregateTime2Days}
 \alias{aggregateTime2Days}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-aggregate Time to Days
-}
-\description{
-Aggregates a Time vector of POSIX format to Days
-}
+\title{Aggregate time-series observations}
+\description{Group observations by time and apply a summary function.}
 \usage{
-aggregateTime2Days(Time, Data, FUN, Header,\dots)
+aggregateTime2Days(Time, Data, FUN, Header, tz = "UTC", \dots) 
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Time}{
-[1:n] \code{POSIXlt} or \code{POSIXct}
-}
-  \item{Data}{
-[1:n,1:d] matrix or dataframe, d can be also 1 , then vector
-}
-  \item{FUN}{
-aggregation function, e.g. \code{mean} or \code{sum}
-}
-  \item{Header}{
-Names of Outputfeatures minus Time column
-}
-  \item{\dots}{
-further arguments passed on to \code{FUN}
-}
+  \item{Time}{One timestamp per data row. Weekly fiscal input must use Monday Date values.}
+  \item{Data}{Numeric vector, matrix, or data frame.}
+  \item{FUN}{Function that returns one numeric value per group and column.}
+  \item{Header}{Optional column names. Supply one name per data column, or names for all output columns. A single name is repeated with unique suffixes for matrix input.}
+  \item{tz}{Time zone used when converting timestamps to dates.}
+  \item{\dots}{Additional arguments for FUN, such as na.rm=TRUE.}
 }
 \details{
-all possible timeframes with higher frequency then days are accepted, aggregation shortcut wrapper
+Apply the same grouping rule to every data column. Weekly groups start on Monday. Missing observations are passed to FUN. No missing period is filled with zero.
 }
 \value{
-dataframe[1:m,1:(d+1)] with m<n and first column being the time in \code{as.Date} format
+Data frame. The first column gives group dates. Other columns contain the aggregated data.
 }
-
-\author{
-Michael Thrun
-}
-
 \examples{
-#to be filled
+time <- as.Date("2020-01-01")+0:99
+out <- aggregateTime2Days(time,rep(1,length(time)),sum)
+stopifnot(sum(out$Data) == length(time))
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{aggregateTime2Days}% use one of  RShowDoc("KEYWORDS")
-\keyword{aggregate}% __ONLY ONE__ keyword per line
+
+\keyword{ts}

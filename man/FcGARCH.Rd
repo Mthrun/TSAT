@@ -1,56 +1,46 @@
 \name{FcGARCH}
 \alias{FcGARCH}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Forecasting with Model for Generalized Autoregressive Conditional Heteroscedasticity
-}
-\description{
-Autoregressive conditional heteroskedasticity (ARCH) model is a statistical model for time series data that describes the variance of the current error term or innovation as a function of the actual sizes of the previous time periods error terms often the variance is related to the squares of the previous innovations - Wikipedia
-}
+\title{GARCH response and volatility forecasts}
+\description{Fit a conditional mean and variance model to the training observations.}
 \usage{
 FcGARCH(DataVec, VarianceModel = list(model = "sGARCH", garchOrder = c(1, 1)),
-
- ForecastHorizon, DistributionModel = 'norm', 
-
-PlotIt = FALSE, Summary = FALSE, \dots)
+  ForecastHorizon = 1L, DistributionModel = "norm", PlotIt = FALSE,
+  Summary = FALSE, \dots, Time = NULL, SplitAt = length(DataVec),
+  TimeStep = NULL, SeasonalPeriod = NULL, FutureTime = NULL, Level = c(80, 95),
+  Difference = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{DataVec}{
-[1:n] Datavector
-}
-  \item{VarianceModel}{
-see \code{\link{ugarchspec}}, The The ARCH (q) and GARCH (p) orders. be chosen manually accordingly to the problem at hand, possible model variants are
-
-“sGARCH”, “fGARCH”, “eGARCH”, “gjrGARCH”, “apARCH” and “iGARCH” and “csGARCH”.
-}
-  \item{ForecastHorizon}{
-Number of Forecast units of time
-}
-  \item{DistributionModel}{
-Optional, see \code{\link{ugarchspec}}
-}
-
-  \item{PlotIt}{
-Optional, If TRUE, plots the forecast
-}
-  \item{Summary}{
-Optional, If TRUE, plots the summary of the model
-}
-  \item{\dots}{
-Optional, Further argument passed on to \code{\link{ugarchspec}}
-}
+  \item{DataVec}{Numeric response vector. A univariate \code{ts} object is also accepted. Values after \code{SplitAt} are used only for evaluation.}
+  \item{VarianceModel}{Variance model specification passed to \code{rugarch::ugarchspec}.}
+  \item{ForecastHorizon}{Positive integer. Number of observations to predict after \code{SplitAt}. The result always contains this number of forecast rows.}
+  \item{DistributionModel}{Conditional innovation distribution passed to \code{rugarch::ugarchspec}.}
+  \item{PlotIt}{If \code{TRUE}, display the forecast plot. If \code{FALSE}, do not display plots. Plot settings do not change the forecast values.}
+  \item{Summary}{For GLM, print the model summary. For GARCH, display its diagnostic plots only when \code{PlotIt} is also \code{TRUE}.}
+  \item{\dots}{Additional arguments for the model function identified in Details. Do not repeat arguments that the wrapper sets explicitly.}
+  \item{Time}{Ordered timestamps, with one timestamp per observation. Use numeric indices, \code{Date}, or \code{POSIXct}. ISO date strings are accepted. If omitted, use the \code{ts} time index or consecutive observation indices. Prophet requires calendar timestamps.}
+  \item{SplitAt}{Index of the last training observation. The forecast starts at the next observation. The usual default uses all supplied observations. See Details for legacy defaults.}
+  \item{TimeStep}{Time interval. Use a positive number or a calendar unit: \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"hour"}, \code{"min"}, or \code{"sec"}. Numeric intervals use the units of \code{Time}: days for \code{Date}, seconds for \code{POSIXct}, and index units otherwise. If omitted, infer a regular interval from training timestamps.}
+  \item{SeasonalPeriod}{Positive integer. Number of observations in one seasonal cycle. The default uses the frequency of a \code{ts} input, or one for a numeric vector. This setting does not select an input window or aggregate data.}
+  \item{FutureTime}{Optional timestamps for all forecast rows. Supply exactly \code{ForecastHorizon} values after the forecast origin. They must agree with any observed test timestamps and with the regular interval required by the method.}
+  \item{Level}{Prediction interval coverage, in percent. Each value must be between zero and 100. X-13, MAPA, and Prophet accept one value per call. Other methods can accept several values.}
+  \item{Difference}{If \code{TRUE}, fit first differences. Add cumulative predicted differences to the last training value to return the response forecast.}
 }
 \details{
-The ARCH model is appropriate when the error variance in a time series follows an autoregressive (AR) model; if an autoregressive moving average model (ARMA) model is assumed for the error variance, the model is a generalized autoregressive conditional heteroskedasticity (GARCH) model - Wikiepdia
+Additional arguments go to rugarch::ugarchspec. Difference=TRUE fits first differences and integrates the forecast mean back to the response scale. Volatility describes the differences; response intervals are not supplied in this mode. With Difference=FALSE, one-step bounds use the selected innovation distribution. For later steps with normal innovations and an ordinary ARMA mean, bounds use a Gaussian approximation with propagated ARMA forecast variance. Volatility still gives innovation standard deviations. Multi-step bounds are NULL for other distributions, fractional integration, or variance-in-mean models. These cases require simulation of future paths. All bounds treat estimated parameters as known. ModelForecast stores the native forecast. With all parameters fixed, Model is a native filter object.
 }
 \value{
-List of 
-\item{Forecast}{[1:ForecastHorizon] of Data}
-\item{Model}{Model, the output of \code{\link{ugarchspec}}}
-in mode \code{\link{invisible}}
+A named list with the common fields described in \code{\link{ForecastingInterface}}:
+\item{Forecast}{Response predictions. A vector of length \code{ForecastHorizon}, or a matrix with one column per series.}
+\item{ForecastTime}{One timestamp per forecast row.}
+\item{TrainData, TrainTime}{The observed training response and its timestamps.}
+\item{Fitted, Residuals}{Training fitted values and observed-minus-fitted residuals. Unsupported fields are \code{NULL}. Initial values can be missing.}
+\item{TestData, TestTime}{Observed response values aligned with the forecast rows and their timestamps. Unknown future responses are \code{NA}.}
+\item{Lower, Upper, Level}{Prediction bounds and coverage percentages. Unsupported intervals are \code{NULL}. Univariate bounds have one column per level. Multivariate bounds have dimensions horizon by series by level.}
+\item{Model}{The fitted model or model parameters.}
+\item{Accuracy}{The matrix from \code{\link{QualityMeasuresForecasting}}, with one row per response series. It contains N, MAE, RMSE, Bias, MASE, MAPE, SMAPE, AbsoluteError, RAE, RSE, MRD, and MRD_BIAS. It is \code{NULL} when no finite test comparisons are available.}
+\item{Info}{Method name, split index, forecast origin, horizon, time interval, seasonal period, response scale, and method-specific information.}
+See Details for additional fields.
 }
-
 \references{
 R. F. Engle: Autoregressive Conditional Heteroskedasticity   with Estimates of the Variance of UK. Inflation. In:   Econometrica, Vol.: 50, pp. 987 - 1008, 1982.
 
@@ -61,26 +51,13 @@ Franke, J., Härdle, W., Hafner, C. M.: Statistics of Financial Markets: An Intr
 \author{
 Michael Thrun
 }
-\note{
-wrapper for \code{\link{ugarchspec}}
-}
-
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-\code{\link{ugarchspec}}
-}
-
+\seealso{\code{\link{ForecastingInterface}}}
 \examples{
-# Plot with forecast
-FcGARCH(TempMelbourneAustralia$Temp,ForecastHorizon=10, PlotIt = TRUE)#
-# Plot with summary
-FcGARCH(TempMelbourneAustralia$Temp,ForecastHorizon=10, Summary = TRUE)
+if (requireNamespace("rugarch", quietly = TRUE)) {
+  y <- as.numeric(EuStockMarkets[, 1])
+  out <- FcGARCH(y, SplitAt = 150, ForecastHorizon = 3)
+  stopifnot(NROW(out$Forecast) == 3, length(out$ForecastTime) == 3,
+            all(is.finite(out$Forecast)))
 }
-
-
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ARCH}% use one of  RShowDoc("KEYWORDS")
-\keyword{GARCH}% __ONLY ONE__ keyword per line
+}
+\keyword{ts}

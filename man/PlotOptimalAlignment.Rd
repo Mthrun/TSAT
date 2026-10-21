@@ -33,7 +33,7 @@ Optional, [1:m] vector, Time object of class Date, see \code{\link{ConvertNumeri
 Optional, either days, weeks, months or quarters or years
 }
   \item{\dots}{
-Optional, arguments passed on to \code{\link{DTWdistance}}
+Optional, arguments passed on to \code{\link[dtw]{dtw}}
 }
 }
 \details{
@@ -53,7 +53,7 @@ Michael Thrun
 
 
 \seealso{
-\code{\link{DTWdistance}}
+\code{\link[dtw]{dtw}}
 }
 \examples{
 ##ToDo

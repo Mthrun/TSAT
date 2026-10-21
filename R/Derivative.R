@@ -22,10 +22,12 @@ Derivative = function(Data, FilterWindowSize=5, PlotIt=FALSE){
   }
   Data = MovingAverage(Data,FilterWindowSize)
   
-  # Derivation i.e. change to last FiData
-  LastData    = Data[length(Data)]  # TE on last FiData
-  LastData[1] = Data[2]             # in beginning it's constant
-  Dx = Data - LastData              # Derivation i.e. change to last Fix
+  # Subtract the preceding row, not one scalar from all observations.
+  # The first difference is zero because no earlier observation is available.
+  if (is.matrix(Data)) {
+    LastData <- Data[c(1L, head(seq_len(NROW(Data)), -1L)), , drop=FALSE]
+  } else LastData <- Data[c(1L, head(seq_along(Data), -1L))]
+  Dx <- Data - LastData
   
   # Filter the derivative
   #return(Dx = smooth(Dx, 'moving', FilterWindowSize)) # moving window filter

@@ -22,6 +22,9 @@
 #author: JM
 
 RootDeviance = function(x,y,Silent=FALSE) {
+  if (!is.numeric(x) || !is.numeric(y) || !length(x) ||
+      length(x) != length(y) || any(!is.finite(c(x,y))))
+    stop("Supply two nonempty, finite numeric vectors of equal length.")
   if(isFALSE(Silent)){
     if(!is.vector(x) || !is.vector(y))
       warning("Input should be of type vector.")
@@ -47,6 +50,7 @@ RootDeviance = function(x,y,Silent=FALSE) {
     SRD = a + b,
     MRD = (a + b) / n,
     length = sqrt(a^2 + b^2),
-    bias = 1 - 4 * atan(b / a) / pi
+    # A perfect forecast has no directional bias. Avoid the undefined ratio 0/0.
+    bias = if (a == 0 && b == 0) 0 else 1 - 4 * atan2(b, a) / pi
   ))
 }

@@ -12,15 +12,9 @@ PartialAutoCorr(TimeSeries, nLags = 2, PlotIt = FALSE,\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{TimeSeries}{
-%%     ~~Describe \code{TimeSeries} here~~
-}
-  \item{nLags}{
-%%     ~~Describe \code{nLags} here~~
-}
-  \item{PlotIt}{
-%%     ~~Describe \code{PlotIt} here~~
-}
+  \item{TimeSeries}{Numeric time series.}
+  \item{nLags}{Number of partial autocorrelation lags.}
+  \item{PlotIt}{If TRUE, display the partial autocorrelation plot.}
   \item{\dots}{
 further arguments passed on to output of \code{\link{ccf}}
 }

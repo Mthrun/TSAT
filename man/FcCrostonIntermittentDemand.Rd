@@ -1,70 +1,43 @@
 \name{FcCrostonIntermittentDemand}
 \alias{FcCrostonIntermittentDemand}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Forecasting with Croston Intermittent Demand
-}
-\description{
-The Croston model answers the question How much demand will we have on average per period?
-This function \code{CrostonIntermittentDemand} returns forecasts and other information for Croston's forecasts.
-}
+\title{Croston forecasts for intermittent demand}
+\description{Fit a Croston demand model to a nonnegative response series.}
 \usage{
-FcCrostonIntermittentDemand(DataVec, Time,
-
-ForecastHorizon,SplitAt,
-
-Frequency = "days", ModelType = "sbj", 
-
-PlotIt = FALSE, ...)
+FcCrostonIntermittentDemand(DataVec, Time = NULL, ForecastHorizon = 1L,
+  SplitAt = length(DataVec), Frequency = NULL, ModelType = "sbj",
+  PlotIt = FALSE, \dots, TimeStep = NULL, SeasonalPeriod = NULL,
+  FutureTime = NULL)
 }
 \arguments{
-  \item{DataVec}{
-[1:n] numerical vector time series data.
-}
-  \item{Time}{
-[1:n] [1:n] character vector of Time in the length of data}
-  \item{Frequency}{
-either \code{days}, \code{weeks}, \code{months} or \code{quarters} or \code{years}
-}
-  \item{ForecastHorizon}{
-Scalar defining the timesteps to forecast ahead, has to be set. 
-}
-  \item{SplitAt}{
-Index of row where the DataVec is divided into test and train data. If not given n is used
-}
-  \item{ModelType}{
-Croston's method variant: 1. "croston" Croston's method; 2. "sba" Syntetos-Boylan approximation; 3. "sbj" Shale-Boylan-Johnston, see \code{\link[tsintermittent]{crost}}.
-}
-  \item{PlotIt}{
-FALSE (default), do nothing. TRUE: plots the result.
-}
-  \item{\dots}{
-Further optional parameters for \code{\link[tsintermittent]{crost}}
-}
+  \item{DataVec}{Numeric response vector. A univariate \code{ts} object is also accepted. Values after \code{SplitAt} are used only for evaluation.}
+  \item{Time}{Ordered timestamps, with one timestamp per observation. Use numeric indices, \code{Date}, or \code{POSIXct}. ISO date strings are accepted. If omitted, use the \code{ts} time index or consecutive observation indices. Prophet requires calendar timestamps.}
+  \item{ForecastHorizon}{Positive integer. Number of observations to predict after \code{SplitAt}. The result always contains this number of forecast rows.}
+  \item{SplitAt}{Index of the last training observation. The forecast starts at the next observation. The usual default uses all supplied observations. See Details for legacy defaults.}
+  \item{Frequency}{Legacy name for \code{TimeStep}. The function does not aggregate observations. Aggregate data before the call.}
+  \item{ModelType}{Model selection. See Details for the supported values and their assumptions.}
+  \item{PlotIt}{If \code{TRUE}, display the forecast plot. If \code{FALSE}, do not display plots. Plot settings do not change the forecast values.}
+  \item{\dots}{Additional arguments for the model function identified in Details. Do not repeat arguments that the wrapper sets explicitly.}
+  \item{TimeStep}{Time interval. Use a positive number or a calendar unit: \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"}, \code{"year"}, \code{"hour"}, \code{"min"}, or \code{"sec"}. Numeric intervals use the units of \code{Time}: days for \code{Date}, seconds for \code{POSIXct}, and index units otherwise. If omitted, infer a regular interval from training timestamps.}
+  \item{SeasonalPeriod}{Positive integer. Number of observations in one seasonal cycle. The default uses the frequency of a \code{ts} input, or one for a numeric vector. This setting does not select an input window or aggregate data.}
+  \item{FutureTime}{Optional timestamps for all forecast rows. Supply exactly \code{ForecastHorizon} values after the forecast origin. They must agree with any observed test timestamps and with the regular interval required by the method.}
 }
 \details{
+\code{ModelType} can be \code{"croston"}, \code{"sba"}, or \code{"sbj"}. Additional arguments go to \code{tsintermittent::crost}. An all-zero training series gives a zero forecast. A model error stops the call; it does not give a zero forecast.
 
-The Croston method is suitable if demand appears at random, with many or even most time periods having no demand; where demand does occur, the historical data is randomly distributed, independently or almost independently of the demand interval. Such demand patterns are known as "lumpy demand" or intermittent, irregular, random or sporadic demand. The approach is  based on Croston's (1972) method for intermittent demand forecasting, also described in Shenstone and Hyndman (2005).
- 
-Croston's method involves using simple exponential smoothing (SES) on the non-zero elements of the time series and a separate application of SES to the times between non-zero elements of the time series. The smoothing parameters of the two applications of SES are assumed to be equal and are denoted by alpha. Optimisation of the types of croston methods is described in [Kourentzes, 2014].
-
+Prediction intervals are not supplied. Legacy fields \code{TrainingSet}, \code{TestSet}, and \code{TrainingForecast} are also returned.
 }
 \value{
-List with
-  \item{Forecast}{
-[1:ForecastHorizon] numeric vector, forecast for test set times
-}
-  \item{Model}{
-Output of \code{\link[tsintermittent]{crost}}
-}
-  \item{TrainingSet}{
-[1:ForecastHorizon] Trainingset
-}
-  \item{TestSet}{
-[ForecastHorizon+1:n] TestSet
-}
-
-
+A named list with the common fields described in \code{\link{ForecastingInterface}}:
+\item{Forecast}{Response predictions. A vector of length \code{ForecastHorizon}, or a matrix with one column per series.}
+\item{ForecastTime}{One timestamp per forecast row.}
+\item{TrainData, TrainTime}{The observed training response and its timestamps.}
+\item{Fitted, Residuals}{Training fitted values and observed-minus-fitted residuals. Unsupported fields are \code{NULL}. Initial values can be missing.}
+\item{TestData, TestTime}{Observed response values aligned with the forecast rows and their timestamps. Unknown future responses are \code{NA}.}
+\item{Lower, Upper, Level}{Prediction bounds and coverage percentages. Unsupported intervals are \code{NULL}. Univariate bounds have one column per level. Multivariate bounds have dimensions horizon by series by level.}
+\item{Model}{The fitted model or model parameters.}
+\item{Accuracy}{The matrix from \code{\link{QualityMeasuresForecasting}}, with one row per response series. It contains N, MAE, RMSE, Bias, MASE, MAPE, SMAPE, AbsoluteError, RAE, RSE, MRD, and MRD_BIAS. It is \code{NULL} when no finite test comparisons are available.}
+\item{Info}{Method name, split index, forecast origin, horizon, time interval, seasonal period, response scale, and method-specific information.}
+See Details for additional fields.
 }
 \references{
 Croston, J. (1972) "Forecasting and stock control for intermittent demands", Operational Research Quarterly, 23(3), 289-303.
@@ -76,23 +49,13 @@ Shenstone, L., and Hyndman, R.J. (2005) "Stochastic models underlying Croston's 
 \author{
 Michael Thrun
 }
-
-
-\seealso{
-\code{\link[tsintermittent]{crost}},\code{\link[TSAT]{ConvertNumerical2TSobject}}
-}
+\seealso{\code{\link{ForecastingInterface}}}
 \examples{
-data(Sales)
-#set arbitrary dates
-y=seq(from=as.Date('1970-01-01'),by='days',to=as.Date('1970-04-01'))[1:length(Sales)]
-out=FcCrostonIntermittentDemand(Sales,y,Frequency = 'days',ForecastHorizon = 12,SplitAt=49,PlotIt = TRUE)
-plot(out$TestSet,main='Plotting Testset Evaluation',xlab='Time',ylab='Sales')
-points(time(out$TestSet),out$Forecast)
+if (requireNamespace("tsintermittent", quietly = TRUE)) {
+  y <- rep(c(0, 0, 3, 0, 1, 0), 10)
+  out <- FcCrostonIntermittentDemand(y, SplitAt = 48, ForecastHorizon = 3)
+  stopifnot(NROW(out$Forecast) == 3, length(out$ForecastTime) == 3,
+            all(is.finite(out$Forecast)))
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{IntermittentDemand}% use one of  RShowDoc("KEYWORDS")
-\keyword{Croston}% __ONLY ONE__ keyword per line
-\keyword{Intermittent}% __ONLY ONE__ keyword per line
-\keyword{Sales}% __ONLY ONE__ keyword per line
-\concept{Intermittent Demand}% use one of  RShowDoc("KEYWORDS")
+}
+\keyword{ts}

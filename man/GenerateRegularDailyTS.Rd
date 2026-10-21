@@ -85,7 +85,8 @@ Michael Thrun
 
 \dontrun{
 #take the last value of a day
-V=GenerateRegularDailyTS(Time,Price,Header = c("UTC_Time","Price"),na.rm = "ff",AggregateFun = tail,n=1)
+V=GenerateRegularDailyTS(Time,Price,Header = c("UTC_Time","Price"),
+                        na.rm = "ff",AggregateFun = tail,n=1)
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

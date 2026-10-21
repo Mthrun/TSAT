@@ -8,11 +8,8 @@ Short Time Fourier Transformation
 Short Time Fourier Transformation
 }
 \usage{
-ShortTimeFT(Datavec, LenWindow,
-
-TypeWindow, GaussianApha=1,
-
-PlotIt=TRUE,Window, ...)
+ShortTimeFT(Datavec, LenWindow = 8, TypeWindow = "gaussian", GaussianApha = 1,
+  PlotIt = TRUE, Window, \dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -71,25 +68,11 @@ Transformations of Tics to frequencies in Hz are not provided so far..
 \code{\link[signal]{specgram}}
 }
 \examples{
-t0=seq(from=0.001,
-to=2.5,
-length.out = 256) 
-
-y=c(cos(2*pi*1.0*t0),
-    cos(2*pi*2.5*t0),
-    cos(2*pi*5.0*t0),
-    cos(2*pi*7.5*t0))
-
-#10sec of ticks of time
-t=seq(from=0.001,
-to=10,
-length.out = 256*4) 
-
-\donttest{
-plot(t,y,type='l',
-ylab='Amplitude',xlab='Time in sec')
+if (requireNamespace("signal",quietly=TRUE)) {
+  y <- sin(seq_len(256)/8)
+  out <- ShortTimeFT(y,LenWindow=8,PlotIt=FALSE)
+  stopifnot(is.matrix(out$Amplitude), all(is.finite(out$Amplitude)))
 }
-x=ShortTimeFT(y,WindowLen = 8,PlotIt = T)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

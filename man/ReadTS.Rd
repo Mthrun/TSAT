@@ -22,9 +22,7 @@ InDirectory where *.TS file is, default: Current dir
 TRUE: saves numeric format of series, FALSE: Accepts text
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
+
 \value{
 List with
 \item{Series}{[1:n,1:2] matrix of Time and Seriesval, 1st column is Unix time or time in seconds, unique index from first column, Series contained in Column 2, without blanks}
@@ -34,15 +32,14 @@ List with
 }
 \author{
 Michael Thrun}
-\note{
-%%  ~~further notes~~
-}
+
 
 \seealso{
 \link{WriteTS}
 }
 \examples{
-WriteTS("ElectricityBRD", ElectricityBRD$Time, ElectricityBRD$Mrd_KWh, Comments="Electricity production in BRD")
+WriteTS("ElectricityBRD", ElectricityBRD$Time, ElectricityBRD$Mrd_KWh,
+        Comments="Electricity production in BRD")
 V=ReadTS("ElectricityBRD")
 V$Series
 V$Header

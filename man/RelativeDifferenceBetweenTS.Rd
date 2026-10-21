@@ -8,7 +8,7 @@ RelativeDifferenceBetweenTS
 RelativeDifference  for Time series
 }
 \usage{
-RelativeDifferenceBetweenTS(TS1, TS2, na.rm = TRUE)
+RelativeDifferenceBetweenTS(TS1, TS2, na.rm = TRUE, Silent = FALSE) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +21,7 @@ RelativeDifferenceBetweenTS(TS1, TS2, na.rm = TRUE)
   \item{na.rm}{
 TRUE: interpolate NaN
 }
+\item{Silent}{If TRUE, suppress optional messages.}
 }
 \seealso{
 \code{\link{TemporalRelativeDifference}}

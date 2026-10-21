@@ -1,37 +1,13 @@
-# V=WriteTS(FileName, Time, SeriesVal)
-#
-# Description:
-# Compute a lagged version of a numeric vector, shifting the time base back or forward by a given number of observations.
-#
-# INPUT
-# x                         [1:n] vector
-# k                         The number of lags (in units of observations): back shifting: positiv value, forward shifting: negative value
-#
-# OUTPUT
-# Shifted vector [1:n] with k NaN values at the beginning (k positive) or the end (k negative)
-#
-# 
-#author: MCT
-
 LagVector <- function(x, k) {
-  if(length(k)!=1) stop('k has to be a scalar number')
-  if(!is.numeric(k)) stop('k has to be a numeric value')
-  if(class(x)=="Date" |class(x)[1]=="POSIXct" | class(x)[1]=="POSIXt"| class(x)[1]=="POSIXlt") {
-    x=as.character(x)
-    warning('Returning character vector instead of time.')
-  }
-  if(!is.vector(x)) stop('x has to be a vector')
-  
-  N=length(x)
-  
-  if(k==0) return(x)
-  
-  k=sign(k)*abs(k)%%N
-  
-  if(k<0) 
-    return(c(tail(x,N+k), rep(NaN, -k)))
-
-  if(k>0)
-    return(c(rep(NaN, k), head(x,N-k)))
-  
+  if (!is.numeric(k) || length(k) != 1L || !is.finite(k) || k != trunc(k))
+    stop("k must be one finite integer.")
+  if (!is.null(dim(x))) stop("x must be a vector.")
+  n <- length(x)
+  if (!n || k == 0) return(x)
+  # Indexing with NA preserves Date, POSIXct, factor, and vector classes.
+  # A lag is a shift with missing values. It must not wrap around.
+  if (abs(k) >= n) return(x[rep(NA_integer_, n)])
+  index <- seq_len(n) - k
+  index[index < 1L | index > n] <- NA_integer_
+  x[index]
 }
